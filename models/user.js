@@ -7,7 +7,6 @@ var db = mongoose.connection;
 var UserSchema = mongoose.Schema({
     email: {
         type: String,
-        unique: true,
         index: true
     },
     password: {
@@ -40,20 +39,42 @@ module.exports.createUser = function(newUser, callback) {
     });
 }
 
-module.exports.resetPassword = function(userEmail, newPassword, callback) {
+module.exports.getIsUserAdministrator = (callback) => {
+    const query = {role: '0'};
+    User.findOne(query, callback);
+}
+
+module.exports.getIsUserStaff = (callback) => {
+    const query = {role: '1'};
+    User.findOne(query, callback);
+}
+
+module.exports.getIsUserDriver = (callback) => {
+    const query = {role: '2'};
+    User.findOne(query, callback);
+}
+
+module.exports.getUserByEmail = (username, callback) => {
+	const query = {email: email};
+	User.findOne(query, callback);
+}
+
+module.exports.getUserById = (id, callback) => {
+	User.findById(id, callback);
+}
+
+module.exports.comparePasswords = (guess, stored, callback) => {
+    bcrypt.compare(guess, stored, callback);
+}
+
+module.exports.resetPassword = (userEmail, newPassword, callback) => {
     bcrypt.genSalt(10, function(err, salt) {
         bcrypt.hash(newPassword, salt, function(err, hash) {
             newPassword = hash;
             // Find user by email
             // Upate his old password with the new one
             var query = { email: userEmail };
-            User.update(query, { password: newPassword });
-            
-            /* Example:
-            MyModel.findOneAndUpdate(query, req.newData, {upsert:true}, function(err, doc){
-            if (err) return res.send(500, { error: err });
-            return res.send("succesfully saved");
-            */
+            User.update(query, { password: newPassword }, callback);
         });
     });
 }

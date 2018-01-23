@@ -10,12 +10,12 @@ var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 var mongo = require('mongodb');
 var mongoose = require('mongoose');
+const { _DB } = require('./config/keys');
 
-mongoose.connect('mongodb://localhost:27017/test');
-var db = mongoose.connection;
+mongoose.connect(_DB.CONN_URL, { useMongoClient: true });
+//var db = mongoose.connection;
 
-
-var routes = require('./routes/index');
+var front = require('./routes/index');
 var users = require('./routes/users');
 
 // Init App
@@ -75,8 +75,8 @@ app.use(function (req, res, next) {
   next();
 });
 
-app.use('/', routes);
-app.use('/users', users);
+app.use('/', front);
+app.use('/api/users', users);
 
 /*
 app.get('/:id', function(req, res) {

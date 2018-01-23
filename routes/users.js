@@ -1,24 +1,23 @@
 const express = require('express');
+var router = express.Router();
 const flash = require('connect-flash');
 const nodemailer = require('nodemailer');
 var generator = require('generate-password');
 
-var router = express.Router();
-
 var User = require('../models/user');
 
 // Show users - GET
-router.get('/', function(req, res){
+router.get('/', function(req, res) {
 	res.render('users/showall');
 });
 
 // Login - GET
-router.get('/login', function(req, res){
+router.get('/login', function(req, res) {
 	res.render('index');
 });
 
 // Login - POST
-router.post('/login', function(req, res){
+router.post('/login', function(req, res) {
 	res.render('index');
 });
 
@@ -63,14 +62,14 @@ router.post('/register', function(req, res) {
 		</ul>
 		<br/><strong>IMPORTANT:</strong> Set your own password.<br/>
 		<ul>
-		<li>Step 1: Click on this link: <a href="http://localhost:3000/users/reset/${email}">Complete account creation!</a></li>
+		<li>Step 1: Click on this link: <a href="http://localhost:3000/api/users/reset/${email}">Complete account creation!</a></li>
 		<li>Step 2: Type in your preffered password and confirm it.</li>
 		<li>Step 3: Sign in to the system with your email and newly set password.</li>
 		</ul>
 	`;
 
 	// create reusable transporter object using the default SMTP transport
-	let transporter = nodemailer.createTransport({
+	const transporter = nodemailer.createTransport({
 		host: 'mail.georgim.com',
 		port: 25,
 		secure: false, // true for 465, false for other ports
@@ -84,7 +83,7 @@ router.post('/register', function(req, res) {
 	});
 
 	// setup email data with unicode symbols
-	let mailOptions = {
+	const mailOptions = {
 		from: '"Georgi @ Cyrenians Farm" <georgi@georgim.com>', // sender address
 		to: 'georgimweb@gmail.com', // list of receivers
 		subject: 'Account completion request', // Subject line
@@ -162,13 +161,12 @@ router.post('/reset', function(req, res) {
 		// Find user by Email func.
 		// then send User as param instead of email and password
 		// then alter the resetPassword func.
-		User.resetPassword(email, password, function(err) {
+		User.resetPassword(email, password, (err) => {
 			if(err) throw err;
 
 			req.flash('success_msg', 'Password was successfully updated.');
-
-			console.log(User);
-
+			
+			console.log(User.password);
 			// delay for 3 seconds and redirect to login
 			setTimeout(() => res.render('users/login'), 3000);
 		});
