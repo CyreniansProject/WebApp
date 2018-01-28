@@ -64,7 +64,7 @@ app.use(expressValidator({
       msg   : msg,
       value : value
     };
-  }
+  },
 }));
 
 // Connect Flash

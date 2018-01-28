@@ -1,11 +1,11 @@
 const express = require('express');
-var router = express.Router();
+const router = express.Router();
 const flash = require('connect-flash');
 const nodemailer = require('nodemailer');
-var generator = require('generate-password');
-var passport = require('passport');
+const passport = require('passport');
+var generator = require('generate-password'); 
 
-var User = require('../models/user');
+const User = require('../models/user');
 require('../middlewares/authenticate');
 
 // Index - GET
@@ -81,7 +81,11 @@ router.post('/register', function(req, res) {
 	const lastname = req.body.lastname;
 	const email = req.body.email;
 	const role = req.body.role;
-	const password = req.body.password;
+	
+	var password = generator.generate({
+		length: 10,
+		numbers: true
+	})
 
 	var accessLevel;
 	if(role == 0)
@@ -138,15 +142,15 @@ router.post('/register', function(req, res) {
 	req.check('lastname', 'Last Name is required').notEmpty();
 	req.check('email', 'Email is required').isEmail();
 	req.check('role', 'Access level selection is required').not().equals("Choose...");
+	
 	// Store validation errors if any...
 	var validErrors = req.validationErrors();
 	// Attempt User creation
 	if (validErrors) {
-		res.render('users/register', { page_title: 'Add member', errors: validErrors });
+		res.render('users/register', { layout: 'layout_staff.handlebars', page_title: 'Add member', errors: validErrors });
 	}
 	else {
-		var newUser = new User(
-		{
+		var newUser = new User({
 			firstname: firstname,
 			lastname: lastname,
 			email: email,
@@ -156,7 +160,6 @@ router.post('/register', function(req, res) {
 
 		User.createUser(newUser, function(err, user) {
 			if(err) throw err;
-			console.log(user);
 
 			// send mail with defined transport object
 			transporter.sendMail(mailOptions, (error, info) => {
@@ -165,8 +168,7 @@ router.post('/register', function(req, res) {
 				}
 
 				req.flash('success_msg', 'User was successfully created.');
-				// delay for 3 seconds and redirect to dashboard
-				setTimeout(() => res.redirect('/api/users'), 1000);
+				res.redirect('/api/users');
 			});
 		});
 	}
@@ -203,7 +205,7 @@ router.post('/reset', function(req, res) {
 
 			req.flash('success_msg', 'Password was successfully updated.');
 			// delay for 3 seconds and redirect to login
-			setTimeout(() => res.redirect('/'), 1000);
+			res.redirect('/');
 		});
 	}
 });
