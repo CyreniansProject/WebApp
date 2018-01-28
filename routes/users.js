@@ -1,55 +1,95 @@
 const express = require('express');
+var router = express.Router();
 const flash = require('connect-flash');
 const nodemailer = require('nodemailer');
 var generator = require('generate-password');
-
-var router = express.Router();
+var passport = require('passport');
 
 var User = require('../models/user');
+require('../middlewares/authenticate');
 
-// Show users - GET
-router.get('/', function(req, res){
-	res.render('users/showall');
+// Index - GET
+router.get('/', function(req, res) {
+	if (req.user) {
+		if (req.user.role == 0) {
+			res.render('users/index', { layout: 'layout_staff.handlebars', page_title: 'Staff members' });
+		}
+		else {
+			req.flash('error_msg', 'You don\'t have the authority to add new staff members!');
+			res.redirect('/api/dashboard');
+		}
+	}	
+	else {
+		req.flash('error_msg', 'You need to login first!');
+		res.redirect('/');
+	}
 });
 
-// Login - GET
-router.get('/login', function(req, res){
-	res.render('index');
+// Profile - GET
+router.get('/profile', function(req, res) {
+	if (req.user) {
+		var accessLevel;
+		if(req.user.role == 0)
+			accessLevel = "Administrator";
+		else if (req.user.role == 1)
+			accessLevel = "Staff member";
+		else if (req.user.role == 2)
+			accessLevel = "Delivery man";
+		
+		res.render('users/profile', { layout: 'layout_staff.handlebars', page_title: 'My profile', user: req.user, access: accessLevel });
+	}
+	else {
+		req.flash('error_msg', 'You need to login first!');
+		res.redirect('/');
+	}
 });
 
 // Login - POST
-router.post('/login', function(req, res){
-	res.render('index');
+router.post('/login',
+	passport.authenticate('local', { successRedirect: '/api/dashboard', failureRedirect: '/', failureFlash: true }),
+	(req, res) => { res.redirect('/');
+});
+
+router.get('/logout', function(req, res) {
+	if (req.user) {
+		req.logout();
+		req.flash('success_msg', 'You are logged out');
+		res.redirect('/');
+	}
 });
 
 // Register - GET
 router.get('/register', function(req, res) {
-	res.render('users/register');
+	if (req.user) {
+		if (req.user.role == 0) {
+			res.render('users/register', { layout: 'layout_staff.handlebars', page_title: 'Add member' });
+		}
+		else {
+			req.flash('error_msg', 'You don\'t have the authority to add new staff members!');
+			res.redirect('/api/dashboard');
+		}
+	}	
+	else {
+		req.flash('error_msg', 'You need to login first!');
+		res.redirect('/');
+	}
 });
 
 // Register - POST
 router.post('/register', function(req, res) {
-	var firstname = req.body.firstname;
-	var lastname = req.body.lastname;
-	var email = req.body.email;
-	var role = req.body.role;
-
-	var password = generator.generate({
-		length: 10,
-		numbers: true
-	});	
+	const firstname = req.body.firstname;
+	const lastname = req.body.lastname;
+	const email = req.body.email;
+	const role = req.body.role;
+	const password = req.body.password;
 
 	var accessLevel;
-	if(role == 0) {
-	 accessLevel = "Administrator";
-	}
-	else if (role == 1) {
+	if(role == 0)
+		accessLevel = "Administrator";
+	else if (role == 1)
 		accessLevel = "Staff member";
-	}
 	else if (role == 2)
-	{
 		accessLevel = "Delivery man";
-	}
 
 	// CREATE EMAIL
 	const output = `
@@ -63,14 +103,14 @@ router.post('/register', function(req, res) {
 		</ul>
 		<br/><strong>IMPORTANT:</strong> Set your own password.<br/>
 		<ul>
-		<li>Step 1: Click on this link: <a href="http://localhost:3000/users/reset/${email}">Complete account creation!</a></li>
+		<li>Step 1: Click on this link: <a href="http://localhost:3000/api/users/reset/${email}">Complete account creation!</a></li>
 		<li>Step 2: Type in your preffered password and confirm it.</li>
 		<li>Step 3: Sign in to the system with your email and newly set password.</li>
 		</ul>
 	`;
 
 	// create reusable transporter object using the default SMTP transport
-	let transporter = nodemailer.createTransport({
+	const transporter = nodemailer.createTransport({
 		host: 'mail.georgim.com',
 		port: 25,
 		secure: false, // true for 465, false for other ports
@@ -84,7 +124,7 @@ router.post('/register', function(req, res) {
 	});
 
 	// setup email data with unicode symbols
-	let mailOptions = {
+	const mailOptions = {
 		from: '"Georgi @ Cyrenians Farm" <georgi@georgim.com>', // sender address
 		to: 'georgimweb@gmail.com', // list of receivers
 		subject: 'Account completion request', // Subject line
@@ -102,7 +142,7 @@ router.post('/register', function(req, res) {
 	var validErrors = req.validationErrors();
 	// Attempt User creation
 	if (validErrors) {
-		res.render('users/register', { errors: validErrors });
+		res.render('users/register', { page_title: 'Add member', errors: validErrors });
 	}
 	else {
 		var newUser = new User(
@@ -126,20 +166,16 @@ router.post('/register', function(req, res) {
 
 				req.flash('success_msg', 'User was successfully created.');
 				// delay for 3 seconds and redirect to dashboard
-				setTimeout(() => res.redirect('/'), 3000);
+				setTimeout(() => res.redirect('/api/users'), 1000);
 			});
 		});
 	}
 });
 
 // Reset - GET
-router.get('/reset', function(req, res) {
-	res.render('users/reset');
-});
-
 router.get('/reset/:email', function(req, res) {
 	var email = req.params.email;
-	res.render('users/reset', { email: email });
+	res.render('users/reset', { page_title: 'Reset password', email: email });
 });
 
 // Reset - POST
@@ -156,21 +192,18 @@ router.post('/reset', function(req, res) {
 
 	// Attempt User creation
 	if (validErrors) {
-		res.render('users/reset', { errors: validErrors });
+		res.render('users/reset', { page_title: 'Reset password', errors: validErrors });
 	}
 	else {
 		// Find user by Email func.
 		// then send User as param instead of email and password
 		// then alter the resetPassword func.
-		User.resetPassword(email, password, function(err) {
+		User.resetPassword(email, password, (err) => {
 			if(err) throw err;
 
 			req.flash('success_msg', 'Password was successfully updated.');
-
-			console.log(User);
-
 			// delay for 3 seconds and redirect to login
-			setTimeout(() => res.render('users/login'), 3000);
+			setTimeout(() => res.redirect('/'), 1000);
 		});
 	}
 });

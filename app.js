@@ -1,25 +1,29 @@
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
-var exphbs = require('express-handlebars');
-var expressValidator = require('express-validator');
-var flash = require('connect-flash');
-var session = require('express-session');
-var passport = require('passport');
-var LocalStrategy = require('passport-local').Strategy;
-var mongo = require('mongodb');
-var mongoose = require('mongoose');
+const express = require('express');
+const path = require('path');
+const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
+const exphbs = require('express-handlebars');
+const expressValidator = require('express-validator');
+const flash = require('connect-flash');
+const session = require('express-session');
+const passport = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
+const mongo = require('mongodb');
+const mongoose = require('mongoose');
+const { _DB } = require('./config/keys');
 
-mongoose.connect('mongodb://localhost:27017/test');
-var db = mongoose.connection;
+mongoose.connect(_DB.CONN_URL, { useMongoClient: true });
+//var db = mongoose.connection;
 
-
-var routes = require('./routes/index');
-var users = require('./routes/users');
+const landing = require('./routes/index');
+const dashboard = require('./routes/dashboard');
+const users = require('./routes/users');
+const stock = require('./routes/stock');
+const orders = require('./routes/orders');
+const reports = require('./routes/reports');
 
 // Init App
-var app = express();
+const app = express();
 
 // View Engine
 app.set('views', path.join(__dirname, 'views'));
@@ -75,18 +79,12 @@ app.use(function (req, res, next) {
   next();
 });
 
-app.use('/', routes);
-app.use('/users', users);
-
-/*
-app.get('/:id', function(req, res) {
-  res.send('<strong>Param: ' + req.params.id + '</strong>');
-});
-
-app.get('/users/reset/:id', function(req, res) {
-  res.send('<strong>User: ' + req.params.id + '</strong>');
-});
-*/
+app.use('/', landing);
+app.use('/api/users', users);
+app.use('/api/dashboard', dashboard);
+app.use('/api/stock', stock);
+app.use('/api/orders', orders);
+app.use('/api/reports', reports);
 
 // Set Port
 app.set('port', (process.env.PORT || 3000));
