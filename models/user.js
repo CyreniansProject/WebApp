@@ -54,7 +54,7 @@ module.exports.getIsUserDriver = (callback) => {
     User.findOne(query, callback);
 }
 
-module.exports.getUserByEmail = (username, callback) => {
+module.exports.getUserByEmail = (email, callback) => {
 	const query = {email: email};
 	User.findOne(query, callback);
 }
@@ -63,8 +63,11 @@ module.exports.getUserById = (id, callback) => {
 	User.findById(id, callback);
 }
 
-module.exports.comparePasswords = (guess, stored, callback) => {
-    bcrypt.compare(guess, stored, callback);
+module.exports.comparePassword = function(candidatePassword, hash, callback){
+	bcrypt.compare(candidatePassword, hash, function(err, isMatch) {
+    	if(err) throw err;
+    	callback(null, isMatch);
+	});
 }
 
 module.exports.resetPassword = (userEmail, newPassword, callback) => {

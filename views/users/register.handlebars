@@ -1,41 +1,49 @@
+{{#if user}}
 {{#if errors}}
       {{#each errors}}
         <div class="alert alert-danger">{{msg}}</div>
       {{/each}}
 {{/if}}
-<form class="form-signup" method="post" action="/api/users/register">
-    <legend>Add a new member</legend>
-    <div class="input-group">
-        <div class="input-group-prepend">
-            <span class="input-group-text"><i class="fa fa-user" aria-hidden="true"></i></span>
+<div class="row">
+    <div class="col-lg-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Please fill out the details</h3>
+            </div>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <form role="form" method="post" action="/api/users/register">
+                            <fieldset>
+                                <div class="form-group">
+                                    <input class="form-control" placeholder="First name" name="firstname" type="text" autofocus>
+                                </div>
+                                <div class="form-group">
+                                    <input class="form-control" placeholder="Last name" name="lastname" type="text">
+                                </div>
+                                <div class="form-group">
+                                    <input class="form-control" placeholder="E-mail" name="email" type="email">
+                                </div>
+                                <div class="form-group">
+                                    <input class="form-control" placeholder="Password" name="password" type="password">
+                                </div>
+                                <div class="form-group">
+                                    <label>Access level</label>
+                                    <select multiple class="form-control" name="role" required>
+                                        <option selected>Choose...</option>
+                                        <option value="0">Administrator</option>
+                                        <option value="1">Staff member</option>
+                                        <option value="2">Delivery man</option>
+                                    </select>
+                                </div>
+                                <!-- Change this to a button or input when using this as a form -->
+                                <button type="submit" class="btn btn-lg btn-success btn-block">Create</a>
+                            </fieldset>
+                        </form>
+                    </div>
+                </div>
+            </div>
         </div>
-        <input type="firstname" name="firstname" class="form-control" placeholder="First name" aria-label="Email address" aria-describedby="basic-addon1" autofocus>
     </div>
-    <div class="input-group">
-        <div class="input-group-prepend">
-            <span class="input-group-text"><i class="fa fa-user" aria-hidden="true"></i></span>
-        </div>
-        <input type="lastname"  name="lastname" class="form-control" placeholder="Last name" aria-label="Email address" aria-describedby="basic-addon1">
-    </div>
-    <div class="input-group">
-        <div class="input-group-prepend">
-            <span class="input-group-text">@</span>
-        </div>
-        <input type="email"  name="email" class="form-control" placeholder="Email address" aria-label="Email address" aria-describedby="basic-addon1">
-    </div>
-    <div class="input-group">
-        <div class="input-group-prepend">
-            <span class="input-group-text"><i class="fa fa-universal-access" aria-hidden="true"> Access</i></span>
-        </div>
-        <select class="custom-select" name="role" required>
-            <option selected>Choose...</option>
-            <option value="0">Administrator</option>
-            <option value="1">Staff member</option>
-            <option value="2">Delivery man</option>
-        </select>
-    </div>
-
-    <button class="btn btn-lg btn-info btn-block" type="submit">
-        Create user <i class="fa fa-sign-in" aria-hidden="true"></i>
-    </button>
-</form>
+</div>
+{{/if}}
