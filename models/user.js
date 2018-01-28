@@ -39,21 +39,6 @@ module.exports.createUser = function(newUser, callback) {
     });
 }
 
-module.exports.getIsUserAdministrator = (callback) => {
-    const query = {role: '0'};
-    User.findOne(query, callback);
-}
-
-module.exports.getIsUserStaff = (callback) => {
-    const query = {role: '1'};
-    User.findOne(query, callback);
-}
-
-module.exports.getIsUserDriver = (callback) => {
-    const query = {role: '2'};
-    User.findOne(query, callback);
-}
-
 module.exports.getUserByEmail = (email, callback) => {
 	const query = {email: email};
 	User.findOne(query, callback);
