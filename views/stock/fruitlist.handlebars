@@ -5,7 +5,7 @@
         <div class="panel-heading">
             A list view of all fruit & veggie items
             <a style="text-decoration: none; margin: 0px;" class="pull-right" href="/api/stock/fruit/create">
-                <strong>New product</strong>
+                <strong>+ New product</strong>
             </a>
         </div>
         <!-- /.panel-heading -->
@@ -21,12 +21,14 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr class="odd gradeX">
-                            <td>Trident</td>
-                            <td>Internet Explorer 4.0</td>
-                            <td>Win 95+</td>
-                            <td class="center">4</td>
+                        {{#each fruits}}
+                        <tr>
+                            <td>{{this.item}}</td>
+                            <td>{{this.avgWeight}}</td>
+                            <td>0</td>
+                            <td>0</td>
                         </tr>
+                        {{/each}}
                     </tbody>
                 </table>
             </div>

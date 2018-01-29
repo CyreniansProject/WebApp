@@ -18,12 +18,11 @@ router.get('/', function(req, res) {
 
 router.get('/fruit', function(req, res) {
     if (req.user) {
-        if (req.user.role == 0 || req.user.role == 1) {                
-            FruitPicking.find({}, function(err, fruit) {
+        if (req.user.role == 0 || req.user.role == 1) {
+            FruitPicking.getAllFruit(function(err, fruit) {
                 if (err) throw err;
-
                 res.render('stock/fruitlist', { layout: 'layout_staff.handlebars', page_title: 'Products list', 
-                    user: req.user, fruit: fruit });
+                user: req.user, fruits: fruit });
             });
         }
         else {

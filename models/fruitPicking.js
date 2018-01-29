@@ -22,6 +22,10 @@ var FruitPickingSchema = mongoose.Schema({
 
 var FruitPicking = module.exports = mongoose.model('FruitPicking', FruitPickingSchema);
 
+module.exports.getAllFruit = function(callback) {
+    FruitPicking.find({}, callback);
+}
+
 module.exports.createFruit = function(newFruit, callback) {
     newFruit.save(callback);
 }
