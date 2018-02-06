@@ -1,9 +1,6 @@
 const mongoose = require('mongoose');
 const FruitSchema = require('./fruit');
 
-const _DB = require('../config/keys');
-mongoose.connect(_DB.CONN_URL, { useMongoClient: true });
-
 var BagContentSchema = mongoose.Schema({
     type: {
         type: String        
@@ -22,10 +19,10 @@ module.exports.createBag = function(newBag, callback) {
     newBag.save(callback);
 }
 
-module.exports.removeBag = function(_id, callback) {
+module.exports.removeBagById = function(_id, callback) {
     BagContent.remove({_id}, callback);
 }
 
-module.exports.updateBag = function (_id, updatedBag, callback) {
+module.exports.updateBagById = function (_id, updatedBag, callback) {
     BagContent.update({_id}, updatedBag, callback);
 }

@@ -1,9 +1,6 @@
 var mongoose = require('mongoose');
 var bcrypt = require('bcryptjs');
 
-mongoose.connect('mongodb://localhost:27017/test');
-var db = mongoose.connection;
-
 var UserSchema = mongoose.Schema({
     email: {
         type: String,

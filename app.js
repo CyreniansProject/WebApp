@@ -10,16 +10,14 @@ const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const mongo = require('mongodb');
 const mongoose = require('mongoose');
-const { _DB } = require('./config/keys');
-
-mongoose.connect(_DB.CONN_URL, { useMongoClient: true });
-//var db = mongoose.connection;
+require('./config/db.js');
 
 const landing = require('./routes/index');
 const dashboard = require('./routes/dashboard');
 const users = require('./routes/users');
-const stock = require('./routes/stock');
+const clients = require('./routes/clients');
 const orders = require('./routes/orders');
+const stock = require('./routes/stock');
 const reports = require('./routes/reports');
 
 // Init App
@@ -82,8 +80,9 @@ app.use(function (req, res, next) {
 app.use('/', landing);
 app.use('/api/users', users);
 app.use('/api/dashboard', dashboard);
-app.use('/api/stock', stock);
+app.use('/api/clients', clients);
 app.use('/api/orders', orders);
+app.use('/api/stock', stock);
 app.use('/api/reports', reports);
 
 // Set Port

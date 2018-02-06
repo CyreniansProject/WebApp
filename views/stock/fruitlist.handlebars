@@ -23,7 +23,11 @@
                     <tbody>
                         {{#each fruits}}
                         <tr>
-                            <td>{{this.item}}</td>
+                            <td>
+                                <a style="text-decoration: none;" href="/api/stock/fruit/view/{{this.item}}">
+                                    <strong>{{this.item}}</strong>
+                                </a>
+                            </td>
                             <td>{{this.avgWeight}}</td>
                             <td>0</td>
                             <td>0</td>

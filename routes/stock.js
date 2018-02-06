@@ -19,11 +19,57 @@ router.get('/', function(req, res) {
 router.get('/fruit', function(req, res) {
     if (req.user) {
         if (req.user.role == 0 || req.user.role == 1) {
-            FruitPicking.getAllFruit(function(err, fruit) {
+            FruitPicking.getAllFruit(function(err, fruits) {
+                // Display all items by name category. -> name & avgWeight just once AND THEN =>
+                // Calculate totalWeight and totalAmount from all items within the name category
+                // Display the calculated fileds.
                 if (err) throw err;
                 res.render('stock/fruitlist', { layout: 'layout_staff.handlebars', page_title: 'Products list', 
-                user: req.user, fruits: fruit });
+                user: req.user, fruits: fruits });
             });
+        }
+        else {
+            req.flash('error_msg', 'You don\'t have the authority to access this page!');
+			res.redirect('/api/dashboard');
+        }
+    }
+    else {
+        req.flash('error_msg', 'You need to login first!');
+        res.redirect('/');
+    }
+});
+
+router.get('/fruit/view/:name', function(req, res) {
+    // Get all with the same item name in a table view ordered by week
+    const name = req.params.name;
+    if (req.user) {
+        if (req.user.role == 0 || req.user.role == 1) {
+            FruitPicking.getAllFruitByName(name, function(err, fruits) {
+                if (err) throw err;
+                res.render('stock/viewFruit', { layout: 'layout_staff.handlebars', page_title: 'List view: ' + name,
+                user: req.user, fruits: fruits, name: name });
+            })
+        }
+        else {
+            req.flash('error_msg', 'You don\'t have the authority to access this page!');
+			res.redirect('/api/dashboard');
+        }
+    }
+    else {
+        req.flash('error_msg', 'You need to login first!');
+        res.redirect('/');
+    }
+});
+
+router.get('/fruit/update/:id', function(req, res) {
+    const id = req.params.id;
+    if (req.user) {
+        if (req.user.role == 0 || req.user.role == 1) {
+            FruitPicking.getOneFruitById(id, function(err, fruit) {
+                if (err) throw err;
+                res.render('stock/updateFruit', { layout: 'layout_staff.handlebars', page_title: 'Update: ' + fruit.item,
+                user: req.user, fruit: fruit });
+            })
         }
         else {
             req.flash('error_msg', 'You don\'t have the authority to access this page!');
