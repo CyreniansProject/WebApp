@@ -20,11 +20,4 @@ describe('Users', () => {
         });
     });
 
-     // Before each test below => empty the database
-    beforeEach((done) => {
-        User.removeAll((err) => { 
-            done(); 
-        });
-    });
-
 });
