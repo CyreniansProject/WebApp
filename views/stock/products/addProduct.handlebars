@@ -1,0 +1,43 @@
+{{#if user}}
+{{#if errors}}
+      {{#each errors}}
+        <div class="alert alert-danger">{{msg}}</div>
+      {{/each}}
+{{/if}}
+<div class="row">
+    <div class="col-lg-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Please fill out the details</h3>
+            </div>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <form role="form" method="post" action="/api/stock/products/new">
+                            <fieldset>
+                                <div class="form-group row">
+                                        <label class="col-sm-2 col-form-label">Product name <span style="color:red;">*</span></label>
+                                        <div class="col-sm-2">
+                                            <input class="form-control pull-right" placeholder="" name="itemName" type="text">
+                                        </div>
+                                </div>
+                                <div class="form-group row">
+                                        <label class="col-sm-2 col-form-label">Average weight <span style="color:red;">*</span></label>
+                                        <div class="col-sm-2">
+                                            <div class="input-group">
+                                            <input class="form-control pull-right" placeholder="" name="avgWeight" type="text">
+                                            <div class="input-group-addon">kg</div>
+                                            </div>
+                                        </div>
+                                </div>
+                                <!-- Change this to a button or input when using this as a form -->
+                                <button type="submit" class="btn btn-lg btn-danger btn-block">Add product</a>
+                            </fieldset>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{{/if}}

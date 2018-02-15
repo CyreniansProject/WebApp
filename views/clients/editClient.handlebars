@@ -1,0 +1,70 @@
+{{#if user}}
+{{#if errors}}
+      {{#each errors}}
+        <div class="alert alert-danger">{{msg}}</div>
+      {{/each}}
+{{/if}}
+<div>
+</div>
+<div class="row">
+    <div class="col-lg-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <div class="btn-group" role="group">
+                    <a href="/api/orders/to/{{client._id}}" class="btn btn-danger btn-outline btn-md" role="button">
+                        <strong>Client orders</strong>
+                    </a>
+                    <a href="/api/clients/edit/{{client._id}}" class="btn btn-primary btn-md" role="button">
+                        <strong>Client details</strong>
+                    </a>
+                </div>
+            </div>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <form role="form" method="post" action="/api/clients/update">
+                            <input class="form-control" name="clientId" type="hidden" value="{{client._id}}">
+                            <fieldset>
+                                <div class="form-group">
+                                    <label>Full name</label>
+                                    <input class="form-control" name="fullname" type="text" value="{{client.name}}" autofocus>
+                                </div>
+                                <div class="form-group">
+                                    <label>Email addres</label>
+                                    <input class="form-control" name="email" type="email" value="{{client.email}}">
+                                </div>
+                                <div class="form-group">
+                                    <label>Bank account</label>
+                                    <input class="form-control" name="account" type="text" value="{{client.account}}">
+                                </div>
+                                <div class="form-group">
+                                    <label>Collection point</label>
+                                    <input class="form-control" name="address" type="text" value="{{client.address}}">
+                                </div>
+                                <div class="form-group">
+                                    <label>Frequency</label>
+                                    <select id="freq" multiple class="form-control" name="frequency">
+                                        <option value="Weekly">Weekly</option>
+                                        <option value="Forth-nightly">Forth-nightly</option>
+                                        <option value="Monthly">Monthly</option>
+                                    </select>
+                                </div>
+
+                                <!-- Change this to a button or input when using this as a form -->
+                                <button type="submit" class="btn btn-lg btn-danger btn-block">Update client</a>
+                            </fieldset>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Page-Level Demo Scripts - Tables - Use for reference -->
+<script src="http://code.jquery.com/jquery-3.3.1.min.js" 
+integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" 
+crossorigin="anonymous"></script>
+<script>
+    $("#freq").val('{{client.frequency}}').change();
+</script>
+{{/if}}

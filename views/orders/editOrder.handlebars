@@ -1,0 +1,91 @@
+{{#if user}}
+{{#if errors}}
+      {{#each errors}}
+        <div class="alert alert-danger">{{msg}}</div>
+      {{/each}}
+{{/if}}
+<div>
+</div>
+<div class="row">
+    <div class="col-lg-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <div class="btn-group" role="group">
+                    <script>const goBack = () => { return window.location.href = '/api/orders/to/{{order.client._id}}'; };</script>
+                    <div class="pull-left">
+                        <button type="button" class="btn btn-danger btn-outline pull-left" onclick="goBack()">< Back</button>
+                    </div>
+                </div>
+            </div>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <form role="form" method="post" action="/api/orders/update">
+                            <input class="form-control" name="orderId" type="hidden" value="{{order._id}}">
+                            <fieldset>
+                                <div class="form-group row">
+                                        <label class="col-sm-2 col-form-label">Bags num <span style="color:red;">*</span></label>
+                                        <div class="col-sm-2">
+                                            <div class="input-group">
+                                            <input value="{{order.numberOfBags}}" class="form-control pull-right" placeholder="" name="numberOfBags" type="text">
+                                            <div class="input-group-addon">Amount</div>
+                                            </div>
+                                        </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-sm-2 col-form-label">Notes <span style="color:red;">*</span></label>
+                                    <div class="col-sm-4">
+                                        <textarea style="text-align: left;" rows="8" class="form-control" placeholder="" name="notes" type="text">{{order.notes}}</textarea>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-sm-2 col-form-label">Date <span style="color:red;">*</span></label>
+                                    <div class="col-sm-2">
+                                        <div class="input-group date">
+                                            <input value="{{order.date}}" type="text" class="form-control" name="date">
+                                            <div class="input-group-addon">
+                                                <span class="glyphicon glyphicon-th"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-sm-2 col-form-label">Deposit? <span style="color:red;">*</span></label>
+                                     <div class="col-sm-4">
+                                        <input type="hidden" class="deposit-val" value="{{order.depositPaid}}">
+                                        <input value='true' id="isPaid" name="depositPaid" type="radio">
+                                        <label class="custom-control-label">Yes</label>
+                                        <input value='false' id="notPaid" name="depositPaid" type="radio">
+                                        <label class="custom-control-label">No</label>
+                                    </div>
+                                </div>
+                                <!-- Change this to a button or input when using this as a form -->
+                                <button type="submit" class="btn btn-lg btn-danger btn-block">Save order information</a>
+                            </fieldset>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Page-Level Demo Scripts - Tables - Use for reference -->
+<script src="http://code.jquery.com/jquery-3.3.1.min.js" 
+integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" 
+crossorigin="anonymous"></script>
+<script>
+$(document).ready(function() {
+    $('.date input').each(function() {
+        $(this).datepicker();
+    });
+
+    // set the radio button for deposit
+    const deposit = $('.deposit-val').val();
+    const depositStr = deposit.toString();
+    if (depositStr == 'true')
+        $('#isPaid').attr('checked', 'checked');
+    else if (depositStr == 'false')
+        $('#notPaid').attr('checked', 'checked');
+});
+</script>
+{{/if}}

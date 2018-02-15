@@ -4,11 +4,11 @@
     <div class="panel panel-default">
         <div style="height: 50px;" class="panel-heading">
             <div class="btn-group pull-left" role="group">
-                <a href="/api/orders/to/{{clientId}}" class="btn btn-danger btn-md" role="button">
-                    <strong>Client orders</strong>
+                <a href="/api/stock/harvests/to/{{productId}}" class="btn btn-danger btn-md" role="button">
+                    <strong>Product harvestings</strong>
                 </a>
-                <a href="/api/clients/edit/{{clientId}}" class="btn btn-primary btn-outline btn-md" role="button">
-                    <strong>Client details</strong>
+                <a href="/api/stock/products/edit/{{productId}}" class="btn btn-primary btn-outline btn-md" role="button">
+                    <strong>Product details</strong>
                 </a>
             </div>
             <div style="margin-left: 15%;" class="input-group input-daterange col-sm-4 pull-left">
@@ -18,7 +18,7 @@
                 <input type="text" class="form-control">
                 <a style="text-decoration: none; background-color: #d9534f; color: white; border: 1px #d43f3a solid;" href="#" class="input-group-addon">Update</a>
             </div>
-            <a href="/api/orders/to/{{clientId}}/new" class="btn btn-danger pull-right" role="button">New order</a>
+            <a href="/api/harvests/to/{{productId}}/new" class="btn btn-danger pull-right" role="button">New harvesting</a>
         </div>
         <!-- /.panel-heading -->
         <div class="panel-body">
@@ -27,25 +27,23 @@
                     <thead>
                         <tr>
                             <th style="text-align: center;">#</th>
-                            <th>Date</th>
-                            <th>Bags amount</th>
-                            <th>Deposit</th>
+                            <th>Picking week</th>
+                            <th>Harvested amount</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {{#each orders}}
+                        {{#each harvests}}
                         <tr>
                             <td style="text-align: center;margin: 0px;padding: 5px;width: 120px;">
-                                <a href="/api/orders/edit/{{this._id}}" class="btn btn-primary btn-outline" role="button">
+                                <a href="/api/stock/harvests/edit/{{this._id}}" class="btn btn-primary btn-outline" role="button">
                                     <strong>Edit</strong>
                                 </a>&nbsp;
-                                <a href="/api/orders/remove/{{this._id}}" class="btn btn-danger btn-outline" role="button">
+                                <a href="/api/stock/harvests/remove/{{this._id}}" class="btn btn-danger btn-outline" role="button">
                                     <strong>Del</strong>
                                 </a>
                             </td>
-                            <td style="font-size:18px;">{{this.date}}</td>
-                            <td style="font-size:18px;">{{this.numberOfBags}}</td>
-                            <td style="font-size:18px;">{{this.depositPaid}}</td>
+                            <td style="font-size:18px;">{{this.pickingWeek}}</td>
+                            <td style="font-size:18px;">{{this.amountHarvested}}</td>
                         </tr>
                         {{/each}}
                     </tbody>

@@ -8,7 +8,7 @@ const ClientSchema = new Schema({
     },
     frequency: {
         // freq of the orders (weekly/forthnightly/monthly)
-        tyoe: String
+        type: String
     },
     email: {
         // example@email.com
@@ -27,15 +27,13 @@ const ClientSchema = new Schema({
 
 const Client = module.exports = mongoose.model('Client', ClientSchema);
 
-
-
 module.exports.createClient = function(clientDetails, callback) {
     const client = new Client(clientDetails);
     client.save(callback);
 }
 
 module.exports.removeClient = function(_id, callback) {
-    Client.remove(callback);
+    Client.remove({_id}, callback);
 }
 
 module.exports.updateClient = function(_id, clientDetails, callback) {

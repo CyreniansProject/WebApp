@@ -29,6 +29,13 @@ OrderSchema.pre('remove', function(next) {
 
 const Order = module.exports = mongoose.model('Order', OrderSchema);
 
+module.exports.listOrders = function(_id, callback) {
+    Client.findById({_id})
+    .then((client) => {
+        Order.find({client: client}, callback);
+    });
+}
+
 module.exports.createOrder = function(_id, orderDetails, callback) {
     const order = new Order(orderDetails);
     Client.findById({_id})
@@ -37,14 +44,6 @@ module.exports.createOrder = function(_id, orderDetails, callback) {
     })
     .then(() => {
         order.save(callback);
-    });
-}
-
-
-module.exports.fetchOrders = function(_id, callback) {
-    Client.findById({_id})
-    .then((clientToFetch) => {
-        Order.find({client: clientToFetch}, callback);
     });
 }
 

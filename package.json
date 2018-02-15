@@ -33,6 +33,7 @@
     "express-messages": "1.0.1",
     "express-session": "1.15.6",
     "express-validator": "4.3.0",
+    "generate-password": "1.4.0",
     "lodash": "4.17.4",
     "mongodb": "3.0.1",
     "mongoose": "4.10.8",
