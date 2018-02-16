@@ -2,7 +2,7 @@
 var mongoose = require('mongoose'); 
 
 // Build the connection string 
-var dbURI = 'mongodb://georgim:405060@ds237748.mlab.com:37748/heroku_37q1v8c3'; 
+var dbURI = 'mongodb://georgim:123123@ds237848.mlab.com:37848/cyrenians-farm'; 
 
 // Create the database connection 
 mongoose.connect(dbURI);
