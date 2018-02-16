@@ -4,6 +4,7 @@
   "description": "web application interacting with Cyrenians Farm's new database",
   "main": "app.js",
   "scripts": {
+    "start": "node app.js",
     "test": "mocha"
   },
   "repository": {
