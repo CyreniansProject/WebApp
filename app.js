@@ -19,6 +19,7 @@ const clients = require('./routes/clients');
 const orders = require('./routes/orders');
 const stock = require('./routes/stock');
 const reports = require('./routes/reports');
+const helpers = require('handlebars-helpers')();
 
 // Init App
 const app = express();

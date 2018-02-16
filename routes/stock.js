@@ -5,6 +5,8 @@ const flash = require('connect-flash');
 var Product = require('../models/product');
 var Picking = require('../models/picking');
 
+// PRODUCTS ROUTING
+
 router.get('/', function(req, res) { res.redirect('/api/stock/products'); });
 
 router.get('/products', function(req, res) {
@@ -145,7 +147,7 @@ router.get('/products/remove/:id', function(req, res) {
     }
 });
 
-// HARVESTING
+// HARVESTING ROUTING
 
 router.get('/harvests/to/:productId', function(req, res) {
     if (req.user) {
@@ -169,6 +171,128 @@ router.get('/harvests/to/:productId', function(req, res) {
         req.flash('error_msg', 'You need to login first!');
         res.redirect('/');
     }
+});
+
+router.get('/harvests/to/:productId/new', function(req, res) {
+    if (req.user) {
+        if (req.user.role == 0 || req.user.role == 1) {
+            const productId = req.params.productId;
+            Product.findById({_id: productId}, function(err, product) {
+                if (err) throw err;
+                res.render('stock/harvests/addHarvest', { layout: 'layout_staff.handlebars', page_title: 'New harvesting for ' + product.name, 
+                user: req.user, productId: productId});
+            });
+        }
+        else {
+            req.flash('error_msg', 'You don\'t have the authority to access this page!');
+			res.redirect('/api/dashboard');
+        }
+    }
+    else {
+        req.flash('error_msg', 'You need to login first!');
+        res.redirect('/');
+    }
+});
+
+router.post('/harvests/new', function(req, res) {
+    if (req.user) {
+        if (req.user.role == 0 || req.user.role == 1) {
+            const productId = req.body.productId;
+            
+            const amountHarvested = req.body.amountHarvested;
+            const pickingWeek = req.body.pickingWeek;
+
+            // VALIDATION ... TODO
+
+            const pickingDetails = {
+                amountHarvested: amountHarvested,
+                pickingWeek: pickingWeek
+            };
+
+            Picking.addHaverst(productId, pickingDetails, function(err, picking) {
+                if (err) throw err;
+                req.flash('success_msg', 'Harvesting successfully added!');
+                res.redirect('/api/stock/harvests/to/' + productId);
+            });
+        }
+        else {
+            req.flash('error_msg', 'You don\'t have the authority to access this page!');
+			res.redirect('/api/dashboard');
+        }
+    }
+    else {
+        req.flash('error_msg', 'You need to login first!');
+        res.redirect('/');
+    }
+});
+
+router.get('/harvests/edit/:id', function(req, res) {
+    if (req.user) {
+        if (req.user.role == 0 || req.user.role == 1) {
+            const id = req.params.id;
+
+            Picking.findById({_id: id}, function(err, harvest) {
+                if (err) throw err;
+                harvest.populate({
+                    path:'product'
+                }, function(err) {
+                    if (err) throw err;
+                    res.render('stock/harvests/editHarvest', { layout: 'layout_staff.handlebars', page_title: 'Edit harvesting for ' + harvest.product.name, 
+                    user: req.user, harvest: harvest });
+                });
+            });
+        }
+        else {
+            req.flash('error_msg', 'You don\'t have the authority to access this page!');
+            res.redirect('/api/dashboard');
+        }
+    }
+    else {
+        req.flash('error_msg', 'You need to login first!');
+        res.redirect('/');
+    }
+});
+
+router.post('/harvests/update', function(req, res) {
+    if (req.user) {
+        if (req.user.role == 0 || req.user.role == 1) {
+            const id = req.body.harvestId;
+            
+            const amountHarvested = req.body.amountHarvested;
+            const pickingWeek = req.body.pickingWeek;
+
+            // VALIDATION ... TODO
+
+            const pickingDetails = {
+                amountHarvested: amountHarvested,
+                pickingWeek: pickingWeek
+            };
+
+            Picking.updateHarvest(id, pickingDetails, function(err, harvest) {
+                if (err) throw err;
+                req.flash('success_msg', 'Harvesting successfully updated!');
+                res.redirect('back');
+            });
+        }
+        else {
+            req.flash('error_msg', 'You don\'t have the authority to access this page!');
+			res.redirect('/api/dashboard');
+        }
+    }
+    else {
+        req.flash('error_msg', 'You need to login first!');
+        res.redirect('/');
+    }
+});
+
+router.get('/harvests/remove/:id', function(req, res) {
+    const id = req.params.id;
+
+    Picking.removeHarvest(id, function(err) {
+        if (err) throw err;
+        req.flash('success_msg', 'Harvesting successfully removed!');
+        res.redirect('back');
+    });
 });
 
 module.exports = router;

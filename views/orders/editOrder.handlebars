@@ -24,8 +24,8 @@
                             <input class="form-control" name="orderId" type="hidden" value="{{order._id}}">
                             <fieldset>
                                 <div class="form-group row">
-                                        <label class="col-sm-2 col-form-label">Bags num <span style="color:red;">*</span></label>
-                                        <div class="col-sm-2">
+                                        <label class="col-sm-2 col-form-label">Bags <span style="color:red;">*</span></label>
+                                        <div class="col-sm-3">
                                             <div class="input-group">
                                             <input value="{{order.numberOfBags}}" class="form-control pull-right" placeholder="" name="numberOfBags" type="text">
                                             <div class="input-group-addon">Amount</div>
@@ -34,17 +34,17 @@
                                 </div>
                                 <div class="form-group row">
                                     <label class="col-sm-2 col-form-label">Notes <span style="color:red;">*</span></label>
-                                    <div class="col-sm-4">
-                                        <textarea style="text-align: left;" rows="8" class="form-control" placeholder="" name="notes" type="text">{{order.notes}}</textarea>
+                                    <div class="col-sm-3">
+                                        <textarea style="text-align: left;" rows="6" class="form-control" placeholder="" name="notes" type="text">{{order.notes}}</textarea>
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                     <label class="col-sm-2 col-form-label">Date <span style="color:red;">*</span></label>
-                                    <div class="col-sm-2">
+                                    <div class="col-sm-3">
                                         <div class="input-group date">
                                             <input value="{{order.date}}" type="text" class="form-control" name="date">
                                             <div class="input-group-addon">
-                                                <span class="glyphicon glyphicon-th"></span>
+                                                mm/dd/yyyy
                                             </div>
                                         </div>
                                     </div>

@@ -41,8 +41,8 @@ router.get('/to/:clientId/new', function(req, res) {
     if (req.user) {
         if (req.user.role == 0 || req.user.role == 1) {
             const clientId = req.params.clientId;
-            Client.findById({_id: clientId}, function(cErr, client) {
-                if (cErr) throw cErr;
+            Client.findById({_id: clientId}, function(err, client) {
+                if (err) throw err;
                 res.render('orders/addOrder', { layout: 'layout_staff.handlebars', page_title: 'New order for ' + client.name, 
                 user: req.user, clientId: clientId});
             });
@@ -79,6 +79,7 @@ router.post('/new', function(req, res) {
 
             Order.createOrder(clientId, orderDetails, function(err, order) {
                 if (err) throw err;
+                req.flash('success_msg', 'Order successfully added!');
                 res.redirect('/api/orders/to/' + clientId);
             });
         }
@@ -103,7 +104,6 @@ router.get('/edit/:id', function(req, res) {
                 order.populate({
                     path:'client'
                 }, function(err) {
-                    //order.client._id
                     if (err) throw err;
                     res.render('orders/editOrder', { layout: 'layout_staff.handlebars', page_title: 'Edit order for ' + order.client.name, 
                     user: req.user, order: order, depositPaid: order.depositPaid });

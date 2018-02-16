@@ -23,14 +23,18 @@ const Picking = module.exports = mongoose.model('Picking', PickingSchema);
 module.exports.listHarvests = function(_id, callback) {
     Product.findById({_id})
     .then((product) => {
-        Picking.find({product: product}, callback);
+        Picking.find({product: product})
+        .populate({
+            path: 'product'
+        })
+        .exec(callback);
     });
 };
 
-module.exports.addHaverst = function(productId, pickingDetails, callback) {
-    Product.findById({productId})
+module.exports.addHaverst = function(_id, pickingDetails, callback) {
+    const picking = new Picking(pickingDetails);
+    Product.findById({_id})
     .then((product) => {
-        const picking = new Picking(pickingDetails);
         picking.product = product;
     })
     .then(() => {
