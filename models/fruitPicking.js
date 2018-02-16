@@ -1,8 +1,5 @@
 var mongoose = require('mongoose');
 
-const _DB = require('../config/keys');
-mongoose.connect(_DB.CONN_URL, { useMongoClient: true });
-
 var FruitPickingSchema = mongoose.Schema({
     item: {
         type: String,
@@ -22,14 +19,26 @@ var FruitPickingSchema = mongoose.Schema({
 
 var FruitPicking = module.exports = mongoose.model('FruitPicking', FruitPickingSchema);
 
+module.exports.getAllFruit = function(callback) {
+    FruitPicking.find({}, callback);
+}
+
+module.exports.getAllFruitByName = function(name, callback) {
+    FruitPicking.find({item: name}, callback);
+}
+
+module.exports.getOneFruitById = function(id, callback) {
+    FruitPicking.findById(id, callback);
+}
+
 module.exports.createFruit = function(newFruit, callback) {
     newFruit.save(callback);
 }
 
-module.exports.removeFromBag = function(_id, callback) {
+module.exports.removeFruitById = function(_id, callback) {
     FruitPicking.remove({_id}, callback);
 }
 
-module.exports.updateBag = function (_id, updatedBag, callback) {
+module.exports.updateFruitById = function (_id, updatedBag, callback) {
     FruitPicking.update({_id}, updatedBag, callback);
 }

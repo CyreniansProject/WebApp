@@ -14,8 +14,12 @@
                         <div class="form-group">
                             <input class="form-control" placeholder="Password" name="password" type="password" value="">
                         </div>
-                        <!-- Change this to a button or input when using this as a form -->
-                        <button type="submit" class="btn btn-lg btn-primary btn-block">Login</a>
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-lg btn-primary btn-block">Login</button>
+                        </div>
+                        <div class="form-group">
+                            <a href="#">Forgotten password ?</a>
+                        </div>
                     </fieldset>
                 </form>
             </div>
@@ -25,8 +29,5 @@
 {{/unless}}
 
 {{#if user}}
-<a href="/api/dashboard">Go to dashboard</a>
-<script>
-    // use jquery for ajax get request to /api/dashboard/
-</script>
+<script>window.location.href = "/api/dashboard";</script>
 {{/if}}

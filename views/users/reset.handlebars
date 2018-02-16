@@ -4,7 +4,12 @@
       {{/each}}
 {{/if}}
 
-{{#unless user}}
+{{#if user}}
+<a href="/api/dashboard">Go to dashboard</a>
+<script>
+    // use jquery for ajax get request to /api/dashboard/
+</script>
+{{else}}
 <div class="row">
     <div class="col-md-4 col-md-offset-4">
         <div class="login-panel panel panel-default">
@@ -14,11 +19,14 @@
             <div class="panel-body">
                 <form role="form" method="post" action="/api/users/reset">
                     <fieldset>
-                        {{#if email}}
                         <div class="form-group">
-                            <input class="form-control" placeholder="E-mail" name="email" type="email" value="{{email}}" readonly="true">
-                        </div>
+                        {{#if email}}
+                            <input class="form-control" name="email" type="email" value="{{email}}" readonly="true">
                         {{/if}}
+                        {{#unless email}}
+                            <input class="form-control" placeholder="E-mail" name="email" type="email">
+                        {{/unless}}
+                        </div>
                         <div class="form-group">
                             <input class="form-control" placeholder="Password" name="password" type="password" autofocus>
                         </div>
@@ -33,11 +41,4 @@
         </div>
     </div>
 </div>
-{{/unless}}
-
-{{#if user}}
-<a href="/api/dashboard">Go to dashboard</a>
-<script>
-    // use jquery for ajax get request to /api/dashboard/
-</script>
 {{/if}}

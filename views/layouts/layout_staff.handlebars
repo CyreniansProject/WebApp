@@ -24,6 +24,9 @@
     <!-- DataTables Responsive CSS -->
     <link href="/css/dataTables/dataTables.responsive.css" rel="stylesheet">
 
+    <!-- Bootstrap-Datepicker CSS -->
+    <link href="/css/datepicker.css" rel="stylesheet">    
+
     <!-- Custom CSS -->
     <link href="/css/startmin.css" rel="stylesheet">
 
@@ -89,15 +92,30 @@
                 <ul class="nav" id="side-menu">
                     <li class="sidebar-search"></li>
                     <li>
-                        <a href="/api/dashboard" class="active"><i class="fa fa-dashboard fa-fw"></i> Dashboard</a>
+                        <a href="/api/dashboard"><i class="fa fa-dashboard fa-fw"></i> Dashboard</a>
                     </li>
                     <li>
-                        <a href="/api/users" class="active"><i class="fa fa-dashboard fa-fw"></i> Staff members</a>
+                        <a href="/api/users"><i class="fa fa-dashboard fa-fw"></i> Staff members</a>
                     </li>
                     <li>
-                        <a href="/api/stock" class="active"><i class="fa fa-dashboard fa-fw"></i> Manage stock</a>
-                        <a href="/api/orders" class="active"><i class="fa fa-dashboard fa-fw"></i> Manage orders</a>
-                        <a href="/api/reports" class="active"><i class="fa fa-dashboard fa-fw"></i> Reports</a>
+                        <a href="/api/clients"><i class="fa fa-dashboard fa-fw"></i> Manage clients / orders</a>
+                    </li>
+                    <li>
+                        <a href="/api/stock"><i class="fa fa-dashboard fa-fw"></i> Manage stock</a>
+                    </li>
+                    <li>
+                        <a href="/api/bags"><i class="fa fa-dashboard fa-fw"></i> Manage bags</a>
+                    </li>
+                    <li>
+                        <a href="/api/reports"><i class="fa fa-dashboard fa-fw"></i> Reports (todo)<span class="fa arrow"></span></a>
+                        <ul class="nav nav-second-level">
+                            <li>
+                                <a style="text-decoration: none;" href="#">Report #1</a>
+                            </li>
+                            <li>
+                                <a style="text-decoration: none;" href="#">Report #2</a>
+                            </li>
+                        </ul>
                     </li>
                 </ul>
 
@@ -139,6 +157,9 @@
 
     <!-- Bootstrap Core JavaScript -->
     <script src="/js/bootstrap.min.js"></script>
+
+    <!-- Bootstrap-Datepicker Javascript -->
+    <script src="/js/bootstrap-datepicker.js"></script>
 
     <!-- Metis Menu Plugin JavaScript -->
     <script src="/js/metisMenu.min.js"></script>
