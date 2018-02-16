@@ -8,7 +8,7 @@ const ProductSchema = new Schema({
     avgWeight:{
         type:Number
     },
-    numberOfProducts:{
+    productsNumber:{
         type:Number
     }
 });

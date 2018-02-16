@@ -10,6 +10,7 @@ const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const mongo = require('mongodb');
 const mongoose = require('mongoose');
+const helpers = require('handlebars-helpers')();
 require('./config/db.js');
 
 const landing = require('./routes/index');
@@ -19,7 +20,7 @@ const clients = require('./routes/clients');
 const orders = require('./routes/orders');
 const stock = require('./routes/stock');
 const reports = require('./routes/reports');
-const helpers = require('handlebars-helpers')();
+const bags = require('./routes/bags');
 
 // Init App
 const app = express();
@@ -84,6 +85,7 @@ app.use('/api/dashboard', dashboard);
 app.use('/api/clients', clients);
 app.use('/api/orders', orders);
 app.use('/api/stock', stock);
+app.use('/api/bags', bags);
 app.use('/api/reports', reports);
 
 // Set Port
