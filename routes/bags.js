@@ -47,7 +47,26 @@ router.get('/new', function(req, res) {
 router.post('/new', function(req, res) { 
     if (req.user) {
         if (req.user.role == 0 || req.user.role == 1) {
-            req.flash('error_msg', 'BACK-END FUNCTIONALITY IS STILL IN DEVELOPMENT. TRY AGAIN LATER! :)');
+            // req.flash('error_msg', 'BACK-END FUNCTIONALITY IS STILL IN DEVELOPMENT. TRY AGAIN LATER! :)');
+            const dateOfCreation = req.body.dateOfCreation;
+            var products = JSON.parse(req.body.products);
+            
+            var productList = []
+            for (var i = 0; i < products.length; i++) {
+                productList.push(products[i]);
+            }
+
+            const bagDetails = {
+                date: dateOfCreation
+            };
+
+            Bag.createBag(bagDetails, productList, function(err, picking) {
+                if (err) throw err;
+                req.flash('success_msg', 'Harvesting successfully added!');
+                //res.redirect('/api/stock/harvests/to/' + productId);
+                res.send("In development...");
+            });
+
             res.redirect('back');
         }
         else {

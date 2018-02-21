@@ -51,6 +51,8 @@ router.post('/products/new', function(req, res) {
             const name = req.body.itemName;
             const avgWeight = req.body.avgWeight;
 
+            // VALIDATION ... TODO
+
             const productDetails = {
                 name: name,
                 avgWeight: avgWeight,

@@ -9,7 +9,7 @@ const BagSchema = new Schema ({
         type: String
     },
     product:{
-        //list of fruit in the bag
+        //list of products in the bag
         type: [ProductSchema]
     },
     date: {
