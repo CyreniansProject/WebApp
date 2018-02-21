@@ -53,21 +53,19 @@ router.post('/new', function(req, res) {
             
             var productList = []
             for (var i = 0; i < products.length; i++) {
-                productList.push(products[i]);
+                productList.push({product: products[i]});
             }
 
             const bagDetails = {
+                bagType: 'Small',
                 date: dateOfCreation
             };
-
-            Bag.createBag(bagDetails, productList, function(err, picking) {
+            
+            Bag.createBag(bagDetails, productList, function(err, bagContent) {
                 if (err) throw err;
-                req.flash('success_msg', 'Harvesting successfully added!');
-                //res.redirect('/api/stock/harvests/to/' + productId);
-                res.send("In development...");
+                req.flash('success_msg', 'Bag successfully created!');
+                res.send("In development..." + bagContent);
             });
-
-            res.redirect('back');
         }
         else {
             req.flash('error_msg', 'You don\'t have the authority to access this page!');
