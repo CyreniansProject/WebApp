@@ -1,0 +1,134 @@
+{{#if user}}
+{{#if errors}}
+      {{#each errors}}
+        <div class="alert alert-danger">{{msg}}</div>
+      {{/each}}
+{{/if}}
+<script>var bagElemsList = [];</script>
+<div class="row">
+    <div class="col-lg-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Please fill out the details</h3>
+            </div>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <form id="addBagForm" role="form" method="post" action="/api/bags/new">
+                            <fieldset>
+                                <div class="form-group row">
+                                <div class="pull-left col-sm-6">
+                                    <h4>List of products</h4>
+                                    <hr>
+                                    <div style="display: none;" class="alert alert-danger">Please select an amount for the product you wish to add.</div>
+                                    <div style="height: 300px; overflow-y: auto;" class="list-group">
+                                        {{#each products}}
+                                            <!-- products -->
+                                            <div id="prod_{{this._id}}">
+                                                <a href="#" onclick="addToBag('{{this._id}}');" class="list-group-item list-group-item-action productToAdd">{{this.name}}</a>
+                                                <input type="hidden" name="itemName" value="{{this.name}}">
+                                            </div>
+                                        {{/each}}
+                                    </div>
+                                </div>
+                                <div class="pull-left col-sm-6">
+                                    <h4>Products in bag</h4>
+                                    <hr>
+                                    <div id="bagElems" style="height: 300px; overflow-y: auto;" class="list-group">
+                                        <input type="hidden" id="productData" name="products"/>
+                                        <!-- display the added to bag products -->
+                                    </div>
+                                </div>
+                                </div>
+                                <hr>
+                                <div class="form-group row">
+                                <div class="pull-left col-sm-6">
+                                    <h4>Price <span style="color:red;">*</span></h4>
+                                    <div class="pull-left">
+                                        <label>Small</label>
+                                        <input type="text" class="form-control" name="smallPrice">
+                                    </div>
+                                    <div style="margin-left: 5%;" class="pull-left">
+                                        <label>Medium</label>
+                                        <input type="text" class="form-control" name="mediumPrice">
+                                    </div>
+                                    <div style="margin-left: 5%;" class="pull-left">
+                                        <label>Large</label>
+                                        <input type="text" class="form-control" name="largePrice">
+                                    </div>
+                                </div>
+                                </div>
+                                <div class="form-group row">
+                                <div class="pull-left col-sm-6">
+                                    <h4>Active period <span style="color:red;">*</span></h4>
+                                    <div class="input-group input-daterange">
+                                        <div class="input-group-addon">From</div>
+                                        <input type="text" class="form-control" name="startDate">
+                                        <div class="input-group-addon">To</div>
+                                        <input type="text" class="form-control" name="endDate">
+                                        <div class="input-group-addon">
+                                            mm/dd/yyyy
+                                        </div>
+                                    </div>
+                                </div>
+                                </div>
+                                <br><br>
+                                <button type="submit" class="btn btn-lg btn-danger btn-block">Create bag</button>
+                            </fieldset>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Page-Level Demo Scripts - Tables - Use for reference -->
+<script src="http://code.jquery.com/jquery-3.3.1.min.js" 
+integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" 
+crossorigin="anonymous"></script>
+<script>
+    function removeFromBag(elementId) {
+        const elemName = $('#elem_' + elementId + ' input[name=itemName]').val();
+
+        const bagElemIndex = bagElemsList.indexOf(elemName);
+        bagElemsList.splice(bagElemIndex, 1);
+        document.getElementById("productData").value = JSON.stringify(bagElemsList);
+
+        $("#elem_" + elementId).remove();
+
+        $('#prod_' + elementId + ' a').css('text-decoration', 'none');
+        $('#prod_' + elementId + ' a').attr('onclick', 'addToBag("' + elementId + '")');
+    }
+
+    function addToBag(productId) {
+        const productName = $('#prod_' + productId + ' input[name=itemName]').val();
+
+        // create the html dom elements for a new product in bag list
+        $('#bagElems').append(
+            '<div id="elem_' + productId + '">' +
+            '<a href="#" class="list-group-item list-group-item-action col-sm-12 pull-left" onclick=removeFromBag("' + productId + '")>' + productName + '</a>' +
+            '<input type="hidden" name="itemName" value="' + productName + '">' +
+            '</div>'
+        );
+        
+        bagElemsList.push(productName);
+
+        // store data to an input array of product data
+        for (var elem in bagElemsList) {
+            console.log(bagElemsList[elem]);
+        }
+
+        document.getElementById("productData").value = JSON.stringify(bagElemsList);
+
+        $('#prod_' + productId + ' a').css('text-decoration', 'line-through');
+        $('#prod_' + productId + ' a').attr('onclick', 'return false');
+    }
+
+    $(document).ready(function() {
+         $('.input-daterange input').each(function() {
+            $(this).datepicker();
+        });
+    });
+</script>
+{{/if}}

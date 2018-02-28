@@ -130,7 +130,7 @@ router.post('/register', function(req, res) {
 	// setup email data with unicode symbols
 	const mailOptions = {
 		from: '"Georgi @ Cyrenians Farm" <georgi@georgim.com>', // sender address
-		to: 'georgimweb@gmail.com', // list of receivers
+		to: email, // list of receivers
 		subject: 'Account completion request', // Subject line
 		text: 'Set your password!', // plain text body
 		html: output // html body
@@ -177,7 +177,10 @@ router.post('/register', function(req, res) {
 // Reset - GET
 router.get('/reset/:email', function(req, res) {
 	var email = req.params.email;
-	res.render('users/reset', { page_title: 'Reset password', email: email });
+	if (req.user && req.user.email == email)
+		res.redirect('/api/dashboard');
+	else
+		res.render('users/reset', { page_title: 'Reset password', email: email });
 });
 
 // Reset - POST

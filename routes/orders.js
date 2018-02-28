@@ -4,6 +4,7 @@ const flash = require('connect-flash');
 
 const Order = require('../models/order');
 const Client = require('../models/client');
+const Product = require('../models/product');
 
 /** !!!
  ** THIS IS A BASE AND PURE API WITH NO FRONT-END CONNECTION ATM!
@@ -43,8 +44,13 @@ router.get('/to/:clientId/new', function(req, res) {
             const clientId = req.params.clientId;
             Client.findById({_id: clientId}, function(err, client) {
                 if (err) throw err;
-                res.render('orders/addOrder', { layout: 'layout_staff.handlebars', page_title: 'New order for ' + client.name, 
-                user: req.user, clientId: clientId});
+
+                Product.listProducts(function(prodErr, products) {
+                    if (prodErr) throw prodErr;
+
+                    res.render('orders/addOrder', { layout: 'layout_staff.handlebars', page_title: 'New order for ' + client.name, 
+                    products: products, user: req.user, clientId: clientId});
+                });
             });
         }
         else {

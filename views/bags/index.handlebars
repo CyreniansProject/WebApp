@@ -13,22 +13,22 @@
                         <tr>
                             <th style="text-align: center;">#</th>
                             <th>Bag type</th>
-                            <th>Date created</th>
+                            <th>Active period</th>
                         </tr>
                     </thead>
                     <tbody>
                         {{#each bags}}
                         <tr>
                             <td style="text-align: center;margin: 0px;padding: 5px;width: 120px;">
-                                <a href="/api/stock/products/edit/{{this._id}}" class="btn btn-primary btn-outline" role="button">
+                                <a href="#/api/stock/products/edit/{{this._id}}" class="btn btn-primary btn-outline" role="button">
                                     <strong>Edit</strong>
                                 </a>&nbsp;
-                                <a href="/api/stock/products/remove/{{this._id}}" class="btn btn-danger btn-outline" role="button">
+                                <a href="#/api/stock/products/remove/{{this._id}}" class="btn btn-danger btn-outline" role="button">
                                     <strong>Del</strong>
                                 </a>
                             </td>
-                            <td style="font-size:18px;">{{this.name}}</td>
-                            <td style="font-size:18px;">{{this.avgWeight}}</td>
+                            <td style="font-size:18px;">{{this.bagType}}</td>
+                            <td style="font-size:18px;">{{this.date}}</td>
                         </tr>
                         {{/each}}
                     </tbody>

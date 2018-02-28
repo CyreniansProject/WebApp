@@ -2,8 +2,8 @@ const express = require('express');
 var router = express.Router();
 const flash = require('connect-flash');
 
-var Bag = require('../models/bag');
-var Product = require('../models/product');
+const Bag = require('../models/bag');
+const Product = require('../models/product');
 
 router.get('/', function(req, res) { 
     if (req.user) {
@@ -47,18 +47,28 @@ router.get('/new', function(req, res) {
 router.post('/new', function(req, res) { 
     if (req.user) {
         if (req.user.role == 0 || req.user.role == 1) {
-            // req.flash('error_msg', 'BACK-END FUNCTIONALITY IS STILL IN DEVELOPMENT. TRY AGAIN LATER! :)');
-            const dateOfCreation = req.body.dateOfCreation;
-            var products = JSON.parse(req.body.products);
-            
+            const products = JSON.parse(req.body.products);
+            const startDate = req.body.startDate;
+            const endDate = req.body.endDate;
+            const smallPrice = req.body.smallPrice;
+            const mediumPrice = req.body.mediumPrice;
+            const largePrice = req.body.largePrice;
+
             var productList = []
-            for (var i = 0; i < products.length; i++) {
-                productList.push({product: products[i]});
-            }
+            products.forEach(productName => {
+                // find product information based on the product name
+                Product.findOne({name: productName}, function(err, product) {
+                    if (err) throw err;
+                    productList.push(product);
+                });
+            });
 
             const bagDetails = {
-                bagType: 'Small',
-                date: dateOfCreation
+                startDate: dateOfCreation,
+                endDate: dateOfCreation,
+                smallPrice: smallPrice,
+                mediumPrice: mediumPrice,
+                largePrice: largePrice
             };
             
             Bag.createBag(bagDetails, productList, function(err, bagContent) {

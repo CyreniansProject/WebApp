@@ -34,7 +34,6 @@ module.exports.createBag = function(bagDetails, productList, callback) {
     
     productList.forEach(product => { 
         newBag.product.push(product); 
-        //console.log(product);
     });
     newBag.save(callback);
 }
@@ -45,7 +44,7 @@ module.exports.updateBag = function(_id, bagDetails, productList) {
         bag.update(bagDetails);
         bag.product = [];
         productList.forEach(product => {
-            bag.product.pushback(product);
+            bag.product.push(product);
         });
         bag.save(callback);
     });
