@@ -1,0 +1,179 @@
+
+@import url('https://fonts.googleapis.com/css?family=Open+Sans');
+
+body {
+  font-family: 'Open Sans', sans-serif;
+}
+
+h1 {
+	font-family: 'Open Sans', sans-serif;
+	font-size: 24px;
+	color: rgba(0, 0, 0, 0.87);
+	font-weight: 500;
+}
+
+h1 .bold {
+	font-weight: 600;
+}
+
+
+
+a {
+ 	color: rgba(0, 0, 0, 0.54);	
+}
+
+a:hover {
+	color: rgba(0, 0, 0, 0.54);	
+}
+
+a:visited {
+	color: rgba(0, 0, 0, 0.54);	
+}
+
+#page-wrapper {
+	background-color: #f7f7f8;
+}
+
+/* Navbar styles */
+
+.nav-logo {
+	width: auto;
+	height: 25px;
+}
+
+.navbar-inverse {
+	background-color: white;
+	box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+	border: 0;
+}
+
+.navbar-top-links>li>a:hover, .navbar-top-links>li>a:focus, .navbar-top-links>.open>a, .navbar-top-links>.open>a:hover, .navbar-top-links>.open>a:focus {
+	background-color: #f8f8f8;
+	color: rgba(0, 0, 0, 0.55);
+}
+
+#wrapper {
+	background-color: white;
+}
+
+.side-nav-item {
+	background-color: white;
+	border: 0;
+	font-size: 16px;
+}
+
+.side-nav-item a {
+	color: black;
+	opacity: 0.54;
+}
+
+.sidebar ul li a.active {
+	background-color: #f7f7f8;
+	color: black;
+	opacity: 0.87;
+	font-weight: 500;
+	border-left: 5px solid #009bc0;
+}
+
+.avatar-pic {
+	width: 25px;
+	height: 25px;
+	margin-left: 10px;
+}
+
+/* Login page CSS */
+
+#login-background {
+	background-color: #f1f1f1;
+}
+
+#login-panel {
+	padding-top: 30px;
+	padding-bottom: 30px;
+}
+
+#forgot-password-link {
+	text-align:center; 
+	margin-top: 30px;
+}
+
+
+/* Button styles */
+.btn-purple {
+	background-color: #a1225e;
+	color: #f1f1f1 !important;
+	border-radius: 3px;
+	border-color: transparent;
+}
+
+.btn-purple:hover {
+	background-color: #941f56;
+	color: #f1f1f1 !important;
+	border-radius: 3px;
+	border-color: transparent;
+}
+
+
+/* Input styles */
+label {
+	font-weight: 500;
+	color: rgba(0, 0, 0, 0.54);
+}
+
+.required {
+	color: red;
+}
+
+.form-control {
+	border-radius: 3px;
+	border: 1px solid #e8e7e7;
+}
+
+/* Dashboard styles */
+.tiles-header {
+	font-size: 30px;
+	font-weight: bold;
+
+}
+
+.tiles-label {
+	color: rgba(0, 0, 0, 0.54);
+}
+
+.tiles-icon {
+	font-size: 16px;
+	color: #49a425;
+}
+
+.tiles-small {
+	font-size: 16px;
+}
+
+.grey {
+	color: rgba(0, 0, 0, 0.54);	
+}
+
+.black {
+	color: rgba(0, 0, 0, 0.87);	
+}
+
+
+.margin-xs {
+	margin-top: 5px;
+}
+
+.margin-sm {
+	margin-top: 15px;
+}
+
+.margin-md {
+	margin-top: 25px;
+}
+
+.margin-lg {
+	margin-top: 35px;
+}
+
+.switch-btn {
+	width: 150px;
+}

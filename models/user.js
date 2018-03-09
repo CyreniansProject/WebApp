@@ -22,10 +22,11 @@ var UserSchema = mongoose.Schema({
 
 var User = module.exports = mongoose.model('User', UserSchema);
 
-module.exports.removeAll = function(callback) {
-    User.remove({}, callback);
+module.exports.listUsers = function(callback) {
+    User.find({}, callback);
 }
 
+// TODO: edit to user userDetails instead of newly created user object
 module.exports.createUser = function(newUser, callback) {
     bcrypt.genSalt(10, function(err, salt) {
         bcrypt.hash(newUser.password, salt, function(err, hash) {
@@ -36,13 +37,20 @@ module.exports.createUser = function(newUser, callback) {
     });
 }
 
-module.exports.getUserByEmail = (email, callback) => {
-	const query = {email: email};
-	User.findOne(query, callback);
+module.exports.updateUser = function(_id, userDetails, callback) {
+    User.update({_id}, userDetails, callback);
 }
 
-module.exports.getUserById = (id, callback) => {
-	User.findById(id, callback);
+module.exports.removeUser = function(_id, callback) {
+    User.remove({_id}, callback);
+}
+
+module.exports.getUserByEmail = (email, callback) => {
+	User.findOne({email: email}, callback);
+}
+
+module.exports.getUserById = (_id, callback) => {
+	User.findById({_id}, callback);
 }
 
 module.exports.comparePassword = function(candidatePassword, hash, callback){
@@ -56,10 +64,14 @@ module.exports.resetPassword = (userEmail, newPassword, callback) => {
     bcrypt.genSalt(10, function(err, salt) {
         bcrypt.hash(newPassword, salt, function(err, hash) {
             newPassword = hash;
-            // Find user by email
-            // Upate his old password with the new one
-            var query = { email: userEmail };
-            User.update(query, { password: newPassword }, callback);
+            // Find user by email AND
+            // Upate user's old password with the new one
+            User.update({email: userEmail}, {password: newPassword}, callback);
         });
     });
+}
+
+// could use in future - used for runing test mostly
+module.exports.removeAll = function(callback) {
+    User.remove({}, callback);
 }

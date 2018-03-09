@@ -1,13 +1,103 @@
-Hello, this is your <a href="/api/dashboard">Dashboard</a>. :)
-<hr />
-TODO:
-Quick Dashboard Front-Page helpers:
-<div>
-    <ol>
-        <li>View all harvested for the week</li>
-        <li>View all orders made for the week</li>
-        <li>Tab indicating low stock and listing the corresponding items</li>
-        <li>More...</li>
-        <li>Scheduling options (extra)</li>
-    </ol>
-</div>
+<!-- START OF DASHBOARD TILES -->
+    <div class="row">
+
+    <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+        <div class="panel panel-default">
+            <div class="panel-body">
+            <center>
+                <h1 class="tiles-header">
+                    50
+                </h1>
+                <p class="tiles-label">Total Orders</p>
+            </center>
+            </div>
+        </div>                    
+    </div>
+
+    <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+        <div class="panel panel-default">
+            <div class="panel-body">
+            <center>
+                <h1 class="tiles-header">
+                    <span class="tiles-small">£</span>1050 
+                </h1>
+                <p class="tiles-label">Total Sales</p>
+            </center>
+            </div>
+        </div>                    
+    </div>
+
+    <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+        <div class="panel panel-default">
+            <div class="panel-body">
+            <center>
+                <h1 class="tiles-header">
+                    50<span class="tiles-small">kg</span> 
+                </h1>
+                <p class="tiles-label">Amount Sold</p>
+            </center>
+            </div>
+        </div>                    
+    </div>
+
+    <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+        <div class="panel panel-default">
+            <div class="panel-body">
+            <center>
+                <h1 class="tiles-header">
+                    10<span class="tiles-small">kg</span>  
+                </h1>
+                <p class="tiles-label">Amount Harvested</p>
+            </center>
+            </div>
+        </div>                    
+    </div>
+
+                                                    
+</div>  
+<!-- END OF DASHBOARD TILES -->    
+
+<div class="row">
+    <!-- START OF ORDER STATUS --> 
+    <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+            <h3 class="panel-title"><span class="badge">28</span> Order Status</h3>
+            </div>
+            <div class="panel-body">
+            <div class="row" style="padding: 15px 10px 15px 45px">
+                <div class="col-md-6">
+                    <h4 class="black margin-md"><b>25 </b> - Delivered</h4>
+                    <h4 class="black margin-md"><b>2 </b> - Pending Delivery</h4>
+                    <h4 class="black margin-md"><b>25 </b> - Not Delivered</h4>
+                </div>
+                <div class="col-md-6">
+                    <img src="/img/chart.png">
+                </div>                            
+            </div>
+
+            <center><p class="grey" style="margin-top: 20px">View this weeks orders</p></center>
+            </div><!--.panel-body-->
+        </div>
+    </div><!--.col-->
+    <!-- END OF ORDER STATUS --> 
+
+    <!-- START OF NOTIFICATIONS --> 
+    <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+            <h3 class="panel-title"><span class="badge">3</span> Notifications</h3>
+            </div>
+            <div class="panel-body">
+            <ul class="list-group">
+                <li class="list-group-item list-group-item-danger">You have ran out of carrots</li>
+                <li class="list-group-item list-group-item-warning">Stock warning - Only 20 beetroot left</li>
+                <li class="list-group-item list-group-item-success">All weekly orders have been delivered</li>
+            </ul>
+
+            <center><p class="grey" style="margin-top: 25px">No more to display</p></center>
+            </div>
+        </div>
+    </div><!--.col-->
+    <!-- END OF NOTIFICATIONS --> 
+</div><!--.row-->

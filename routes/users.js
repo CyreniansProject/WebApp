@@ -4,6 +4,7 @@ const flash = require('connect-flash');
 const nodemailer = require('nodemailer');
 const passport = require('passport');
 var generator = require('generate-password'); 
+var bcrypt = require('bcryptjs');
 
 const User = require('../models/user');
 require('../middlewares/authenticate');
@@ -12,32 +13,17 @@ require('../middlewares/authenticate');
 router.get('/', function(req, res) {
 	if (req.user) {
 		if (req.user.role == 0) {
-			res.render('users/index', { layout: 'layout_staff.handlebars', page_title: 'Staff members' });
+			User.listUsers(function(err, users) {
+				if (err) throw err;
+                res.render('users/index', { layout: 'layout_staff.handlebars', page_title: 'Staff members', 
+                user: req.user, users: users });
+            });
 		}
 		else {
 			req.flash('error_msg', 'You don\'t have the authority to add new staff members!');
 			res.redirect('/api/dashboard');
 		}
 	}	
-	else {
-		req.flash('error_msg', 'You need to login first!');
-		res.redirect('/');
-	}
-});
-
-// Profile - GET
-router.get('/profile', function(req, res) {
-	if (req.user) {
-		var accessLevel;
-		if(req.user.role == 0)
-			accessLevel = "Administrator";
-		else if (req.user.role == 1)
-			accessLevel = "Staff member";
-		else if (req.user.role == 2)
-			accessLevel = "Delivery man";
-		
-		res.render('users/profile', { layout: 'layout_staff.handlebars', page_title: 'My profile', user: req.user, access: accessLevel });
-	}
 	else {
 		req.flash('error_msg', 'You need to login first!');
 		res.redirect('/');
@@ -53,16 +39,16 @@ router.post('/login',
 router.get('/logout', function(req, res) {
 	if (req.user) {
 		req.logout();
-		req.flash('success_msg', 'You are logged out');
+		req.flash('success_msg', 'You have logged out');
 		res.redirect('/');
 	}
 });
 
 // Register - GET
-router.get('/register', function(req, res) {
+router.get('/new', function(req, res) {
 	if (req.user) {
 		if (req.user.role == 0) {
-			res.render('users/register', { layout: 'layout_staff.handlebars', page_title: 'Add member' });
+			res.render('users/addUser', { layout: 'layout_staff.handlebars', page_title: 'Add Member' });
 		}
 		else {
 			req.flash('error_msg', 'You don\'t have the authority to add new staff members!');
@@ -76,7 +62,7 @@ router.get('/register', function(req, res) {
 });
 
 // Register - POST
-router.post('/register', function(req, res) {
+router.post('/new', function(req, res) {
 	const firstname = req.body.firstname;
 	const lastname = req.body.lastname;
 	const email = req.body.email;
@@ -117,7 +103,7 @@ router.post('/register', function(req, res) {
 	const transporter = nodemailer.createTransport({
 		host: 'mail.georgim.com',
 		port: 25,
-		secure: false, // true for 465, false for other ports
+		secure: false, // true for 465, false for any other ports
 		auth: {
 			user: 'georgi@georgim.com', // generated ethereal user
 			pass: '405060Gg'  // generated ethereal password
@@ -171,6 +157,84 @@ router.post('/register', function(req, res) {
 				res.redirect('/api/users');
 			});
 		});
+	}
+});
+
+// Edit - GET
+router.get('/edit/:id', function(req, res) {
+    if (req.user) {
+        if (req.user.role == 0) {
+			const id = req.params.id;
+			User.getUserById(id, function(err, member) {
+                if (err) throw err;
+				res.render('users//editUser', { layout: 'layout_staff.handlebars', 
+				page_title: 'Edit ' + member.firstname + ' ' + member.lastname,
+                user: req.user, member: member, memberId: id});
+            });
+		}
+	}
+});
+
+// Profile - GET
+router.get('/profile', function(req, res) {
+	if (req.user) {
+		var accessLevel;
+		if(req.user.role == 0)
+			accessLevel = "Administrator";
+		else if (req.user.role == 1)
+			accessLevel = "Staff member";
+		else if (req.user.role == 2)
+			accessLevel = "Delivery man";
+		
+		res.render('users/profile', { layout: 'layout_staff.handlebars', page_title: 'Hi ' + req.user.firstname + ' | Profile', user: req.user, access: accessLevel });
+	}
+	else {
+		req.flash('error_msg', 'You need to login first!');
+		res.redirect('/');
+	}
+});
+
+// Update - POST
+router.post('/update', function(req, res) {
+    if (req.user) {
+        if (req.user.role == 0 || req.user.role == 1) {
+			const id = req.body.userId;
+
+			const firstname = req.body.firstname;
+			const lastname = req.body.lastname;
+			const email = req.body.email;
+			const role = req.body.role;
+			
+			// VALIDATION ... TODO
+
+			const userDetails = {
+				firstname: firstname,
+				lastname: lastname,
+				email: email,
+				role: role
+			};
+
+			// Update the user field details
+			User.updateUser(id, userDetails, function(err, updatedUser) {
+				if (err) throw err; 
+				req.flash('success_msg', 'User details successfully updated!');
+				res.redirect('back');
+			});	
+		}
+	}
+});
+
+// Delete - GET
+router.get('/remove/:id', function(req, res) {
+    if (req.user) {
+        if (req.user.role == 0 || req.user.role == 1) {
+			const id = req.params.id;
+			User.removeUser(id, function(err) {
+                if (err) throw err;
+                req.flash('success_msg', 'User/Member successfully removed!');
+                res.redirect('back');
+            });
+		}
 	}
 });
 
