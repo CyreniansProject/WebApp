@@ -1,0 +1,74 @@
+{{#if user}}
+{{#if errors}}
+      {{#each errors}}
+        <div class="alert alert-danger">{{msg}}</div>
+      {{/each}}
+{{/if}}
+<div class="row">
+    <div class="col-lg-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <div class="btn-group" role="group">
+                    <script>const goBack = () => { return window.location.href = '/api/stock/purchases/to/{{purchase.product._id}}'; };</script>
+                    <div class="pull-left">
+                        <button type="button" class="btn btn-purple pull-left" onclick="goBack()">< Back</button>
+                    </div>
+                </div>
+            </div>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <form role="form" method="post" action="/api/stock/purchases/update">
+                            <input class="form-control" name="purchaseId" type="hidden" value="{{purchase._id}}">
+                            <fieldset>
+                                <div class="form-group row">
+                                        <label class="col-sm-2 col-form-label">How many? <span style="color:red;">*</span></label>
+                                        <div class="col-sm-3">
+                                            <div class="input-group">
+                                            <input value="{{purchase.amountPurchased}}" class="form-control pull-right" placeholder="" name="amountPurchased" type="text">
+                                            <div class="input-group-addon">Amount</div>
+                                            </div>
+                                        </div>
+                                </div>
+                                <div class="form-group row">
+                                        <label class="col-sm-2 col-form-label">Single unit price <span style="color:red;">*</span></label>
+                                        <div class="col-sm-3">
+                                            <div class="input-group">
+                                            <input value="{{purchase.price}}" class="form-control pull-right" placeholder="" name="price" type="text">
+                                            <div class="input-group-addon">GBP</div>
+                                            </div>
+                                        </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-sm-2 col-form-label">Purchase date <span style="color:red;">*</span></label>
+                                    <div class="col-sm-3">
+                                        <div class="input-group date">
+                                            <input value="{{purchase.date}}" type="text" class="form-control" name="purchaseDate">
+                                            <div class="input-group-addon">
+                                                mm/dd/yyyy
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Change this to a button or input when using this as a form -->
+                                <button type="submit" class="btn btn-purple btn-lg btn-block">Save harvesting information</a>
+                            </fieldset>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Page-Level Demo Scripts - Tables - Use for reference -->
+<script src="http://code.jquery.com/jquery-3.3.1.min.js" 
+integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" 
+crossorigin="anonymous"></script>
+<script>
+$(document).ready(function() {
+    $('.date input').each(function() {
+        $(this).datepicker();
+    });
+});
+</script>
+{{/if}}

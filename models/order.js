@@ -2,12 +2,14 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const Client = require('./client');
+const Product = require('./product');
 
 mongoose.Promise = global.Promise;
 
 const OrderSchema = new Schema({
     client: {
-        type: Schema.Types.ObjectId, ref: 'Client'
+        type: Schema.Types.ObjectId,
+        ref: 'Client'
     },
     depositPaid: {
         type: Boolean
@@ -20,11 +22,20 @@ const OrderSchema = new Schema({
     },
     numberOfBags: {
         type: Number
-    }
+    },
+    typeOfBag: {
+        //type of bag ordered
+        type: String
+    },
+    extra: [{
+        //list of fruit in the bag
+        type: Schema.Types.ObjectId,
+        ref: 'Product'
+    }]
 });
 
 OrderSchema.pre('remove', function(next) {
-    this.model('order').remove({ client: this._id }, next);
+    this.model('Order').remove({client: this._id}, next);
 });
 
 const Order = module.exports = mongoose.model('Order', OrderSchema);
@@ -36,19 +47,52 @@ module.exports.listOrders = function(_id, callback) {
     });
 }
 
-module.exports.createOrder = function(_id, orderDetails, callback) {
-    const order = new Order(orderDetails);
-    Client.findById({_id})
-    .then((clientToAdd) => {
-        order.client = clientToAdd;
+module.exports.createOrder = function(_id, orderDetails, extrasList, callback) {
+    var order = new Order(orderDetails);
+    var count = extrasList.length;
+    
+    Client.findById({_id}, function(err, client) {
+        order.client = client;
     })
     .then(() => {
-        order.save(callback);
+        if (count == 0) {
+            return order.save(orderDetails, callback);
+        }
+        else {
+            extrasList.forEach(productId => {
+                Product.findById({_id: productId}, function(err, product) {
+                    order.extra.push(product);
+                    count--;
+                    // save the data
+                    if (count == 0)
+                        return order.save(callback);
+                });
+            });
+        }
     });
 }
 
-module.exports.updateOrder = function(_id, orderDetails, callback) {
-    Order.update({_id}, orderDetails, callback);
+module.exports.updateOrder = function(_id, orderDetails, extrasList, callback) {
+    var count = extrasList.length;
+    
+    Order.findById({_id})
+    .then((order) => {
+        order.extra = [];
+        if (count == 0) {
+            return order.save(orderDetails, callback);
+        }
+        else {
+            extrasList.forEach(productId => {
+                Product.findById({_id: productId}, function(err, product) {
+                    order.extra.push(product);
+                    count--;
+                    // save the data
+                    if (count == 0)
+                        return order.save(orderDetails, callback);
+                });
+            });
+        }
+    });
 }
 
 module.exports.removeOrder = function(_id, callback) {

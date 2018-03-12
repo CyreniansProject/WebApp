@@ -3,10 +3,18 @@ const Schema = mongoose.Schema;
 
 const ProductSchema = new Schema ({
     name: {
-        //name of product
         type: String
     },
     avgWeight: {
+        type: Number
+    },
+    amountSmall: {
+        type: Number
+    },
+    amountMedium: {
+        type: Number
+    },
+    amountLarge: {
         type: Number
     }
 });

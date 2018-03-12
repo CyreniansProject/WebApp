@@ -6,7 +6,8 @@ const Product = require('./product');
 const PickingSchema = new Schema ({
     product: {
         //type of product picked
-        type: Schema.Types.ObjectId, ref: 'Product'
+        type: Schema.Types.ObjectId, 
+        ref: 'Product'
     },
     pickingWeek: {
         //date of picking

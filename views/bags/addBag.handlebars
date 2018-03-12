@@ -42,19 +42,19 @@
                                 </div>
                                 <hr>
                                 <div class="form-group row">
-                                <div class="pull-left col-sm-6">
+                                <div class="pull-left col-sm-7">
                                     <h4>Price <span style="color:red;">*</span></h4>
                                     <div class="pull-left">
                                         <label>Small</label>
-                                        <input type="text" class="form-control" name="smallPrice">
+                                        <input type="text" class="form-control" name="priceSmall">
                                     </div>
-                                    <div style="margin-left: 5%;" class="pull-left">
+                                    <div style="margin-left: 1%;" class="pull-left">
                                         <label>Medium</label>
-                                        <input type="text" class="form-control" name="mediumPrice">
+                                        <input type="text" class="form-control" name="priceMedium">
                                     </div>
-                                    <div style="margin-left: 5%;" class="pull-left">
+                                    <div style="margin-left: 1%;" class="pull-left">
                                         <label>Large</label>
-                                        <input type="text" class="form-control" name="largePrice">
+                                        <input type="text" class="form-control" name="priceLarge">
                                     </div>
                                 </div>
                                 </div>
@@ -73,7 +73,7 @@
                                 </div>
                                 </div>
                                 <br><br>
-                                <button type="submit" class="btn btn-lg btn-danger btn-block">Create bag</button>
+                                <button type="submit" class="btn btn-lg btn-purple btn-block">Create bag</button>
                             </fieldset>
                         </form>
                     </div>
@@ -88,10 +88,10 @@
 integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" 
 crossorigin="anonymous"></script>
 <script>
-    function removeFromBag(elementId) {
-        const elemName = $('#elem_' + elementId + ' input[name=itemName]').val();
+    // TODO: ABSTRACT THOSE FUNCTIONS IN bagHelper.js
 
-        const bagElemIndex = bagElemsList.indexOf(elemName);
+    function removeFromBag(elementId) {
+        const bagElemIndex = bagElemsList.indexOf(elementId);
         bagElemsList.splice(bagElemIndex, 1);
         document.getElementById("productData").value = JSON.stringify(bagElemsList);
 
@@ -112,7 +112,7 @@ crossorigin="anonymous"></script>
             '</div>'
         );
         
-        bagElemsList.push(productName);
+        bagElemsList.push(productId);
 
         document.getElementById("productData").value = JSON.stringify(bagElemsList);
 

@@ -2,7 +2,7 @@
 <div class="row">
     <div class="col-lg-7">
         <label><strong>Display harvestings between specific dates</strong></label>
-        <form class="form-inline" method="POST">
+        <form class="form-inline" method="POST" action="">
             <div class="form-group">
                 <label for="inputStartDate">From</label>
                 <input type="date" class="form-control" id="inputStartDate">
@@ -20,6 +20,9 @@
     <div class="panel panel-default">
         <div style="height: 65px;" class="panel-heading">
             <div class="btn-group pull-left" role="group">
+                <a href="/api/stock/purchases/to/{{productId}}" class="btn btn-primary btn-outline btn-md" role="button">
+                    <strong>Product purchases</strong>
+                </a>
                 <a href="/api/stock/harvests/to/{{productId}}" class="btn btn-purple btn-md" role="button">
                     <strong>Product harvestings</strong>
                 </a>

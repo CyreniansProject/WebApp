@@ -47,34 +47,150 @@ router.get('/new', function(req, res) {
 router.post('/new', function(req, res) { 
     if (req.user) {
         if (req.user.role == 0 || req.user.role == 1) {
-            const products = JSON.parse(req.body.products);
+            
+            var products;
+            try {
+                const o = JSON.parse(req.body.products);
+                if (o && typeof o === "object")
+                    products = o;
+            }
+            catch (e) {
+                req.flash('error_msg', 'Error -> Cannot have a bag with 0 products inside. Try again!');
+                return res.redirect('back');
+            }
+
             const startDate = req.body.startDate;
             const endDate = req.body.endDate;
-            const smallPrice = req.body.smallPrice;
-            const mediumPrice = req.body.mediumPrice;
-            const largePrice = req.body.largePrice;
+            const priceSmall = req.body.priceSmall;
+            const priceMedium = req.body.priceMedium;
+            const priceLarge = req.body.priceLarge;
 
-            var productList = []
-            products.forEach(productName => {
-                // find product information based on the product name
-                Product.findOne({name: productName}, function(err, product) {
-                    if (err) throw err;
-                    productList.push(product);
-                });
+            // VALIDATION ... TODO
+
+            var productList = [];
+            products.forEach(product => {
+                productList.push(product);
             });
 
             const bagDetails = {
-                startDate: dateOfCreation,
-                endDate: dateOfCreation,
-                smallPrice: smallPrice,
-                mediumPrice: mediumPrice,
-                largePrice: largePrice
+                startDate: startDate,
+                endDate: endDate,
+                priceSmall: priceSmall,
+                priceMedium: priceMedium,
+                priceLarge: priceLarge
             };
             
             Bag.createBag(bagDetails, productList, function(err, bagContent) {
                 if (err) throw err;
                 req.flash('success_msg', 'Bag successfully created!');
-                res.send("In development..." + bagContent);
+                res.redirect('/api/bags/');
+            });
+        }
+        else {
+            req.flash('error_msg', 'You don\'t have the authority to access this page!');
+            res.redirect('/api/dashboard');
+        }
+    }
+    else {
+        req.flash('error_msg', 'You need to login first!');
+        res.redirect('/');
+    }
+});
+
+router.get('/edit/:id', function(req, res) {
+    if (req.user) {
+        if (req.user.role == 0 || req.user.role == 1) {
+            const id = req.params.id;
+            
+            Bag.findById({_id: id}, function(err, bagContent) {
+                if (err) throw err;
+                bagContent.populate({
+                    path: 'product'
+                }, function(pErr) {
+                    if (pErr) throw pErr;
+                    Product.listProducts(function(lpErr, products) {
+                        if (lpErr) throw lpErr;
+                        res.render('bags/editBag', { layout: 'layout_staff.handlebars', 
+                        page_title: 'Bag (' + bagContent.startDate + ' - ' + bagContent.endDate + ')', 
+                        user: req.user, bagContent: bagContent, products: products });
+                    });
+                });
+            });
+        }
+        else {
+            req.flash('error_msg', 'You don\'t have the authority to access this page!');
+            res.redirect('/api/dashboard');
+        }
+    }
+    else {
+        req.flash('error_msg', 'You need to login first!');
+        res.redirect('/');
+    }
+});
+
+router.post('/update', function(req, res) {
+    if (req.user) {
+        if (req.user.role == 0 || req.user.role == 1) {
+            const id = req.body.bagId;
+            
+            var products;
+            try {
+                const o = JSON.parse(req.body.products);
+                if (o && typeof o === "object")
+                    products = o;
+            }
+            catch (e) {
+                req.flash('error_msg', 'Error -> Cannot have a bag with 0 products inside. Try again!');
+                return res.redirect('back');
+            }
+            
+            const startDate = req.body.startDate;
+            const endDate = req.body.endDate;
+            const priceSmall = req.body.priceSmall;
+            const priceMedium = req.body.priceMedium;
+            const priceLarge = req.body.priceLarge;
+
+            // VALIDATION ... TODO
+
+            var productList = [];
+            products.forEach(product => {
+                productList.push(product);
+            });
+
+            const bagDetails = {
+                startDate: startDate,
+                endDate: endDate,
+                priceSmall: priceSmall,
+                priceMedium: priceMedium,
+                priceLarge: priceLarge
+            };
+
+            Bag.updateBag(id, bagDetails, productList, function(err, bagContent) {
+                if (err) throw err;
+                req.flash('success_msg', 'Bag successfully updated!');
+                res.redirect('back');
+            });
+        }
+        else {
+            req.flash('error_msg', 'You don\'t have the authority to access this page!');
+            res.redirect('/api/dashboard');
+        }
+    }
+    else {
+        req.flash('error_msg', 'You need to login first!');
+        res.redirect('/');
+    }
+});
+
+router.get('/remove/:id', function(req, res) {
+    if (req.user) {
+        if (req.user.role == 0 || req.user.role == 1) {
+            const id = req.params.id;
+            
+            Bag.removeBag(id, function(err) {
+                if (err) throw err;
+                req.flash('success_msg', 'Bag successfully removed!');
+                res.redirect('back');
             });
         }
         else {

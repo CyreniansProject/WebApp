@@ -69,12 +69,27 @@ router.post('/new', function(req, res) {
         if (req.user.role == 0 || req.user.role == 1) {
             const clientId = req.body.clientId;
             
+            var products;
+            try {
+                const o = JSON.parse(req.body.products);
+                if (o && typeof o === "object")
+                    products = o;
+            }
+            catch (e) {
+                products = [];
+            }
+
             const depositPaid = req.body.depositPaid;
             const notes = req.body.notes;
             const date = req.body.date;
             const numberOfBags = req.body.numberOfBags;
 
-            // VALIDATION ... TODO
+            var extrasList = [];
+            if (products.length > 0) {
+                products.forEach(product => {
+                    extrasList.push(product);
+                });
+            }
 
             const orderDetails = {
                 depositPaid: depositPaid,
@@ -83,7 +98,7 @@ router.post('/new', function(req, res) {
                 numberOfBags: numberOfBags,
             };
 
-            Order.createOrder(clientId, orderDetails, function(err, order) {
+            Order.createOrder(clientId, orderDetails, extrasList, function(err, order) {
                 if (err) throw err;
                 req.flash('success_msg', 'Order successfully added!');
                 res.redirect('/api/orders/to/' + clientId);
@@ -107,12 +122,15 @@ router.get('/edit/:id', function(req, res) {
 
             Order.findById({_id: id}, function(err, order) {
                 if (err) throw err;
-                order.populate({
-                    path:'client'
-                }, function(err) {
-                    if (err) throw err;
-                    res.render('orders/editOrder', { layout: 'layout_staff.handlebars', page_title: 'Edit order for ' + order.client.name, 
-                    user: req.user, order: order, depositPaid: order.depositPaid });
+                order.populate({path: 'client'}).populate({path: 'extra'}, function(cpErr) {
+                    if (cpErr) throw cpErr;
+                    Product.listProducts(function(lpErr, products) {
+                        if (lpErr) throw lpErr;
+                            res.render('orders/editOrder', { layout: 'layout_staff.handlebars', 
+                            page_title: 'Edit order for ' + order.client.name, 
+                            user: req.user, order: order, products: products,
+                            depositPaid: order.depositPaid });
+                    });
                 });
             });
         }
@@ -131,14 +149,28 @@ router.post('/update', function(req, res) {
     if (req.user) {
         if (req.user.role == 0 || req.user.role == 1) {
             const orderId = req.body.orderId;
+
+            var products;
+            if (req.body.products.length > 0)
+                products = JSON.parse(req.body.products);
+            else
+                products = []
             
             const depositPaid = req.body.depositPaid;
             const notes = req.body.notes;
             const date = req.body.date;
             const numberOfBags = req.body.numberOfBags;
 
-            // VALIDATION ... TODO
+             // VALIDATION ... TODO
 
+            var extrasList = [];
+            if (products.length > 0) {
+                products.forEach(product => {
+                    console.log(product);
+                    extrasList.push(product);
+                });
+            }
+        
             const orderDetails = {
                 depositPaid: depositPaid,
                 notes: notes,
@@ -146,7 +178,7 @@ router.post('/update', function(req, res) {
                 numberOfBags: numberOfBags,
             };
 
-            Order.updateOrder(orderId, orderDetails, function(err, order) {
+            Order.updateOrder(orderId, orderDetails, extrasList, function(err, order) {
                 if (err) throw err;
                 req.flash('success_msg', 'Order successfully updated!');
                 res.redirect('back');

@@ -1,20 +1,29 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const ProductSchema = require('./product_virtual');
+const Product = require('./product');
 
 const BagSchema = new Schema ({
-    bagType: {
-        //Small or Large bag
-        type: String
-    },
-    product:{
-        //list of products in the bag
-        type: [ProductSchema]
-    },
-    date: {
+    product: [{
+        //list of fruit in the bag
+        type: Schema.Types.ObjectId, ref: 'Product'
+    }],
+    startDate: {
         //date of the bag creation
         type: String
+    },
+    endDate: {
+        //date of the bag expiration
+        type: String
+    },
+    priceSmall: {
+        type: Number
+    },
+    priceMedium: {
+        type: Number
+    },
+    priceLarge: {
+        type: Number
     }
 });
 
@@ -24,29 +33,36 @@ module.exports.listBags = function(callback) {
     Bag.find({}, callback);
 }
 
-/** For the following queries:
- ** productList is an array holding the product 'name'(string),
- ** product 'avg. weight'(number) and the added 'amount'(number)
-**/
-
 module.exports.createBag = function(bagDetails, productList, callback) {
-    const newBag = new Bag(bagDetails);
-    
-    productList.forEach(product => { 
-        newBag.product.push(product); 
+    var bag = new Bag(bagDetails);
+    var count = productList.length;
+
+    productList.forEach(productId => { 
+        Product.findById({_id: productId}, function(err, product) {
+            bag.product.push(product);
+            count--;
+             // save the data
+             if (count == 0)
+                return bag.save(callback);
+        })
     });
-    newBag.save(callback);
 }
 
-module.exports.updateBag = function(_id, bagDetails, productList) {
+module.exports.updateBag = function(_id, bagDetails, productList, callback) {
+    var count = productList.length;
+    
     Bag.findById({_id})
-    .then((bag) =>{
-        bag.update(bagDetails);
+    .then((bag) => {
         bag.product = [];
-        productList.forEach(product => {
-            bag.product.push(product);
+        productList.forEach(productId => {
+            Product.findById({_id: productId}, function(err, product) {
+                bag.product.push(product);
+                count--;
+                // save the data
+                if (count == 0)
+                    return bag.save(bagDetails, callback);
+            });
         });
-        bag.save(callback);
     });
 }
 

@@ -163,6 +163,6 @@ router.get('/remove/:id', function(req, res) {
         req.flash('error_msg', 'You need to login first!');
         res.redirect('/');
     }
-})
+});
 
 module.exports = router;
