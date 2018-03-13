@@ -4,8 +4,6 @@ const Schema = mongoose.Schema;
 const Client = require('./client');
 const Product = require('./product');
 
-mongoose.Promise = global.Promise;
-
 const OrderSchema = new Schema({
     client: {
         type: Schema.Types.ObjectId,
@@ -74,7 +72,7 @@ module.exports.createOrder = function(_id, orderDetails, extrasList, callback) {
 
 module.exports.updateOrder = function(_id, orderDetails, extrasList, callback) {
     var count = extrasList.length;
-    
+
     Order.findById({_id})
     .then((order) => {
         order.extra = [];

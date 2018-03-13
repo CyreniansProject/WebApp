@@ -57,9 +57,9 @@ crossorigin="anonymous"></script>
                                     <label class="col-sm-2 col-form-label">Date <span style="color:red;">*</span></label>
                                     <div class="col-sm-3">
                                         <div class="input-group date">
-                                            <input type="text" class="form-control" name="date">
+                                            <input type="text" class="form-control" name="date" placeholder="mm/dd/yyyy">
                                             <div class="input-group-addon">
-                                                mm/dd/yyyy
+                                                date
                                             </div>
                                         </div>
                                     </div>
@@ -169,7 +169,9 @@ crossorigin="anonymous"></script>
 
     $(document).ready(function() {
          $('.date input').each(function() {
-            $(this).datepicker();
+            $(this).datepicker(({
+                format: 'mm/dd/yyyy'
+            }));
         });
     });
 </script>

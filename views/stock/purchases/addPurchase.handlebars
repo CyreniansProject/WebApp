@@ -11,7 +11,7 @@
                 <div class="btn-group" role="group">
                     <script>const goBack = () => { return window.location.href = '/api/stock/harvests/to/{{productId}}'; };</script>
                     <div class="pull-left">
-                        <button type="button" class="btn btn-danger btn-outline pull-left" onclick="goBack()">< Back</button>
+                        <button type="button" class="btn btn-purple pull-left" onclick="goBack()">< Back</button>
                     </div>
                     <h3 style="margin-left: 20px; margin-top: 10px;" class="panel-title pull-right">Please fill out the details</h3>
                 </div>
@@ -44,15 +44,15 @@
                                     <label class="col-sm-2 col-form-label">Purchase date <span style="color:red;">*</span></label>
                                     <div class="col-sm-3">
                                         <div class="input-group date">
-                                            <input type="text" class="form-control" name="purchaseDate">
+                                            <input type="text" class="form-control" name="purchaseDate" placeholder="mm/dd/yyyy">
                                             <div class="input-group-addon">
-                                                mm/dd/yyyy
+                                                date
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                                 <!-- Change this to a button or input when using this as a form -->
-                                <button type="submit" class="btn btn-lg btn-danger btn-block">Add purchase</a>
+                                <button type="submit" class="btn btn-lg btn-purple btn-block">Add purchase</a>
                             </fieldset>
                         </form>
                     </div>

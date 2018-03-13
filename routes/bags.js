@@ -5,6 +5,10 @@ const flash = require('connect-flash');
 const Bag = require('../models/bag');
 const Product = require('../models/product');
 
+function checkForValidBag(date) {
+
+}
+
 router.get('/', function(req, res) { 
     if (req.user) {
         if (req.user.role == 0 || req.user.role == 1) {

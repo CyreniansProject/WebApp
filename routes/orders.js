@@ -5,6 +5,7 @@ const flash = require('connect-flash');
 const Order = require('../models/order');
 const Client = require('../models/client');
 const Product = require('../models/product');
+const Bag = require('../models/bag');
 
 /** !!!
  ** THIS IS A BASE AND PURE API WITH NO FRONT-END CONNECTION ATM!
@@ -84,25 +85,46 @@ router.post('/new', function(req, res) {
             const date = req.body.date;
             const numberOfBags = req.body.numberOfBags;
 
-            var extrasList = [];
-            if (products.length > 0) {
-                products.forEach(product => {
-                    extrasList.push(product);
-                });
-            }
+            // VALIDATION ... TODO
 
-            const orderDetails = {
-                depositPaid: depositPaid,
-                notes: notes,
-                date: date,
-                numberOfBags: numberOfBags,
-            };
+            // Validate order date: in the range of the activity of bag
+            var foundValidBag = false;
+            const orderDate = new Date(date);
+            Bag.find({}, function(err, bagList) {
+                if (err) return err;
+                for (let i = bagList.length - 1; i >= 0; i--) {
+                    const startDate = new Date(bagList[i].startDate);
+                    const endDate = new Date(bagList[i].endDate);
+                    if (startDate <= orderDate && endDate >= orderDate) foundValidBag = true;
+                    else if (i == 0) {
+                        req.flash('error_msg', 'Cannot proceed with the order. There is no valid bag set for the selected date.');
+                        return res.redirect('back');
+                    }
+                }
+            }).
+            then(() => {
+                if (foundValidBag) {
+                    var extrasList = [];
+                    if (products.length > 0) {
+                        products.forEach(product => {
+                            extrasList.push(product);
+                        });
+                    }
 
-            Order.createOrder(clientId, orderDetails, extrasList, function(err, order) {
-                if (err) throw err;
-                req.flash('success_msg', 'Order successfully added!');
-                res.redirect('/api/orders/to/' + clientId);
-            });
+                    const orderDetails = {
+                        depositPaid: depositPaid,
+                        notes: notes,
+                        date: date,
+                        numberOfBags: numberOfBags,
+                    };
+
+                    Order.createOrder(clientId, orderDetails, extrasList, function(err, order) {
+                        if (err) throw err;
+                        req.flash('success_msg', 'Order successfully added!');
+                        res.redirect('/api/orders/to/' + clientId);
+                    });
+                }
+            });           
         }
         else {
             req.flash('error_msg', 'You don\'t have the authority to access this page!');
@@ -163,25 +185,44 @@ router.post('/update', function(req, res) {
 
              // VALIDATION ... TODO
 
-            var extrasList = [];
-            if (products.length > 0) {
-                products.forEach(product => {
-                    console.log(product);
-                    extrasList.push(product);
-                });
-            }
-        
-            const orderDetails = {
-                depositPaid: depositPaid,
-                notes: notes,
-                date: date,
-                numberOfBags: numberOfBags,
-            };
+            // Validate order date: in the range of the activity of bag
+            var foundValidBag = false;
+            const orderDate = new Date(date);
+            Bag.find({}, function(err, bagList) {
+                if (err) return err;
+                for (let i = bagList.length - 1; i >= 0; i--) {
+                    const startDate = new Date(bagList[i].startDate);
+                    const endDate = new Date(bagList[i].endDate);
+                    if (startDate <= orderDate && endDate >= orderDate) foundValidBag = true;
+                    else if (i == 0) {
+                        req.flash('error_msg', 'Cannot proceed with the order. There is no valid bag set for the selected date.');
+                        return res.redirect('back');
+                    }
+                }
+            }).
+            then(() => {
+                if (foundValidBag) {
+                    var extrasList = [];
+                    if (products.length > 0) {
+                        products.forEach(product => {
+                            console.log(product);
+                            extrasList.push(product);
+                        });
+                    }
+                
+                    const orderDetails = {
+                        depositPaid: depositPaid,
+                        notes: notes,
+                        date: date,
+                        numberOfBags: numberOfBags,
+                    };
 
-            Order.updateOrder(orderId, orderDetails, extrasList, function(err, order) {
-                if (err) throw err;
-                req.flash('success_msg', 'Order successfully updated!');
-                res.redirect('back');
+                    Order.updateOrder(orderId, orderDetails, extrasList, function(err, order) {
+                        if (err) throw err;
+                        req.flash('success_msg', 'Order successfully updated!');
+                        res.redirect('back');
+                    });
+                }
             });
         }
         else {

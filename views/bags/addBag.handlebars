@@ -61,13 +61,14 @@
                                 <div class="form-group row">
                                 <div class="pull-left col-sm-6">
                                     <h4>Active period <span style="color:red;">*</span></h4>
-                                    <div class="input-group input-daterange">
-                                        <div class="input-group-addon">From</div>
-                                        <input type="text" class="form-control" name="startDate">
-                                        <div class="input-group-addon">To</div>
-                                        <input type="text" class="form-control" name="endDate">
-                                        <div class="input-group-addon">
-                                            mm/dd/yyyy
+                                    <div class="input-group input-daterange form-inline">
+                                        <label>From</label>
+                                         <div class="form-group">
+                                            <input type="text" class="form-control" name="startDate" placeholder="mm/dd/yyyy">
+                                        </div>
+                                        <label>To</label>
+                                        <div class="form-group">
+                                            <input type="text" class="form-control" name="endDate" placeholder="mm/dd/yyyy">
                                         </div>
                                     </div>
                                 </div>
@@ -122,7 +123,9 @@ crossorigin="anonymous"></script>
 
     $(document).ready(function() {
          $('.input-daterange input').each(function() {
-            $(this).datepicker();
+            $(this).datepicker(({
+                format: 'mm/dd/yyyy'
+            }));
         });
     });
 </script>

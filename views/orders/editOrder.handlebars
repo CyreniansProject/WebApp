@@ -159,7 +159,9 @@ crossorigin="anonymous"></script>
 
     $(document).ready(function() {
         $('.date input').each(function() {
-            $(this).datepicker();
+            $(this).datepicker(({
+                format: 'mm/dd/yyyy'
+            }));
         });
 
         // set the radio button for deposit
