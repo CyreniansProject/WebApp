@@ -7,14 +7,6 @@ const Client = require('../models/client');
 const Product = require('../models/product');
 const Bag = require('../models/bag');
 
-/** !!!
- ** THIS IS A BASE AND PURE API WITH NO FRONT-END CONNECTION ATM!
-
- ** NOTE: AFTER RECEIVING THE FRONT-END TEMPLATE,
- ** DO: if (req.user) { ... res.render(...) } else { res.flash(...) res.redirect(...) }
- ** WITH USER LEVEL RESTRICTIONS AS WELL WHERE APPLICABLE
-!!! **/
-
 router.get('/to/:clientId', function(req, res) {
     if (req.user) {
         if (req.user.role == 0 || req.user.role == 1) {
@@ -101,8 +93,8 @@ router.post('/new', function(req, res) {
                         return res.redirect('back');
                     }
                 }
-            }).
-            then(() => {
+            })
+            .then(() => {
                 if (foundValidBag) {
                     var extrasList = [];
                     if (products.length > 0) {
@@ -199,8 +191,8 @@ router.post('/update', function(req, res) {
                         return res.redirect('back');
                     }
                 }
-            }).
-            then(() => {
+            })
+            .then(() => {
                 if (foundValidBag) {
                     var extrasList = [];
                     if (products.length > 0) {

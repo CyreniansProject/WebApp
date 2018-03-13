@@ -40,7 +40,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Express Session
 app.use(session({
-  secret: '!secret!of!cyrenians!',
+  secret: 'secret',
   saveUninitialized: true,
   resave: true
 }));
@@ -64,7 +64,7 @@ app.use(expressValidator({
       msg   : msg,
       value : value
     };
-  },
+  }
 }));
 
 // Connect Flash

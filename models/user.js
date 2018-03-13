@@ -27,7 +27,8 @@ module.exports.listUsers = function(callback) {
 }
 
 // TODO: edit to user userDetails instead of newly created user object
-module.exports.createUser = function(newUser, callback) {
+module.exports.createUser = function(userDetails, callback) {
+    const newUser = new User(userDetails);
     bcrypt.genSalt(10, function(err, salt) {
         bcrypt.hash(newUser.password, salt, function(err, hash) {
             newUser.password = hash;

@@ -136,22 +136,20 @@ router.post('/new', function(req, res) {
 		res.render('users/register', { layout: 'layout_staff.handlebars', page_title: 'Add member', errors: validErrors });
 	}
 	else {
-		var newUser = new User({
+		const userDetails = {
 			firstname: firstname,
 			lastname: lastname,
 			email: email,
 			password: password,
 			role: role
-		});
+		}
 
-		User.createUser(newUser, function(err, user) {
+		User.createUser(userDetails, function(err, user) {
 			if(err) throw err;
 
 			// send mail with defined transport object
-			transporter.sendMail(mailOptions, (error, info) => {
-				if (error) {
-					return console.log(error);
-				}
+			transporter.sendMail(mailOptions, (mailErr, info) => {
+				if (mailErr) return mailErr;
 
 				req.flash('success_msg', 'User was successfully created.');
 				res.redirect('/api/users');

@@ -86,9 +86,11 @@
                         <li class="side-nav-item">
                             <a href="/api/dashboard"> Dashboard</a>
                         </li>
+                        {{#eq user.role 0}}
                         <li class="side-nav-item">
                             <a href="/api/users"> Manage Staff</a>
                         </li>
+                        {{/eq}}
                         <li class="side-nav-item">
                             <a href="/api/stock"> Manage Stock</a>
                         </li>

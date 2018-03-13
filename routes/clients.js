@@ -3,13 +3,6 @@ const router = express.Router();
 const flash = require('connect-flash');
 
 const Client = require('../models/client');
-/** !!!
- ** THIS IS A BASE AND PURE API WITH NO FRONT-END CONNECTION ATM!
-
- ** NOTE: AFTER RECEIVING THE FRONT-END TEMPLATE,
- ** DO: if (req.user) { ... res.render(...) } else { res.flash(...) res.redirect(...) }
- ** WITH USER LEVEL RESTRICTIONS AS WELL WHERE APPLICABLE
-!!! **/
 
 router.get('/', function(req, res) {
     if (req.user) {
