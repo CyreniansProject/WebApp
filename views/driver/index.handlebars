@@ -1,0 +1,78 @@
+<style type="text/css">
+    input[type=checkbox] {
+        transform: scale(2);
+    }
+
+    .address-d {
+        margin-left: 45px;
+        margin-top: 7px;
+        font-size: 16px;
+    }
+</style>
+
+<div class="row">
+    <!-- START OF DRIVER PANEL -->
+    <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="false">
+
+        <div class="panel panel-default">
+        <div class="panel-heading" role="tab" id="headingOne">
+            <h2 class="panel-title" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                <span class="badge" style="padding: 10px 12px 10px 12px; border-radius: 500px">0</span> Standard Life Investments <br> <p class="tiles-label address-d">1 George St, Edinburgh EH2 2LL</p>
+            </h2>
+        </div>
+        <div id="collapseOne" class="panel-collapse collapse out" role="tabpanel" aria-labelledby="headingOne">
+            <div class="panel-body">
+            <div class="dataTable_wrapper">
+                <table class="table table-striped table-bordered table-hover" id="clients">
+                    <thead>
+                        <tr>
+                            <th>Customer name</th>
+                            <th>Qty</th>
+                            <th>Type</th>
+                            <th>Delivered?</th>                           
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="font-size:14px;">Aidan Carr</td>
+                            <td style="font-size:14px;">2</td>
+                            <td style="font-size:14px;">Large Bag</td>
+                            <th style="text-align: center;">
+                                <div class="checkbox">
+                                    <label>
+                                    <input type="checkbox" value="">
+                                    </label>
+                                </div>                                
+                            </th>
+
+                        </tr>
+                        <tr>
+                            <td style="font-size:14px;">Ryan Smith</td>
+                            <td style="font-size:14px;">2</td>
+                            <td style="font-size:14px;">Large Bag</td>
+                            <th style="text-align: center;">
+                                <div class="checkbox">
+                                    <label>
+                                    <input type="checkbox" value="" >
+                                    </label>
+                                </div>                                
+                            </th>
+
+                        </tr>                        
+                    </tbody>
+                </table>
+                </div>
+                <!-- /.table-responsive -->
+                <!-- table footer -->
+            </div>
+            <div class="panel-footer" style="padding-left: 20px; padding-right: 25px">
+            <h4><b>All delivered?  </b>                               
+                <button class="btn btn-purple pull-right">Submit</button>
+            </h4>
+            </div>
+            <!-- /.table footer -->
+        </div>
+        </div>
+    </div>     
+    <!-- END OF DRIVER PANEL -->           
+</div><!--.row-->   

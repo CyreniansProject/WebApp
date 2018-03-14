@@ -78,8 +78,8 @@ module.exports.updateOrder = function(_id, orderDetails, extrasList, callback) {
     .then((order) => {
         order.extra = [];
         if (count == 0) {
-            console.log(orderDetails);
-            return order.save(orderDetails, callback);
+            order.save();
+            return Order.update({_id}, orderDetails, callback);
         }
         else {
             extrasList.forEach(productId => {
@@ -88,7 +88,8 @@ module.exports.updateOrder = function(_id, orderDetails, extrasList, callback) {
                     count--;
                     // save the data
                     if (count == 0) {
-                        return order.save(orderDetails, callback);
+                        order.save();
+                        return Order.update({_id}, orderDetails, callback);
                     }
                 });
             });

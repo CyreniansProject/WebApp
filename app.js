@@ -19,9 +19,9 @@ const users = require('./routes/users');
 const clients = require('./routes/clients');
 const orders = require('./routes/orders');
 const stock = require('./routes/stock');
-const reports = require('./routes/reports');
 const bags = require('./routes/bags');
-
+const reports = require('./routes/reports');
+const driver = require('./routes/driver');
 // Init App
 const app = express();
 
@@ -89,6 +89,7 @@ app.use('/api/orders', orders);
 app.use('/api/stock', stock);
 app.use('/api/bags', bags);
 app.use('/api/reports', reports);
+app.use('/api/driver', driver);
 
 // Set Port
 app.set('port', (process.env.PORT || 80));

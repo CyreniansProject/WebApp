@@ -1,16 +1,15 @@
-const express = require('express');
+var express = require('express');
 var router = express.Router();
-const flash = require('connect-flash');
 
-var User = require('../models/user');
-
+// Driver Landing - GET
 router.get('/', function(req, res) {
     if (req.user) {
         if (req.user.role == 2) {
-            res.redirect('/api/driver');
+            res.render('driver/index', { layout: 'layout_staff.handlebars', page_title: '', user: req.user });
         }
         else {
-            res.render('dashboard', { layout: 'layout_staff.handlebars', page_title: 'Dashboard', user: req.user });
+            req.flash('error_msg', 'You don\'t have the authority to access this page!');
+			res.redirect('/api/dashboard');
         }
     }
     else {

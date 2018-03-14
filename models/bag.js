@@ -59,8 +59,10 @@ module.exports.updateBag = function(_id, bagDetails, productList, callback) {
                 bag.product.push(product);
                 count--;
                 // save the data
-                if (count == 0)
-                    return bag.save(bagDetails, callback);
+                if (count == 0) {
+                    bag.save();
+                    return Bag.update({_id}, bagDetails, callback);
+                }
             });
         });
     });
