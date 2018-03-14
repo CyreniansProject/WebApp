@@ -31,8 +31,8 @@ router.get('/', function(req, res) {
 });
 
 // Login - POST
-router.post('/login',
-	passport.authenticate('local', { successRedirect: '/api/dashboard', failureRedirect: '/', failureFlash: true }),
+router.post('/login', passport.authenticate('local', { 
+	successRedirect: '/api/dashboard', failureRedirect: '/', failureFlash: true }),
 	(req, res) => { res.redirect('/');
 });
 
@@ -93,7 +93,7 @@ router.post('/new', function(req, res) {
 		</ul>
 		<br/><strong>IMPORTANT:</strong> Set your own password.<br/>
 		<ul>
-		<li>Step 1: Click on this link: <a href="http://localhost:3000/api/users/reset/${email}">Complete account creation!</a></li>
+		<li>Step 1: Click on this link: <a href="http://localhost/api/users/reset/${email}">Complete account creation!</a></li>
 		<li>Step 2: Type in your preffered password and confirm it.</li>
 		<li>Step 3: Sign in to the system with your email and newly set password.</li>
 		</ul>
@@ -127,13 +127,14 @@ router.post('/new', function(req, res) {
 	req.check('firstname', 'First Name is required').notEmpty();
 	req.check('lastname', 'Last Name is required').notEmpty();
 	req.check('email', 'Email is required').isEmail();
-	req.check('role', 'Access level selection is required').not().equals("Choose...");
+	req.check('role', 'Access level (selection) is required').not().equals("Choose...");
 	
 	// Store validation errors if any...
 	var validErrors = req.validationErrors();
 	// Attempt User creation
 	if (validErrors) {
-		res.render('users/register', { layout: 'layout_staff.handlebars', page_title: 'Add member', errors: validErrors });
+		req.flash('valid_msg', validErrors[0].msg);
+		res.redirect('back');
 	}
 	else {
 		const userDetails = {
@@ -165,7 +166,7 @@ router.get('/edit/:id', function(req, res) {
 			const id = req.params.id;
 			User.getUserById(id, function(err, member) {
                 if (err) throw err;
-				res.render('users//editUser', { layout: 'layout_staff.handlebars', 
+				res.render('users/editUser', { layout: 'layout_staff.handlebars', 
 				page_title: 'Edit ' + member.firstname + ' ' + member.lastname,
                 user: req.user, member: member, memberId: id});
             });
@@ -184,7 +185,8 @@ router.get('/profile', function(req, res) {
 		else if (req.user.role == 2)
 			accessLevel = "Delivery man";
 		
-		res.render('users/profile', { layout: 'layout_staff.handlebars', page_title: 'Hi ' + req.user.firstname + ' | Profile', user: req.user, access: accessLevel });
+		res.render('users/profile', { layout: 'layout_staff.handlebars', page_title: 'Hi ' + req.user.firstname + ' | Profile', 
+		user: req.user, access: accessLevel });
 	}
 	else {
 		req.flash('error_msg', 'You need to login first!');
@@ -203,21 +205,34 @@ router.post('/update', function(req, res) {
 			const email = req.body.email;
 			const role = req.body.role;
 			
-			// VALIDATION ... TODO
+			// Validation
+			req.check('firstname', 'First Name is required').notEmpty();
+			req.check('lastname', 'Last Name is required').notEmpty();
+			req.check('email', 'Email is required').isEmail();
+			req.check('role', 'Access level selection is required').not().equals("Choose...");
 
-			const userDetails = {
-				firstname: firstname,
-				lastname: lastname,
-				email: email,
-				role: role
-			};
-
-			// Update the user field details
-			User.updateUser(id, userDetails, function(err, updatedUser) {
-				if (err) throw err; 
-				req.flash('success_msg', 'User details successfully updated!');
+			// Store validation errors if any...
+			var validErrors = req.validationErrors();
+			// Attempt User update
+			if (validErrors) {
+				req.flash('valid_msg', validErrors[0].msg);			
 				res.redirect('back');
-			});	
+			}
+			else {
+				const userDetails = {
+					firstname: firstname,
+					lastname: lastname,
+					email: email,
+					role: role
+				};
+
+				// Update the user field details
+				User.updateUser(id, userDetails, function(err, updatedUser) {
+					if (err) throw err; 
+					req.flash('success_msg', 'User details successfully updated!');
+					res.redirect('back');
+				});	
+			}
 		}
 	}
 });
@@ -251,15 +266,17 @@ router.post('/reset', function(req, res) {
 	var password = req.body.password;
 	var confirmPassword = req.body.confirmPassword;
 
+	// Validation
 	req.check('email', 'The email is wrong / does not exist in the database').isEmail();
-	req.check('password', 'Password is required').notEmpty();
-	req.check('confirmPassword', 'Passwords do not match').equals(req.body.password);
+	req.check('password', 'Password field is required').notEmpty();
+	req.check('confirmPassword', 'Both passwords do not match').equals(req.body.password);
 	// Store validation errors if any...
 	var validErrors = req.validationErrors();
 
 	// Attempt User creation
 	if (validErrors) {
-		res.render('users/reset', { page_title: 'Reset password', errors: validErrors });
+		req.flash('valid_msg', validErrors[0].msg);
+		res.redirect('back');
 	}
 	else {
 		// Find user by Email func.

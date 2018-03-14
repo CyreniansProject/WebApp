@@ -40,6 +40,7 @@
                             <th style="text-align: center;">#</th>
                             <th>Date</th>
                             <th>Bags amount</th>
+                            <th>Type of bag</th>
                             <th>Deposit</th>
                         </tr>
                     </thead>
@@ -54,12 +55,13 @@
                                     <i class="fa fa-trash"></i>
                                 </a>
                             </td>
-                            <td style="font-size:18px;">{{this.date}}</td>
-                            <td style="font-size:18px;">{{this.numberOfBags}}</td>
+                            <td style="font-size:16px;">{{this.date}}</td>
+                            <td style="font-size:16px;">{{this.numberOfBags}}</td>
+                            <td style="font-size:16px;">{{this.typeOfBag}}</td>
                             {{#eq this.depositPaid true}}
-                                <td style="font-size:18px;">Paid</td>
+                                <td style="font-size:16px;">Paid</td>
                             {{else}}
-                                <td style="font-size:18px;">Not paid</td>
+                                <td style="font-size:16px;">Not paid</td>
                             {{/eq}}
                         </tr>
                         {{/each}}

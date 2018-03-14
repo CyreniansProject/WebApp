@@ -55,36 +55,50 @@ router.post('/new', function(req, res) {
                     products = o;
             }
             catch (e) {
-                req.flash('error_msg', 'Error -> Cannot have a bag with 0 products inside. Try again!');
+                req.flash('error_msg', 'Cannot have a bag with 0 products inside!');
                 return res.redirect('back');
             }
 
-            const startDate = req.body.startDate;
-            const endDate = req.body.endDate;
             const priceSmall = req.body.priceSmall;
             const priceMedium = req.body.priceMedium;
             const priceLarge = req.body.priceLarge;
+            const startDate = req.body.startDate;
+            const endDate = req.body.endDate;
 
-            // VALIDATION ... TODO
+            // Validation
+            req.check('priceSmall', 'Small bag price (number) is required').isNumeric();
+            req.check('priceMedium', 'Medium bag price (number) is required').isNumeric();
+            req.check('priceLarge', 'Large bag price (number) is required').isNumeric();
+            req.check('startDate', 'Active period: From date (selection) is required').notEmpty();
+            req.check('endDate', 'Active period: To date (selection) is required').notEmpty();
+            // Store validation errors if any...
+            var validErrors = req.validationErrors();
 
-            var productList = [];
-            products.forEach(product => {
-                productList.push(product);
-            });
+            // Attempt User creation
+            if (validErrors) {
+                req.flash('valid_msg', validErrors[0].msg);
+                res.redirect('back');
+            }
+            else {
+                var productList = [];
+                products.forEach(product => {
+                    productList.push(product);
+                });
 
-            const bagDetails = {
-                startDate: startDate,
-                endDate: endDate,
-                priceSmall: priceSmall,
-                priceMedium: priceMedium,
-                priceLarge: priceLarge
-            };
-            
-            Bag.createBag(bagDetails, productList, function(err, bagContent) {
-                if (err) throw err;
-                req.flash('success_msg', 'Bag successfully created!');
-                res.redirect('/api/bags/');
-            });
+                const bagDetails = {
+                    startDate: startDate,
+                    endDate: endDate,
+                    priceSmall: priceSmall,
+                    priceMedium: priceMedium,
+                    priceLarge: priceLarge
+                };
+                
+                Bag.createBag(bagDetails, productList, function(err, bagContent) {
+                    if (err) throw err;
+                    req.flash('success_msg', 'Bag successfully created!');
+                    res.redirect('/api/bags/');
+                });
+            }
         }
         else {
             req.flash('error_msg', 'You don\'t have the authority to access this page!');
@@ -140,36 +154,50 @@ router.post('/update', function(req, res) {
                     products = o;
             }
             catch (e) {
-                req.flash('error_msg', 'Error -> Cannot have a bag with 0 products inside. Try again!');
+                req.flash('error_msg', 'Cannot have a bag with 0 products inside!');
                 return res.redirect('back');
             }
             
-            const startDate = req.body.startDate;
-            const endDate = req.body.endDate;
             const priceSmall = req.body.priceSmall;
             const priceMedium = req.body.priceMedium;
             const priceLarge = req.body.priceLarge;
+            const startDate = req.body.startDate;
+            const endDate = req.body.endDate;
 
-            // VALIDATION ... TODO
+            // Validation
+            req.check('priceSmall', 'Small bag price (number) is required').isNumeric();
+            req.check('priceMedium', 'Medium bag price (number) is required').isNumeric();
+            req.check('priceLarge', 'Large bag price (number) is required').isNumeric();
+            req.check('startDate', 'Active period: From date (selection) is required').notEmpty();
+            req.check('endDate', 'Active period: To date (selection) is required').notEmpty();
+            // Store validation errors if any...
+            var validErrors = req.validationErrors();
 
-            var productList = [];
-            products.forEach(product => {
-                productList.push(product);
-            });
-
-            const bagDetails = {
-                startDate: startDate,
-                endDate: endDate,
-                priceSmall: priceSmall,
-                priceMedium: priceMedium,
-                priceLarge: priceLarge
-            };
-
-            Bag.updateBag(id, bagDetails, productList, function(err, bagContent) {
-                if (err) throw err;
-                req.flash('success_msg', 'Bag successfully updated!');
+            // Attempt User creation
+            if (validErrors) {
+                req.flash('valid_msg', validErrors[0].msg);
                 res.redirect('back');
-            });
+            }
+            else {
+                var productList = [];
+                products.forEach(product => {
+                    productList.push(product);
+                });
+
+                const bagDetails = {
+                    startDate: startDate,
+                    endDate: endDate,
+                    priceSmall: priceSmall,
+                    priceMedium: priceMedium,
+                    priceLarge: priceLarge
+                };
+
+                Bag.updateBag(id, bagDetails, productList, function(err, bagContent) {
+                    if (err) throw err;
+                    req.flash('success_msg', 'Bag successfully updated!');
+                    res.redirect('back');
+                });
+            }
         }
         else {
             req.flash('error_msg', 'You don\'t have the authority to access this page!');

@@ -1,8 +1,6 @@
 {{#if user}}
-{{#if errors}}
-      {{#each errors}}
-        <div class="alert alert-danger">{{msg}}</div>
-      {{/each}}
+{{#if valid_msg}}
+    <div class="alert alert-danger">{{valid_msg}}</div>
 {{/if}}
 <!-- Page-Level Demo Scripts - Tables - Use for reference -->
 <script src="http://code.jquery.com/jquery-3.3.1.min.js" 
@@ -39,16 +37,16 @@ crossorigin="anonymous"></script>
                                 <div class="form-group row">
                                     <label class="col-sm-2 col-form-label">Bag size <span style="color:red;">*</span></label>
                                     <div class="col-sm-3">
-                                        <select class="form-control" name="bagSize">
-                                            <option>Choose...</option>
-                                            <option>Small</option>
-                                            <option>Medium</option>
-                                            <option>Large</option>
+                                        <select class="form-control" name="typeOfBag">
+                                            <option value="Choose..." selected>Choose...</option>
+                                            <option value="Small">Small</option>
+                                            <option value="Medium">Medium</option>
+                                            <option value="Large">Large</option>
                                         </select>
                                     </div>
                                 </div>
                                 <div class="form-group row">
-                                    <label class="col-sm-2 col-form-label">Notes <span style="color:red;">*</span></label>
+                                    <label class="col-sm-2 col-form-label">Notes</label>
                                     <div class="col-sm-3">
                                         <textarea rows="6" class="form-control" placeholder="" name="notes" type="text"></textarea>
                                     </div>

@@ -55,21 +55,35 @@ router.post('/products/new', function(req, res) {
             const amountMedium = req.body.amountMedium;
             const amountLarge = req.body.amountLarge;
 
-            // VALIDATION ... TODO
+            // Validation
+            req.check('itemName', 'Product name is required').notEmpty();
+            req.check('avgWeight', 'Average weight (number) is required').isNumeric();
+            req.check('amountSmall', 'Small bag amount (number) is required').isNumeric();
+            req.check('amountMedium', 'Medium bag amount (number) is required').isNumeric();
+            req.check('amountLarge', 'Large bag amount (number) is required').isNumeric();
+            // Store validation errors if any...
+            var validErrors = req.validationErrors();
+    
+            // Attempt User creation
+            if (validErrors) {
+                req.flash('valid_msg', validErrors[0].msg);
+                res.redirect('back');
+            }
+            else {
+                const productDetails = {
+                    name: name,
+                    avgWeight: avgWeight,
+                    amountSmall: amountSmall,
+                    amountMedium: amountMedium,
+                    amountLarge: amountLarge
+                };
 
-            const productDetails = {
-                name: name,
-                avgWeight: avgWeight,
-                amountSmall: amountSmall,
-                amountMedium: amountMedium,
-                amountLarge: amountLarge
-            };
-
-            Product.createProduct(productDetails, function(err, product) {
-                if(err) throw err;
-                req.flash('success_msg', 'Product successfully created!');
-                res.redirect('/api/stock/products');
-            });
+                Product.createProduct(productDetails, function(err, product) {
+                    if(err) throw err;
+                    req.flash('success_msg', 'Product successfully created!');
+                    res.redirect('/api/stock/products');
+                });
+            }
         }
         else {
             req.flash('error_msg', 'You don\'t have the authority to access this page!');
@@ -114,21 +128,35 @@ router.post('/products/update', function(req, res) {
             const amountMedium = req.body.amountMedium;
             const amountLarge = req.body.amountLarge;
 
-            // VALIDATION ... TODO
-
-            const productDetails = {
-                name: name,
-                avgWeight: avgWeight,
-                amountSmall: amountSmall,
-                amountMedium: amountMedium,
-                amountLarge: amountLarge
-            };
-
-            Product.updateProduct(id, productDetails, function(err, product) {
-                if (err) throw err; 
-                req.flash('success_msg', 'Product successfully updated!');
+            // Validation
+            req.check('itemName', 'Product name is required').notEmpty();
+            req.check('avgWeight', 'Average weight (number) is required').isNumeric();
+            req.check('amountSmall', 'Small bag amount (number) is required').isNumeric();
+            req.check('amountMedium', 'Medium bag amount (number) is required').isNumeric();
+            req.check('amountLarge', 'Large bag amount (number) is required').isNumeric();
+            // Store validation errors if any...
+            var validErrors = req.validationErrors();
+    
+            // Attempt User creation
+            if (validErrors) {
+                req.flash('valid_msg', validErrors[0].msg);
                 res.redirect('back');
-            });
+            }
+            else {
+                const productDetails = {
+                    name: name,
+                    avgWeight: avgWeight,
+                    amountSmall: amountSmall,
+                    amountMedium: amountMedium,
+                    amountLarge: amountLarge
+                };
+
+                Product.updateProduct(id, productDetails, function(err, product) {
+                    if (err) throw err; 
+                    req.flash('success_msg', 'Product successfully updated!');
+                    res.redirect('back');
+                });
+            }
         }
         else {
             req.flash('error_msg', 'You don\'t have the authority to access this page!');
@@ -217,18 +245,29 @@ router.post('/harvests/new', function(req, res) {
             const amountHarvested = req.body.amountHarvested;
             const pickingWeek = req.body.pickingWeek;
 
-            // VALIDATION ... TODO
+            // Validation
+            req.check('amountHarvested', 'Haversted amount (number) is required').isNumeric();
+            req.check('pickingWeek', 'Harvesting date (selection) is required').notEmpty();
+            // Store validation errors if any...
+            var validErrors = req.validationErrors();
+    
+            // Attempt User creation
+            if (validErrors) {
+                req.flash('valid_msg', validErrors[0].msg);
+                res.redirect('back');
+            }
+            else {
+                const pickingDetails = {
+                    amountHarvested: amountHarvested,
+                    pickingWeek: pickingWeek
+                };
 
-            const pickingDetails = {
-                amountHarvested: amountHarvested,
-                pickingWeek: pickingWeek
-            };
-
-            Picking.addHaverst(productId, pickingDetails, function(err, picking) {
-                if (err) throw err;
-                req.flash('success_msg', 'Harvesting successfully added!');
-                res.redirect('/api/stock/harvests/to/' + productId);
-            });
+                Picking.addHaverst(productId, pickingDetails, function(err, picking) {
+                    if (err) throw err;
+                    req.flash('success_msg', 'Harvesting successfully added!');
+                    res.redirect('/api/stock/harvests/to/' + productId);
+                });
+            }
         }
         else {
             req.flash('error_msg', 'You don\'t have the authority to access this page!');
@@ -276,18 +315,29 @@ router.post('/harvests/update', function(req, res) {
             const amountHarvested = req.body.amountHarvested;
             const pickingWeek = req.body.pickingWeek;
 
-            // VALIDATION ... TODO
-
-            const pickingDetails = {
-                amountHarvested: amountHarvested,
-                pickingWeek: pickingWeek
-            };
-
-            Picking.updateHarvest(id, pickingDetails, function(err, harvest) {
-                if (err) throw err;
-                req.flash('success_msg', 'Harvesting successfully updated!');
+            // Validation
+            req.check('amountHarvested', 'Haversted amount (number) is required').isNumeric();
+            req.check('pickingWeek', 'Harvesting date (selection) is required').notEmpty();
+            // Store validation errors if any...
+            var validErrors = req.validationErrors();
+    
+            // Attempt User creation
+            if (validErrors) {
+                req.flash('valid_msg', validErrors[0].msg);
                 res.redirect('back');
-            });
+            }
+            else {
+                const pickingDetails = {
+                    amountHarvested: amountHarvested,
+                    pickingWeek: pickingWeek
+                };
+
+                Picking.updateHarvest(id, pickingDetails, function(err, harvest) {
+                    if (err) throw err;
+                    req.flash('success_msg', 'Harvesting successfully updated!');
+                    res.redirect('back');
+                });
+            }
         }
         else {
             req.flash('error_msg', 'You don\'t have the authority to access this page!');
@@ -366,19 +416,31 @@ router.post('/purchases/new', function(req, res) {
             const date = req.body.purchaseDate;
             const price = req.body.price;
 
-            // VALIDATION ... TODO
+            // Validation
+            req.check('amountPurchased', 'Haversted amount (number) is required').isNumeric();
+            req.check('purchaseDate', 'Purchase date (selection) is required').notEmpty();
+            req.check('price', 'Price (number) is required').isNumeric();
+            // Store validation errors if any...
+            var validErrors = req.validationErrors();
+    
+            // Attempt User creation
+            if (validErrors) {
+                req.flash('valid_msg', validErrors[0].msg);
+                res.redirect('back');
+            }
+            else {
+                const purchaseDetails = {
+                    amountPurchased: amountPurchased,
+                    date: date,
+                    price: price
+                };
 
-            const purchaseDetails = {
-                amountPurchased: amountPurchased,
-                date: date,
-                price: price
-            };
-
-            Purchasing.addPurchase(productId, purchaseDetails, function(err, purchase) {
-                if (err) throw err;
-                req.flash('success_msg', 'Purchase successfully added!');
-                res.redirect('/api/stock/purchases/to/' + productId);
-            });
+                Purchasing.addPurchase(productId, purchaseDetails, function(err, purchase) {
+                    if (err) throw err;
+                    req.flash('success_msg', 'Purchase successfully added!');
+                    res.redirect('/api/stock/purchases/to/' + productId);
+                });
+            }
         }
         else {
             req.flash('error_msg', 'You don\'t have the authority to access this page!');
@@ -428,19 +490,31 @@ router.post('/purchases/update', function(req, res) {
             const date = req.body.purchaseDate;
             const price = req.body.price;
 
-            // VALIDATION ... TODO
-
-            const purchaseDetails = {
-                amountPurchased: amountPurchased,
-                date: date,
-                price: price
-            };
-
-            Purchasing.updatePurchase(id, purchaseDetails, function(err, purchase) {
-                if (err) throw err;
-                req.flash('success_msg', 'Purchase successfully updated!');
+            // Validation
+            req.check('amountPurchased', 'Haversted amount (number) is required').isNumeric();
+            req.check('purchaseDate', 'Purchase date (selection) is required').notEmpty();
+            req.check('price', 'Price (number) is required').isNumeric();
+            // Store validation errors if any...
+            var validErrors = req.validationErrors();
+    
+            // Attempt User creation
+            if (validErrors) {
+                req.flash('valid_msg', validErrors[0].msg);
                 res.redirect('back');
-            });
+            }
+            else {
+                const purchaseDetails = {
+                    amountPurchased: amountPurchased,
+                    date: date,
+                    price: price
+                };
+
+                Purchasing.updatePurchase(id, purchaseDetails, function(err, purchase) {
+                    if (err) throw err;
+                    req.flash('success_msg', 'Purchase successfully updated!');
+                    res.redirect('back');
+                });
+            }
         }
         else {
             req.flash('error_msg', 'You don\'t have the authority to access this page!');

@@ -4,6 +4,8 @@ const Schema = mongoose.Schema;
 const Client = require('./client');
 const Product = require('./product');
 
+mongoose.Promise = global.Promise;
+
 const OrderSchema = new Schema({
     client: {
         type: Schema.Types.ObjectId,
@@ -49,12 +51,11 @@ module.exports.createOrder = function(_id, orderDetails, extrasList, callback) {
     var order = new Order(orderDetails);
     var count = extrasList.length;
     
-    Client.findById({_id}, function(err, client) {
+    Client.findById({_id})
+    .then((client) => {
         order.client = client;
-    })
-    .then(() => {
         if (count == 0) {
-            return order.save(orderDetails, callback);
+            return order.save(callback);
         }
         else {
             extrasList.forEach(productId => {
@@ -72,11 +73,12 @@ module.exports.createOrder = function(_id, orderDetails, extrasList, callback) {
 
 module.exports.updateOrder = function(_id, orderDetails, extrasList, callback) {
     var count = extrasList.length;
-
+    
     Order.findById({_id})
     .then((order) => {
         order.extra = [];
         if (count == 0) {
+            console.log(orderDetails);
             return order.save(orderDetails, callback);
         }
         else {
@@ -85,8 +87,9 @@ module.exports.updateOrder = function(_id, orderDetails, extrasList, callback) {
                     order.extra.push(product);
                     count--;
                     // save the data
-                    if (count == 0)
+                    if (count == 0) {
                         return order.save(orderDetails, callback);
+                    }
                 });
             });
         }

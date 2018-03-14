@@ -14,8 +14,8 @@
                         <tr>
                             <th style="text-align: center;">#</th>
                             <th>Full name</th>
+                            <th>Email</th>
                             <th>Frequency</th>
-                            <th>Last order</th>
                             <th>Address</th>
                         </tr>
                     </thead>
@@ -30,10 +30,10 @@
                                     <i class="fa fa-trash"></i>
                                 </a>
                             </td>
-                            <td style="font-size:18px;">{{this.name}}</td>
-                            <td style="font-size:18px;">{{this.frequency}}</td>
-                            <td style="font-size:18px;">{{this.account}}</td>
-                            <td style="font-size:18px;">{{this.address}}</td>
+                            <td style="font-size:16px;">{{this.name}}</td>
+                            <td style="font-size:16px;"><a href="mailto:{{this.email}}" style="text-decoration: none;">{{this.email}}</a></td>
+                            <td style="font-size:16px;">{{this.frequency}}</td>
+                            <td style="font-size:16px;">{{this.address}}</td>
                         </tr>
                         {{/each}}
                     </tbody>

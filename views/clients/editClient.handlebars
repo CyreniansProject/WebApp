@@ -1,8 +1,6 @@
 {{#if user}}
-{{#if errors}}
-      {{#each errors}}
-        <div class="alert alert-danger">{{msg}}</div>
-      {{/each}}
+{{#if valid_msg}}
+    <div class="alert alert-danger">{{valid_msg}}</div>
 {{/if}}
 <div>
 </div>
