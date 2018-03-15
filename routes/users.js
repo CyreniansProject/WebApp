@@ -46,116 +46,128 @@ router.get('/logout', function(req, res) {
 
 // Register - GET
 router.get('/new', function(req, res) {
-	//if (req.user) {
-	//	if (req.user.role == 0) {
+	if (req.user) {
+		if (req.user.role == 0) {
 			res.render('users/addUser', { layout: 'layout_staff.handlebars', page_title: 'Add Member' });
-	//	}
-	//	else {
-			//req.flash('error_msg', 'You don\'t have the authority to add new staff members!');
-			//res.redirect('/api/dashboard');
-	//	}
-	//}	
-	//else {
-		//req.flash('error_msg', 'You need to login first!');
-		//res.redirect('/');
-	//}
+		}
+		else {
+			req.flash('error_msg', 'You don\'t have the authority to add new staff members!');
+			res.redirect('/api/dashboard');
+		}
+	}	
+	else {
+		req.flash('error_msg', 'You need to login first!');
+		res.redirect('/');
+	}
 });
 
 // Register - POST
 router.post('/new', function(req, res) {
-	const firstname = req.body.firstname;
-	const lastname = req.body.lastname;
-	const email = req.body.email;
-	const role = req.body.role;
-	
-	var password = generator.generate({
-		length: 10,
-		numbers: true
-	})
+	if (req.user) {
+		if (req.user.role == 0) {
+			const firstname = req.body.firstname;
+			const lastname = req.body.lastname;
+			const email = req.body.email;
+			const role = req.body.role;
+			
+			var password = generator.generate({
+				length: 10,
+				numbers: true
+			})
 
-	var accessLevel;
-	if(role == 0)
-		accessLevel = "Administrator";
-	else if (role == 1)
-		accessLevel = "Staff member";
-	else if (role == 2)
-		accessLevel = "Delivery man";
+			var accessLevel;
+			if(role == 0)
+				accessLevel = "Administrator";
+			else if (role == 1)
+				accessLevel = "Staff member";
+			else if (role == 2)
+				accessLevel = "Delivery man";
 
-	// CREATE EMAIL
-	const output = `
-		<p>Hi ${firstname} ${lastname}, </p><br/>
-		<p>Congratulations for beign added to Cyrenians Farm's management system.</p>
-		<h3>Accout details</h3>
-		<ul>
-			<li>Email (LoginID): ${email}</li>
-			<li>Access level: ${accessLevel}</li>
-			<li>Temporary password: ${password} - Safe, but hard to remember. Not recommended.</li>
-		</ul>
-		<br/><strong>IMPORTANT:</strong> Set your own password.<br/>
-		<ul>
-		<li>Step 1: Click on this link: <a href="http://localhost/api/users/reset/${email}">Complete account creation!</a></li>
-		<li>Step 2: Type in your preffered password and confirm it.</li>
-		<li>Step 3: Sign in to the system with your email and newly set password.</li>
-		</ul>
-	`;
+			// CREATE EMAIL
+			const output = `
+				<p>Hi ${firstname} ${lastname}, </p><br/>
+				<p>Congratulations for beign added to Cyrenians Farm's management system.</p>
+				<h3>Accout details</h3>
+				<ul>
+					<li>Email (LoginID): ${email}</li>
+					<li>Access level: ${accessLevel}</li>
+					<li>Temporary password: ${password} - Safe, but hard to remember. Not recommended.</li>
+				</ul>
+				<br/><strong>IMPORTANT:</strong> Set your own password.<br/>
+				<ul>
+				<li>Step 1: Click on this link: <a href="http://vbd.cyrenians.scot/api/users/reset/${email}">Complete account creation!</a></li>
+				<li>Step 2: Type in your preffered password and confirm it.</li>
+				<li>Step 3: Sign in to the system with your email and newly set password.</li>
+				</ul>
+			`;
 
-	// create reusable transporter object using the default SMTP transport
-	const transporter = nodemailer.createTransport({
-		host: 'mail.georgim.com',
-		port: 25,
-		secure: false, // true for 465, false for any other ports
-		auth: {
-			user: 'georgi@georgim.com', // generated ethereal user
-			pass: '405060Gg'  // generated ethereal password
-		},
-		tls: {
-			rejectUnauthorized: false
-		}
-	});
-
-	// setup email data with unicode symbols
-	const mailOptions = {
-		from: '"Georgi @ Cyrenians Farm" <georgi@georgim.com>', // sender address
-		to: email, // list of receivers
-		subject: 'Account completion request', // Subject line
-		text: 'Set your password!', // plain text body
-		html: output // html body
-	};
-	// END EMAIL CREATION
-
-	// Validation
-	req.check('firstname', 'First Name is required').notEmpty();
-	req.check('lastname', 'Last Name is required').notEmpty();
-	req.check('email', 'Email is required').isEmail();
-	req.check('role', 'Access level (selection) is required').not().equals("Choose...");
-	
-	// Store validation errors if any...
-	var validErrors = req.validationErrors();
-	// Attempt User creation
-	if (validErrors) {
-		req.flash('valid_msg', validErrors[0].msg);
-		res.redirect('back');
-	}
-	else {
-		const userDetails = {
-			firstname: firstname,
-			lastname: lastname,
-			email: email,
-			password: password,
-			role: role
-		}
-
-		User.createUser(userDetails, function(err, user) {
-			if(err) throw err;
-
-			// send mail with defined transport object
-			transporter.sendMail(mailOptions, (mailErr, info) => {
-				if (mailErr) return mailErr;
-
-				req.flash('success_msg', 'User was successfully created.');
-				res.redirect('/api/users');
+			// create reusable transporter object using the default SMTP transport
+			const transporter = nodemailer.createTransport({
+				host: 'mail.georgim.com',
+				port: 25,
+				secure: false, // true for 465, false for any other ports
+				auth: {
+					user: 'georgi@georgim.com', // generated ethereal user
+					pass: '405060Gg'  // generated ethereal password
+				},
+				tls: {
+					rejectUnauthorized: false
+				}
 			});
-		});
+
+			// setup email data with unicode symbols
+			const mailOptions = {
+				from: '"Georgi @ Cyrenians Farm" <georgi@georgim.com>', // sender address
+				to: email, // list of receivers
+				subject: 'Account completion request', // Subject line
+				text: 'Set your password!', // plain text body
+				html: output // html body
+			};
+			// END EMAIL CREATION
+
+			// Validation
+			req.check('firstname', 'First Name is required').notEmpty();
+			req.check('lastname', 'Last Name is required').notEmpty();
+			req.check('email', 'Email is required').isEmail();
+			req.check('role', 'Access level (selection) is required').not().equals("Choose...");
+			
+			// Store validation errors if any...
+			var validErrors = req.validationErrors();
+			// Attempt User creation
+			if (validErrors) {
+				req.flash('valid_msg', validErrors[0].msg);
+				res.redirect('back');
+			}
+			else {
+				const userDetails = {
+					firstname: firstname,
+					lastname: lastname,
+					email: email,
+					password: password,
+					role: role
+				}
+
+				User.createUser(userDetails, function(err, user) {
+					if(err) throw err;
+
+					// send mail with defined transport object
+					transporter.sendMail(mailOptions, (mailErr, info) => {
+						if (mailErr) return mailErr;
+
+						req.flash('success_msg', 'User was successfully created.');
+						res.redirect('/api/users');
+					});
+				});
+			}
+		}
+		else {
+			req.flash('error_msg', 'You don\'t have the authority to add new staff members!');
+			res.redirect('/api/dashboard');
+		}
+	}	
+	else {
+		req.flash('error_msg', 'You need to login first!');
+		res.redirect('/');
 	}
 });
 
