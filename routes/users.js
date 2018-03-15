@@ -46,19 +46,19 @@ router.get('/logout', function(req, res) {
 
 // Register - GET
 router.get('/new', function(req, res) {
-	if (req.user) {
-		if (req.user.role == 0) {
+	//if (req.user) {
+	//	if (req.user.role == 0) {
 			res.render('users/addUser', { layout: 'layout_staff.handlebars', page_title: 'Add Member' });
-		}
-		else {
-			req.flash('error_msg', 'You don\'t have the authority to add new staff members!');
-			res.redirect('/api/dashboard');
-		}
-	}	
-	else {
-		req.flash('error_msg', 'You need to login first!');
-		res.redirect('/');
-	}
+	//	}
+	//	else {
+			//req.flash('error_msg', 'You don\'t have the authority to add new staff members!');
+			//res.redirect('/api/dashboard');
+	//	}
+	//}	
+	//else {
+		//req.flash('error_msg', 'You need to login first!');
+		//res.redirect('/');
+	//}
 });
 
 // Register - POST
