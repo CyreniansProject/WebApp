@@ -11,9 +11,32 @@ router.get('/to/:clientId', function(req, res) {
     if (req.user) {
         if (req.user.role == 0 || req.user.role == 1) {
             const clientId = req.params.clientId;
-            Order.listOrders(clientId, function(err, orders) {
+            const startDate = req.query['startDate'];
+            const endDate = req.query['endDate'];
+            var criteria;
+            if (startDate && endDate) {
+                criteria = {
+                    startDate: startDate,
+                    endDate: endDate
+                }
+            }
+            else if (startDate) {
+                criteria = {
+                    startDate: startDate,
+                }
+            }
+            else if (endDate) {
+                criteria = {
+                    endDate: endDate
+                }
+            }
+            else {
+                criteria = {}
+            }
+
+            Order.listOrders(clientId, criteria, function(err, orders) {
                 if (err) throw err;
-                Client.findById({_id: clientId}, function(cErr, client) {
+                Client.findOne({_id: clientId}, function(cErr, client) {
                     if (cErr) throw cErr;
                     res.render('orders/index', { layout: 'layout_staff.handlebars', page_title: 'Orders list for ' + client.name, 
                     user: req.user, orders: orders, clientId: clientId });

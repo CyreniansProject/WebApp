@@ -1,6 +1,12 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
+// helpers
+const _ = require('lodash');
+const dateFormat = require('dateformat');
+const dateHelper = require('./helpers/dates');
+
+// related schemas
 const Product = require('./product');
 
 const PurchasingSchema = new Schema ({
@@ -11,7 +17,7 @@ const PurchasingSchema = new Schema ({
     },
     date: {
         // date of picking
-        type: String
+        type: Date
     },
     amountPurchased: {
         // how much has been purchased
@@ -23,16 +29,31 @@ const PurchasingSchema = new Schema ({
     }
 });
 
+PurchasingSchema.virtual('formatDate').get(function() {
+    var result = dateFormat(this.date, 'ddd, mmmm dd yyyy');
+    return result;
+});
+
+PurchasingSchema.virtual('editDate').get(function() {
+    var result = dateFormat(this.date, 'mm-dd-yyyy');
+    return result;
+});
+
 const Purchasing = module.exports = mongoose.model('Purchasing', PurchasingSchema);
 
-module.exports.listPurchases = function(_id, callback) {
+module.exports.listPurchases = function(_id, criteria, callback) {
     Product.findById({_id})
     .then((product) => {
-        Purchasing.find({product: product})
-        .populate({
-            path: 'product'
-        })
-        .exec(callback);
+        if (!_.isEmpty(criteria)) {
+            Purchasing.find({product: product, date: dateHelper.dateRangedSearch(criteria)})
+            .populate({path: 'product'})
+            .exec(callback);
+        }
+        else {
+            Purchasing.find({product: product})
+            .populate({path: 'product'})
+            .exec(callback);
+        }
     });
 };
 

@@ -36,7 +36,7 @@
                                     <label class="col-sm-2 col-form-label">Harvesting date <span style="color:red;">*</span></label>
                                     <div class="col-sm-3">
                                         <div class="input-group date">
-                                            <input value="{{harvest.pickingWeek}}" type="text" class="form-control" name="pickingWeek">
+                                            <input value="{{harvest.editDate}}" type="text" class="form-control" name="pickingDate">
                                             <div class="input-group-addon">
                                                 mm/dd/yyyy
                                             </div>
@@ -60,7 +60,9 @@ crossorigin="anonymous"></script>
 <script>
 $(document).ready(function() {
     $('.date input').each(function() {
-        $(this).datepicker();
+        $(this).datepicker({
+            format: 'mm-dd-yyyy'
+        });
     });
 });
 </script>

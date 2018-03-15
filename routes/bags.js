@@ -8,7 +8,30 @@ const Product = require('../models/product');
 router.get('/', function(req, res) { 
     if (req.user) {
         if (req.user.role == 0 || req.user.role == 1) {
-            Bag.listBags(function(err, bags) {
+            const startDate = req.query['startDate'];
+            const endDate = req.query['endDate'];
+            var criteria;
+            if (startDate && endDate) {
+                criteria = {
+                    startDate: startDate,
+                    endDate: endDate
+                }
+            }
+            else if (startDate) {
+                criteria = {
+                    startDate: startDate,
+                }
+            }
+            else if (endDate) {
+                criteria = {
+                    endDate: endDate
+                }
+            }
+            else {
+                criteria = {}
+            }
+            
+            Bag.listBags(criteria, function(err, bags) {
                 if (err) throw err;
                 res.render('bags/index', { layout: 'layout_staff.handlebars', page_title: 'Bags list', 
                 user: req.user, bags: bags });
@@ -125,7 +148,7 @@ router.get('/edit/:id', function(req, res) {
                     Product.listProducts(function(lpErr, products) {
                         if (lpErr) throw lpErr;
                         res.render('bags/editBag', { layout: 'layout_staff.handlebars', 
-                        page_title: 'Bag (' + bagContent.startDate + ' - ' + bagContent.endDate + ')', 
+                        page_title: 'Bag (' + bagContent.formatStartDate + ' - ' + bagContent.formatEndDate + ')',
                         user: req.user, bagContent: bagContent, products: products });
                     });
                 });

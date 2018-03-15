@@ -82,11 +82,11 @@ crossorigin="anonymous"></script>
                                     <div class="input-group input-daterange form-inline">
                                         <label>From</label>
                                         <div class="form-group">
-                                            <input type="text" class="form-control" name="startDate" value="{{bagContent.startDate}}">
+                                            <input type="text" class="form-control" name="startDate" value="{{bagContent.editStartDate}}">
                                         </div>
                                         <label>To</label>
                                         <div class="form-group">
-                                            <input type="text" class="form-control" name="endDate" value="{{bagContent.endDate}}">
+                                            <input type="text" class="form-control" name="endDate" value="{{bagContent.editEndDate}}">
                                         </div>
                                     </div>
                                 </div>
@@ -138,7 +138,7 @@ crossorigin="anonymous"></script>
     $(document).ready(function() {
          $('.input-daterange input').each(function() {
            $(this).datepicker(({
-                format: 'mm/dd/yyyy'
+                format: 'mm-dd-yyyy'
             }));
         });
     });

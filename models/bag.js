@@ -1,6 +1,12 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
+// helpers
+const _ = require('lodash');
+const dateFormat = require('dateformat');
+const dateHelper = require('./helpers/dates');
+
+// related schemas
 const Product = require('./product');
 
 const BagSchema = new Schema ({
@@ -10,11 +16,11 @@ const BagSchema = new Schema ({
     }],
     startDate: {
         //date of the bag creation
-        type: String
+        type: Date
     },
     endDate: {
         //date of the bag expiration
-        type: String
+        type: Date
     },
     priceSmall: {
         type: Number
@@ -27,10 +33,35 @@ const BagSchema = new Schema ({
     }
 });
 
+BagSchema.virtual('formatStartDate').get(function() {
+    var result = dateFormat(this.startDate, 'ddd, mmmm dd yyyy');
+    return result;
+});
+
+BagSchema.virtual('formatEndDate').get(function() {
+    var result = dateFormat(this.endDate, 'ddd, mmmm dd yyyy');
+    return result;
+});
+
+BagSchema.virtual('editStartDate').get(function() {
+    var result = dateFormat(this.startDate, 'mm-dd-yyyy');
+    return result;
+});
+
+BagSchema.virtual('editEndDate').get(function() {
+    var result = dateFormat(this.endDate, 'mm-dd-yyyy');
+    return result;
+});
+
 const Bag = module.exports = mongoose.model('Bag', BagSchema);
  
-module.exports.listBags = function(callback) {
-    Bag.find({}, callback);
+module.exports.listBags = function(criteria, callback) {
+    if (!_.isEmpty(criteria)) {
+        Bag.find({startDate: dateHelper.dateRangedSearch(criteria)}, callback);
+    }
+    else {
+        Bag.find({}, callback);
+    }
 }
 
 module.exports.createBag = function(bagDetails, productList, callback) {

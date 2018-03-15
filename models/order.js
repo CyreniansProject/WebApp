@@ -1,6 +1,12 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
+// helpers
+const _ = require('lodash');
+const dateFormat = require('dateformat');
+const dateHelper = require('./helpers/dates');
+
+// related schemas
 const Client = require('./client');
 const Product = require('./product');
 
@@ -18,7 +24,7 @@ const OrderSchema = new Schema({
         type: String
     },
     date: {
-        type: String
+        type: Date
     },
     numberOfBags: {
         type: Number
@@ -38,12 +44,31 @@ OrderSchema.pre('remove', function(next) {
     this.model('Order').remove({client: this._id}, next);
 });
 
+OrderSchema.virtual('formatDate').get(function() {
+    var result = dateFormat(this.date, 'ddd, mmmm dd yyyy');
+    return result;
+});
+
+OrderSchema.virtual('editDate').get(function() {
+    var result = dateFormat(this.date, 'mm-dd-yyyy');
+    return result;
+});
+
 const Order = module.exports = mongoose.model('Order', OrderSchema);
 
-module.exports.listOrders = function(_id, callback) {
+module.exports.listOrders = function(_id, criteria, callback) {
     Client.findById({_id})
-    .then((client) => {
-        Order.find({client: client}, callback);
+    .then((client)=> {
+        if (!_.isEmpty(criteria)) {
+            Order.find({client: client, date: dateHelper.dateRangedSearch(criteria)})
+            .populate({path: 'client'})
+            .exec(callback);
+        }
+        else {
+            Order.find({client: client})
+            .populate({path: 'client'})
+            .exec(callback);;
+        }
     });
 }
 
@@ -78,12 +103,14 @@ module.exports.updateOrder = function(_id, orderDetails, extrasList, callback) {
     .then((order) => {
         order.extra = [];
         if (count == 0) {
+            console.log('normal update');
             order.save();
             return Order.update({_id}, orderDetails, callback);
         }
         else {
             extrasList.forEach(productId => {
                 Product.findById({_id: productId}, function(err, product) {
+                    console.log('full update');
                     order.extra.push(product);
                     count--;
                     // save the data

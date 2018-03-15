@@ -2,7 +2,7 @@
 <div class="row">
     <div class="col-lg-7">
         <label><strong>Display purchases between specific dates</strong></label>
-        <form class="form-inline" method="POST">
+        <form class="form-inline" method="GET" action="/api/stock/purchases/to/{{productId}}">
             <div class="input-group input-daterange">
                 <label>From</label>
                 <div class="form-group">
@@ -58,7 +58,7 @@
                                     <i class="fa fa-trash"></i>
                                 </a>
                             </td>
-                            <td style="font-size:16px;">{{this.date}}</td>
+                            <td style="font-size:16px;">{{this.formatDate}}</td>
                             <td style="font-size:16px;">{{this.amountPurchased}}</td>
                             <td style="font-size:16px;">{{this.price}}</td>
                             <td style="font-size:16px;">{{multiply this.amountPurchased this.price}}</td>

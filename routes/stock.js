@@ -57,10 +57,10 @@ router.post('/products/new', function(req, res) {
 
             // Validation
             req.check('itemName', 'Product name is required').notEmpty();
-            req.check('avgWeight', 'Average weight (number) is required').isNumeric();
-            req.check('amountSmall', 'Small bag amount (number) is required').isNumeric();
-            req.check('amountMedium', 'Medium bag amount (number) is required').isNumeric();
-            req.check('amountLarge', 'Large bag amount (number) is required').isNumeric();
+            req.check('avgWeight', 'Average weight (number) is required').notEmpty();
+            req.check('amountSmall', 'Small bag amount (number) is required').notEmpty();
+            req.check('amountMedium', 'Medium bag amount (number) is required').notEmpty();
+            req.check('amountLarge', 'Large bag amount (number) is required').notEmpty();
             // Store validation errors if any...
             var validErrors = req.validationErrors();
     
@@ -130,10 +130,10 @@ router.post('/products/update', function(req, res) {
 
             // Validation
             req.check('itemName', 'Product name is required').notEmpty();
-            req.check('avgWeight', 'Average weight (number) is required').isNumeric();
-            req.check('amountSmall', 'Small bag amount (number) is required').isNumeric();
-            req.check('amountMedium', 'Medium bag amount (number) is required').isNumeric();
-            req.check('amountLarge', 'Large bag amount (number) is required').isNumeric();
+            req.check('avgWeight', 'Average weight (number) is required').notEmpty();
+            req.check('amountSmall', 'Small bag amount (number) is required').notEmpty();
+            req.check('amountMedium', 'Medium bag amount (number) is required').notEmpty();
+            req.check('amountLarge', 'Large bag amount (number) is required').notEmpty();
             // Store validation errors if any...
             var validErrors = req.validationErrors();
     
@@ -196,7 +196,30 @@ router.get('/harvests/to/:productId', function(req, res) {
     if (req.user) {
         if (req.user.role == 0 || req.user.role == 1) {
             const productId = req.params.productId;
-            Picking.listHarvests(productId, function(err, harvests) {
+            const startDate = req.query['startDate'];
+            const endDate = req.query['endDate'];
+            var criteria;
+            if (startDate && endDate) {
+                criteria = {
+                    startDate: startDate,
+                    endDate: endDate
+                }
+            }
+            else if (startDate) {
+                criteria = {
+                    startDate: startDate,
+                }
+            }
+            else if (endDate) {
+                criteria = {
+                    endDate: endDate
+                }
+            }
+            else {
+                criteria = {}
+            }
+
+            Picking.listHarvests(productId, criteria, function(err, harvests) {
                 if (err) throw err;
                 Product.findById({_id: productId}, function(cErr, product) {
                     if (cErr) throw cErr;
@@ -243,11 +266,11 @@ router.post('/harvests/new', function(req, res) {
             const productId = req.body.productId;
             
             const amountHarvested = req.body.amountHarvested;
-            const pickingWeek = req.body.pickingWeek;
+            const date = req.body.pickingDate;
 
             // Validation
-            req.check('amountHarvested', 'Haversted amount (number) is required').isNumeric();
-            req.check('pickingWeek', 'Harvesting date (selection) is required').notEmpty();
+            req.check('amountHarvested', 'Haversted amount (number) is required').notEmpty();
+            req.check('pickingDate', 'Harvesting date (selection) is required').notEmpty();
             // Store validation errors if any...
             var validErrors = req.validationErrors();
     
@@ -259,7 +282,7 @@ router.post('/harvests/new', function(req, res) {
             else {
                 const pickingDetails = {
                     amountHarvested: amountHarvested,
-                    pickingWeek: pickingWeek
+                    date: date
                 };
 
                 Picking.addHaverst(productId, pickingDetails, function(err, picking) {
@@ -313,11 +336,11 @@ router.post('/harvests/update', function(req, res) {
             const id = req.body.harvestId;
             
             const amountHarvested = req.body.amountHarvested;
-            const pickingWeek = req.body.pickingWeek;
+            const date = req.body.pickingDate;
 
             // Validation
-            req.check('amountHarvested', 'Haversted amount (number) is required').isNumeric();
-            req.check('pickingWeek', 'Harvesting date (selection) is required').notEmpty();
+            req.check('amountHarvested', 'Haversted amount (number) is required').notEmpty();
+            req.check('pickingDate', 'Harvesting date (selection) is required').notEmpty();
             // Store validation errors if any...
             var validErrors = req.validationErrors();
     
@@ -329,7 +352,7 @@ router.post('/harvests/update', function(req, res) {
             else {
                 const pickingDetails = {
                     amountHarvested: amountHarvested,
-                    pickingWeek: pickingWeek
+                    date: date
                 };
 
                 Picking.updateHarvest(id, pickingDetails, function(err, harvest) {
@@ -366,7 +389,30 @@ router.get('/purchases/to/:productId', function(req, res) {
     if (req.user) {
         if (req.user.role == 0 || req.user.role == 1) {
             const productId = req.params.productId;
-            Purchasing.listPurchases(productId, function(err, purchases) {
+            const startDate = req.query['startDate'];
+            const endDate = req.query['endDate'];
+            var criteria;
+            if (startDate && endDate) {
+                criteria = {
+                    startDate: startDate,
+                    endDate: endDate
+                }
+            }
+            else if (startDate) {
+                criteria = {
+                    startDate: startDate,
+                }
+            }
+            else if (endDate) {
+                criteria = {
+                    endDate: endDate
+                }
+            }
+            else {
+                criteria = {}
+            }
+
+            Purchasing.listPurchases(productId, criteria, function(err, purchases) {
                 if (err) throw err;
                 Product.findById({_id: productId}, function(cErr, product) {
                     if (cErr) throw cErr;
@@ -415,11 +461,10 @@ router.post('/purchases/new', function(req, res) {
             const amountPurchased = req.body.amountPurchased;
             const date = req.body.purchaseDate;
             const price = req.body.price;
-
             // Validation
-            req.check('amountPurchased', 'Haversted amount (number) is required').isNumeric();
+            req.check('amountPurchased', 'Haversted amount (number) is required').notEmpty();
             req.check('purchaseDate', 'Purchase date (selection) is required').notEmpty();
-            req.check('price', 'Price (number) is required').isNumeric();
+            req.check('price', 'Price (number) is required').notEmpty();
             // Store validation errors if any...
             var validErrors = req.validationErrors();
     
@@ -491,9 +536,9 @@ router.post('/purchases/update', function(req, res) {
             const price = req.body.price;
 
             // Validation
-            req.check('amountPurchased', 'Haversted amount (number) is required').isNumeric();
+            req.check('amountPurchased', 'Haversted amount (number) is required').notEmpty();
             req.check('purchaseDate', 'Purchase date (selection) is required').notEmpty();
-            req.check('price', 'Price (number) is required').isNumeric();
+            req.check('price', 'Price (number) is required').notEmpty();
             // Store validation errors if any...
             var validErrors = req.validationErrors();
     

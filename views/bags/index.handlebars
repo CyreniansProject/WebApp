@@ -2,7 +2,7 @@
 <div class="row">
     <div class="col-lg-7">
         <label><strong>Display bags between specific dates</strong></label>
-        <form class="form-inline" method="POST" action="">
+        <form class="form-inline" method="POST" action="/api/bags">
             <div class="input-group input-daterange">
                 <label>From</label>
                 <div class="form-group">
@@ -48,7 +48,7 @@
                                     <i class="fa fa-trash"></i>
                                 </a>
                             </td>
-                            <td style="font-size:16px;">{{this.startDate}} - {{this.endDate}}</td>
+                            <td style="font-size:16px;">{{this.formatStartDate}} - {{this.formatEndDate}}</td>
                             <td style="font-size:16px;">{{this.priceSmall}}</td>
                             <td style="font-size:16px;">{{this.priceMedium}}</td>
                             <td style="font-size:16px;">{{this.priceLarge}}</td>

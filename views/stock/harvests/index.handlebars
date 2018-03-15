@@ -2,7 +2,7 @@
 <div class="row">
     <div class="col-lg-7">
         <label><strong>Display harvestings between specific dates</strong></label>
-        <form class="form-inline" method="POST" action="">
+        <form class="form-inline" method="GET" action="/api/stock/harvests/to/{{productId}}">
             <div class="input-group input-daterange">
                 <label>From</label>
                 <div class="form-group">
@@ -41,7 +41,7 @@
                     <thead>
                         <tr>
                             <th style="text-align: center;">#</th>
-                            <th>Picking week</th>
+                            <th>Harvesting week</th>
                             <th>Harvested amount</th>
                             <th>Total weight (kg)</th>
                         </tr>
@@ -57,7 +57,7 @@
                                     <i class="fa fa-trash"></i>
                                 </a>
                             </td>
-                            <td style="font-size:16px;">{{this.pickingWeek}}</td>
+                            <td style="font-size:16px;">{{this.formatDate}}</td>
                             <td style="font-size:16px;">{{this.amountHarvested}}</td>
                             <td style="font-size:16px;">{{multiply this.amountHarvested this.product.avgWeight}}</td>
                         </tr>
