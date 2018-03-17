@@ -44,7 +44,7 @@ router.get('/pending', function(req, res) {
                     });
 
                     // display the driver pending dashboard view
-                    res.render('driver/index', { layout: 'layout_staff.handlebars', page_title: '', delivery_title: 'Pending',
+                    res.render('driver/pending', { layout: 'layout_staff.handlebars', page_title: '', delivery_title: 'Pending',
                     pending_deliveries: deliveries, user: req.user});
                 });
             });
@@ -79,22 +79,23 @@ router.get('/completed', function(req, res) {
                                 tempOrders.push(order);
                             }
                         });
-                        
-                        count++;
-                        
-                        const delivery = {
-                            id: (count == 0) ? 1 : count,
-                            address: address,
-                            orders: tempOrders
-                        }
-                        
-                        if (!_.isEmpty(delivery.orders)) {
+                                                
+                        if (!_.isEmpty(tempOrders)) {
+                            
+                            count++;
+
+                            const delivery = {
+                                id: (count == 0) ? 1 : count,
+                                address: address,
+                                orders: tempOrders
+                            }
+                            
                             deliveries.push(delivery)
                         }
                     });
 
                     // display the driver completed dashboard view
-                    res.render('driver/index', { layout: 'layout_staff.handlebars', page_title: '', delivery_title: 'Completed',
+                    res.render('driver/completed', { layout: 'layout_staff.handlebars', page_title: '', delivery_title: 'Completed',
                     completed_deliveries: deliveries, user: req.user});
                 });
             });
@@ -110,10 +111,30 @@ router.get('/completed', function(req, res) {
     }
 });
 
-router.post('complete', function(req, res) {
+router.post('/complete', function(req, res) {
     if (req.user) {
         if (req.user.role == 2) {
-            // TODO:
+            const id = req.body.deliveryId;
+            const deliveries = JSON.parse(req.body.deliveries);
+            
+            var ordersDetails = [];
+            deliveries.forEach(delivery => {
+                if (delivery.id == id) {
+                    ordersDetails.push(delivery.order);
+                }
+            });
+            
+            count = ordersDetails.length;
+            ordersDetails.forEach(orderDetails => {
+                deliveryHelper.updateOrderStatus(orderDetails, function(err, order) {
+                    if (err) throw err;
+                    count--;
+
+                    if (count == 0) {
+                        res.redirect('/api/driver/pending');
+                    }
+                });
+            })
         }
         else {
             req.flash('error_msg', 'You don\'t have the authority to access this page!');

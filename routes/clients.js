@@ -16,7 +16,6 @@ router.get('/', function(req, res) {
                 clientList.forEach(client => {
                     Client.getLastOrder(client, function(oErr, lastOrder) {
                         if (oErr) throw oErr;
-                        console.log(lastOrder);
                         clients.push({
                             client: client,
                             lastOrder: lastOrder

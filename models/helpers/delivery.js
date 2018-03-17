@@ -30,3 +30,10 @@ module.exports.findCompletedOrders = function(callback) {
     .populate({path: 'client'})
     .exec(callback);
 }
+
+module.exports.updateOrderStatus = function(orderDetails, callback) {
+    var orderId = orderDetails.id;
+    var statusDetails = orderDetails.status;
+
+    Order.update({_id: orderId}, statusDetails, callback);
+}

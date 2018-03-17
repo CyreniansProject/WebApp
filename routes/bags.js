@@ -89,9 +89,9 @@ router.post('/new', function(req, res) {
             const endDate = req.body.endDate;
 
             // Validation
-            req.check('priceSmall', 'Small bag price (number) is required').isNumeric();
-            req.check('priceMedium', 'Medium bag price (number) is required').isNumeric();
-            req.check('priceLarge', 'Large bag price (number) is required').isNumeric();
+            req.check('priceSmall', 'Small bag price (number) is required').notEmpty();
+            req.check('priceMedium', 'Medium bag price (number) is required').notEmpty();
+            req.check('priceLarge', 'Large bag price (number) is required').notEmpty();
             req.check('startDate', 'Active period: From date (selection) is required').notEmpty();
             req.check('endDate', 'Active period: To date (selection) is required').notEmpty();
             // Store validation errors if any...
@@ -188,9 +188,9 @@ router.post('/update', function(req, res) {
             const endDate = req.body.endDate;
 
             // Validation
-            req.check('priceSmall', 'Small bag price (number) is required').isNumeric();
-            req.check('priceMedium', 'Medium bag price (number) is required').isNumeric();
-            req.check('priceLarge', 'Large bag price (number) is required').isNumeric();
+            req.check('priceSmall', 'Small bag price (number) is required').notEmpty();
+            req.check('priceMedium', 'Medium bag price (number) is required').notEmpty();
+            req.check('priceLarge', 'Large bag price (number) is required').notEmpty();
             req.check('startDate', 'Active period: From date (selection) is required').notEmpty();
             req.check('endDate', 'Active period: To date (selection) is required').notEmpty();
             // Store validation errors if any...

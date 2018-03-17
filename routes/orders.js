@@ -102,10 +102,11 @@ router.post('/new', function(req, res) {
             const depositPaid = req.body.depositPaid;
 
             // Validation
-            req.check('numberOfBags', 'Bags (number) is required').isNumeric();
+            req.check('numberOfBags', 'Bags (number) is required').notEmpty();
             req.check('typeOfBag', 'Bag size (selection) is required').not().equals("Choose...");
             req.check('date', 'Date (selection) is required').notEmpty();
             req.check('depositPaid', 'Deposit (selection) is required').notEmpty();
+
             // Store validation errors if any...
             var validErrors = req.validationErrors();
  
@@ -155,6 +156,7 @@ router.get('/edit/:id', function(req, res) {
 
             Order.findById({_id: id}, function(err, order) {
                 if (err) throw err;
+
                 order.populate({path: 'client'}).populate({path: 'extra'}, function(cpErr) {
                     if (cpErr) throw cpErr;
                     Product.listProducts(function(lpErr, products) {
@@ -162,7 +164,7 @@ router.get('/edit/:id', function(req, res) {
                             res.render('orders/editOrder', { layout: 'layout_staff.handlebars', 
                             page_title: 'Edit order for ' + order.client.name, 
                             user: req.user, order: order, products: products,
-                            depositPaid: order.depositPaid });
+                            depositPaid: order.depositPaid});
                     });
                 });
             });
@@ -194,12 +196,14 @@ router.post('/update', function(req, res) {
             const notes = req.body.notes;
             const date = req.body.date;
             const depositPaid = req.body.depositPaid;
+            const status = req.body.deliveryStatus;
 
             // Validation
-            req.check('numberOfBags', 'Bags (number) is required').isNumeric();
+            req.check('numberOfBags', 'Bags (number) is required').notEmpty();
             req.check('typeOfBag', 'Bag size (selection) is required').not().equals("Choose...");
             req.check('date', 'Date (selection) is required').notEmpty();
             req.check('depositPaid', 'Deposit (selection) is required').notEmpty();
+            req.check('deliveryStatus', 'Delivery status (selection) is required').not().equals("Choose...");
             // Store validation errors if any...
             var validErrors = req.validationErrors();
     
@@ -215,13 +219,29 @@ router.post('/update', function(req, res) {
                         extrasList.push(product);
                     });
                 }
+
+                var delivered, cancelled;
+                if (status == "Pending") { 
+                    delivered = false;
+                    cancelled = false;
+                }
+                else if (status == "Delivered") {
+                    delivered = true;
+                    cancelled = false;
+                }
+                else if (status == "Cancelled") {
+                    delivered = false;
+                    cancelled = true;
+                }
             
                 const orderDetails = {
                     depositPaid: depositPaid,
                     notes: notes,
                     date: date,
                     numberOfBags: numberOfBags,
-                    typeOfBag: typeOfBag
+                    typeOfBag: typeOfBag,
+                    delivered: delivered,
+                    cancelled: cancelled
                 };
 
                 Order.updateOrder(orderId, orderDetails, extrasList, function(err, order) {

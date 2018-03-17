@@ -74,11 +74,11 @@ crossorigin="anonymous"></script>
                                 <div class="form-group row">
                                     <label class="col-sm-2 col-form-label">Delivery status <span style="color:red;">*</span></label>
                                     <div class="col-sm-3">
-                                        <select class="form-control" name="deliveryStatus">
-                                            <option value="Choose..." selected>Choose...</option>
+                                        <select id="status" class="form-control" name="deliveryStatus">
+                                            <option value="Choose...">Choose...</option>
                                             <option value="Pending">Pending</option>
                                             <option value="Delivered">Delivered</option>
-                                            <option value="Canceled">Canceled</option>
+                                            <option value="Cancelled">Cancelled</option>
                                         </select>
                                     </div>
                                 </div>
@@ -186,6 +186,7 @@ crossorigin="anonymous"></script>
 
         // select the option for bag size
         $("#bag-type").val('{{order.typeOfBag}}').change();
+        $("#status").val('{{order.status}}').change();
 
         // set the radio button for deposit
         const deposit = $('.deposit-val').val();
