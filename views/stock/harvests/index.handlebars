@@ -6,11 +6,11 @@
             <div class="input-group input-daterange">
                 <label>From</label>
                 <div class="form-group">
-                    <input type="text" class="form-control" name="startDate" placeholder="mm/dd/yyyy">
+                    <input type="text" class="form-control" name="startDate" placeholder="mm-dd-yyyy">
                 </div>
                 <label>To</label>
                 <div class="form-group">
-                    <input type="text" class="form-control" name="endDate" placeholder="mm/dd/yyyy">
+                    <input type="text" class="form-control" name="endDate" placeholder="mm-dd-yyyy">
                 </div>
             </div>
             <button type="submit" class="btn btn-purple">Show</button>
@@ -59,7 +59,7 @@
                             </td>
                             <td style="font-size:16px;">{{this.formatDate}}</td>
                             <td style="font-size:16px;">{{this.amountHarvested}}</td>
-                            <td style="font-size:16px;">{{multiply this.amountHarvested this.product.avgWeight}}</td>
+                            <td style="font-size:16px;">{{toPrecision totalWeight 4}}</td>
                         </tr>
                         {{/each}}
                     </tbody>
@@ -85,7 +85,9 @@ crossorigin="anonymous"></script>
         });
 
         $('.input-daterange input').each(function() {
-            $(this).datepicker();
+            $(this).datepicker({
+                format: 'mm-dd-yyyy'
+            });
         });
     });
 </script>

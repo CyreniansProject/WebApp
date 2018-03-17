@@ -33,6 +33,14 @@ const OrderSchema = new Schema({
         //type of bag ordered
         type: String
     },
+    delivered: {
+        type: Boolean,
+        default: false
+    },
+    cancelled: {
+        type: Boolean,
+        default: false
+    },
     extra: [{
         //list of fruit in the bag
         type: Schema.Types.ObjectId,
@@ -51,6 +59,19 @@ OrderSchema.virtual('formatDate').get(function() {
 
 OrderSchema.virtual('editDate').get(function() {
     var result = dateFormat(this.date, 'mm-dd-yyyy');
+    return result;
+});
+
+OrderSchema.virtual('status').get(function() {
+    var result;
+    
+    if (this.cancelled)
+        result = "Cancelled"
+    else if (this.delivered)
+        result = "Delivered"
+    else
+        result = "Pending"
+    
     return result;
 });
 
@@ -103,14 +124,12 @@ module.exports.updateOrder = function(_id, orderDetails, extrasList, callback) {
     .then((order) => {
         order.extra = [];
         if (count == 0) {
-            console.log('normal update');
             order.save();
             return Order.update({_id}, orderDetails, callback);
         }
         else {
             extrasList.forEach(productId => {
                 Product.findById({_id: productId}, function(err, product) {
-                    console.log('full update');
                     order.extra.push(product);
                     count--;
                     // save the data

@@ -23,7 +23,9 @@ var UserSchema = mongoose.Schema({
 var User = module.exports = mongoose.model('User', UserSchema);
 
 module.exports.listUsers = function(callback) {
-    User.find({}, callback);
+    User.find({})
+    .sort('role firstname lastname')
+    .exec(callback);
 }
 
 // TODO: edit to user userDetails instead of newly created user object

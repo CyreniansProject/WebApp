@@ -95,7 +95,7 @@ router.post('/new', function(req, res) {
 				</ul>
 				<br/><strong>IMPORTANT:</strong> Set your own password.<br/>
 				<ul>
-				<li>Step 1: Click on this link: <a href="http://vbd.cyrenians.scot/api/users/reset/${email}">Complete account creation!</a></li>
+				<li>Step 1: Click on this link: <a href="http://localhost/api/users/reset/${email}">Complete account creation!</a></li>
 				<li>Step 2: Type in your preffered password and confirm it.</li>
 				<li>Step 3: Sign in to the system with your email and newly set password.</li>
 				</ul>

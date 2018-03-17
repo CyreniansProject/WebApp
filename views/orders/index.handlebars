@@ -6,11 +6,11 @@
             <div class="input-group input-daterange">
                 <label>From</label>
                 <div class="form-group">
-                    <input type="text" class="form-control" name="startDate" placeholder="mm/dd/yyyy">
+                    <input type="text" class="form-control" name="startDate" placeholder="mm-dd-yyyy">
                 </div>
                 <label>To</label>
                 <div class="form-group">
-                    <input type="text" class="form-control" name="endDate" placeholder="mm/dd/yyyy">
+                    <input type="text" class="form-control" name="endDate" placeholder="mm-dd-yyyy">
                 </div>
             </div>
             <button type="submit" class="btn btn-purple">Show</button>
@@ -89,7 +89,7 @@ crossorigin="anonymous"></script>
 
         $('.input-daterange input').each(function() {
             $(this).datepicker({
-                format: 'mm/dd/yyyy'
+                format: 'mm-dd-yyyy'
             });
         });
 

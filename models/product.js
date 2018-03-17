@@ -26,7 +26,9 @@ ProductSchema.pre('remove', function(next) {
 const Product = module.exports = mongoose.model('Product', ProductSchema);
 
 module.exports.listProducts = function(callback) {
-    Product.find({}, callback);
+    Product.find({})
+    .sort('name')
+    .exec(callback);
 }
 
 module.exports.createProduct = function(productDetails, callback) {

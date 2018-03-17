@@ -7,10 +7,28 @@ const Client = require('../models/client');
 router.get('/', function(req, res) {
     if (req.user) {
         if (req.user.role == 0 || req.user.role == 1) {
-            Client.find({}, function(err, clients) {
+            var clients = [];
+            Client.listClients(function(err, clientList) {
                 if (err) throw err;
-                res.render('clients/index', { layout: 'layout_staff.handlebars', page_title: 'Client list', 
-                user: req.user, clients: clients });
+                var count = clientList.length;
+                
+                // find the last order for each client object
+                clientList.forEach(client => {
+                    Client.getLastOrder(client, function(oErr, lastOrder) {
+                        if (oErr) throw oErr;
+                        console.log(lastOrder);
+                        clients.push({
+                            client: client,
+                            lastOrder: lastOrder
+                        });
+                        count--;
+
+                        if (count == 0) {
+                            res.render('clients/index', { layout: 'layout_staff.handlebars', page_title: 'Client list', 
+                            user: req.user, clients: clients });
+                        }
+                    });
+                });
             });
         }
         else {

@@ -27,6 +27,20 @@ const ClientSchema = new Schema({
 
 const Client = module.exports = mongoose.model('Client', ClientSchema);
 
+const Order = require('./order');
+
+module.exports.listClients = function(callback) {
+    Client.find({})
+    .sort('name')
+    .exec(callback);
+}
+
+module.exports.getLastOrder = function(client, callback) {
+    Order.findOne({client: client})
+    .sort({date: -1})
+    .exec(callback)
+}
+
 module.exports.createClient = function(clientDetails, callback) {
     const client = new Client(clientDetails);
     client.save(callback);

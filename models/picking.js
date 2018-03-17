@@ -35,6 +35,11 @@ PickingSchema.virtual('editDate').get(function() {
     return result;
 });
 
+PickingSchema.virtual('totalWeight').get(function() {
+    var result = this.amountHarvested * this.product.avgWeight;
+    return result;
+});
+
 const Picking = module.exports = mongoose.model('Picking', PickingSchema);
 
 module.exports.listHarvests = function(_id, criteria, callback) {
@@ -42,11 +47,13 @@ module.exports.listHarvests = function(_id, criteria, callback) {
     .then((product) => {
         if (!_.isEmpty(criteria)) {   
             Picking.find({product: product, date: dateHelper.dateRangedSearch(criteria)})
+            .sort('date')
             .populate({path: 'product'})
             .exec(callback);
         }
         else {
             Picking.find({product: product})
+            .sort('date')
             .populate({path: 'product'})
             .exec(callback);
         }

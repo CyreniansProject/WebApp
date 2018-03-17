@@ -61,7 +61,7 @@
                             <td style="font-size:16px;">{{this.formatDate}}</td>
                             <td style="font-size:16px;">{{this.amountPurchased}}</td>
                             <td style="font-size:16px;">{{this.price}}</td>
-                            <td style="font-size:16px;">{{multiply this.amountPurchased this.price}}</td>
+                            <td style="font-size:16px;">{{toPrecision totalPrice 4}}</td>
                         </tr>
                         {{/each}}
                     </tbody>

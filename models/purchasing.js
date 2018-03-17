@@ -39,6 +39,11 @@ PurchasingSchema.virtual('editDate').get(function() {
     return result;
 });
 
+PurchasingSchema.virtual('totalPrice').get(function() {
+    var result = this.amountPurchased * this.price;
+    return result;
+});
+
 const Purchasing = module.exports = mongoose.model('Purchasing', PurchasingSchema);
 
 module.exports.listPurchases = function(_id, criteria, callback) {
