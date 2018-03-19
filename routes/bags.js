@@ -34,7 +34,7 @@ router.get('/', function(req, res) {
             Bag.listBags(criteria, function(err, bags) {
                 if (err) throw err;
                 res.render('bags/index', { layout: 'layout_staff.handlebars', page_title: 'Bags list', 
-                user: req.user, bags: bags });
+                user: req.user, bags: bags, criteria: criteria });
             });
         }
         else {

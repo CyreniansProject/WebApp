@@ -39,7 +39,7 @@ router.get('/to/:clientId', function(req, res) {
                 Client.findOne({_id: clientId}, function(cErr, client) {
                     if (cErr) throw cErr;
                     res.render('orders/index', { layout: 'layout_staff.handlebars', page_title: 'Orders list for ' + client.name, 
-                    user: req.user, orders: orders, clientId: clientId });
+                    user: req.user, orders: orders, clientId: clientId, criteria: criteria });
                 });
             });
         }

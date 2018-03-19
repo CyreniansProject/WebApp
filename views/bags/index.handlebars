@@ -2,15 +2,23 @@
 <div class="row">
     <div class="col-lg-7">
         <label><strong>Display bags between specific dates</strong></label>
-        <form class="form-inline" method="POST" action="/api/bags">
+        <form class="form-inline" method="GET" action="/api/bags">
             <div class="input-group input-daterange">
                 <label>From</label>
                 <div class="form-group">
-                    <input type="text" class="form-control" name="startDate" placeholder="mm/dd/yyyy">
+                    {{#if criteria.startDate}}
+                    <input type="text" class="form-control" name="startDate" value="{{criteria.startDate}}">
+                    {{else}}
+                    <input type="text" class="form-control" name="startDate" placeholder="mm-dd-yyyy">
+                    {{/if}}
                 </div>
                 <label>To</label>
                 <div class="form-group">
-                    <input type="text" class="form-control" name="endDate" placeholder="mm/dd/yyyy">
+                    {{#if criteria.endDate}}
+                    <input type="text" class="form-control" name="endDate" value="{{criteria.endDate}}">
+                    {{else}}
+                    <input type="text" class="form-control" name="endDate" placeholder="mm-dd-yyyy">
+                    {{/if}}
                 </div>
             </div>
             <button type="submit" class="btn btn-purple">Show</button>
@@ -79,7 +87,7 @@ crossorigin="anonymous"></script>
 
         $('.input-daterange input').each(function() {
             $(this).datepicker(({
-                format: 'mm/dd/yyyy'
+                format: 'mm-dd-yyyy'
             }));
         });
     });

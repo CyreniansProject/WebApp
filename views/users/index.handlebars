@@ -30,7 +30,9 @@
                                 </a>
                             </td>
                             <td style="font-size:16px;">{{this.firstname}} {{this.lastname}}</td>
-                            <td style="font-size:16px;"><a href="mailto:{{this.email}}" style="text-decoration: none;">{{this.email}}</a></td>
+                            <td style="font-size:16px;">
+                                <a href="mailto:{{this.email}}" style="text-decoration: none; color: #666;">{{this.email}}</a>
+                            </td>
                             {{#eq this.role 0}}
                                 <td style="font-size:16px;">Administrator</td>
                             {{/eq}}

@@ -224,7 +224,7 @@ router.get('/harvests/to/:productId', function(req, res) {
                 Product.findById({_id: productId}, function(cErr, product) {
                     if (cErr) throw cErr;
                     res.render('stock/harvests/index', { layout: 'layout_staff.handlebars', page_title: 'Harvestings for ' + product.name, 
-                    user: req.user, harvests: harvests, productId: productId });
+                    user: req.user, harvests: harvests, productId: productId, criteria: criteria });
                 });
             });
         }
@@ -417,7 +417,7 @@ router.get('/purchases/to/:productId', function(req, res) {
                 Product.findById({_id: productId}, function(cErr, product) {
                     if (cErr) throw cErr;
                     res.render('stock/purchases/index', { layout: 'layout_staff.handlebars', page_title: 'Purchases for ' + product.name, 
-                    user: req.user, purchases: purchases, productId: productId });
+                    user: req.user, purchases: purchases, productId: productId, criteria: criteria });
                 });
             });
         }

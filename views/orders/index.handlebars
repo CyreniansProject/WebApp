@@ -6,11 +6,19 @@
             <div class="input-group input-daterange">
                 <label>From</label>
                 <div class="form-group">
+                    {{#if criteria.startDate}}
+                    <input type="text" class="form-control" name="startDate" value="{{criteria.startDate}}">
+                    {{else}}
                     <input type="text" class="form-control" name="startDate" placeholder="mm-dd-yyyy">
+                    {{/if}}
                 </div>
                 <label>To</label>
                 <div class="form-group">
+                    {{#if criteria.endDate}}
+                    <input type="text" class="form-control" name="endDate" value="{{criteria.endDate}}">
+                    {{else}}
                     <input type="text" class="form-control" name="endDate" placeholder="mm-dd-yyyy">
+                    {{/if}}
                 </div>
             </div>
             <button type="submit" class="btn btn-purple">Show</button>
@@ -39,8 +47,8 @@
                         <tr>
                             <th style="text-align: center;">#</th>
                             <th>Date</th>
-                            <th>Bags amount</th>
-                            <th>Type of bag</th>
+                            <th>Num. of bags</th>
+                            <th>Bag size</th>
                             <th>Deposit</th>
                         </tr>
                     </thead>
@@ -92,7 +100,6 @@ crossorigin="anonymous"></script>
                 format: 'mm-dd-yyyy'
             });
         });
-
     });
 </script>
 {{/if}}

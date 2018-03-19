@@ -57,10 +57,14 @@ const Bag = module.exports = mongoose.model('Bag', BagSchema);
  
 module.exports.listBags = function(criteria, callback) {
     if (!_.isEmpty(criteria)) {
-        Bag.find({startDate: dateHelper.dateRangedSearch(criteria)}, callback);
+        Bag.find({startDate: dateHelper.dateRangedSearch(criteria)})
+        .populate({path: 'product'})
+        .exec(callback);
     }
     else {
-        Bag.find({}, callback);
+        Bag.find({})
+        .populate({path: 'product'})
+        .exec(callback);
     }
 }
 

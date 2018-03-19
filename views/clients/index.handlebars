@@ -35,7 +35,7 @@
                                 {{#eq this.lastOrder null}}
                                     <em>No orders</em>
                                 {{else}}
-                                    <a href="/api/orders/edit/{{this.lastOrder._id}}" target="_blank" style="text-decoration: none;">
+                                    <a href="/api/orders/edit/{{this.lastOrder._id}}" target="_blank" style="text-decoration: none; color: #666;">
                                         {{this.lastOrder.formatDate}}
                                     </a>
                                 {{/eq}}
