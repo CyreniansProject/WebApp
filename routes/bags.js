@@ -82,16 +82,14 @@ router.post('/new', function(req, res) {
                 return res.redirect('back');
             }
 
-            const priceSmall = req.body.priceSmall;
-            const priceMedium = req.body.priceMedium;
-            const priceLarge = req.body.priceLarge;
             const startDate = req.body.startDate;
             const endDate = req.body.endDate;
+            const type = req.body.type;
+            const price = req.body.price;
 
             // Validation
-            req.check('priceSmall', 'Small bag price (number) is required').notEmpty();
-            req.check('priceMedium', 'Medium bag price (number) is required').notEmpty();
-            req.check('priceLarge', 'Large bag price (number) is required').notEmpty();
+            req.check('type', 'Bag size (selection) is required').not().equals("Choose...");
+            req.check('price', 'Bag price (number) is required').notEmpty();
             req.check('startDate', 'Active period: From date (selection) is required').notEmpty();
             req.check('endDate', 'Active period: To date (selection) is required').notEmpty();
             // Store validation errors if any...
@@ -111,10 +109,9 @@ router.post('/new', function(req, res) {
                 const bagDetails = {
                     startDate: startDate,
                     endDate: endDate,
-                    priceSmall: priceSmall,
-                    priceMedium: priceMedium,
-                    priceLarge: priceLarge
-                };
+                    type: type,
+                    price: price
+                }
                 
                 Bag.createBag(bagDetails, productList, function(err, bagContent) {
                     if (err) throw err;
@@ -181,16 +178,14 @@ router.post('/update', function(req, res) {
                 return res.redirect('back');
             }
             
-            const priceSmall = req.body.priceSmall;
-            const priceMedium = req.body.priceMedium;
-            const priceLarge = req.body.priceLarge;
             const startDate = req.body.startDate;
             const endDate = req.body.endDate;
+            const type = req.body.type;
+            const price = req.body.price;
 
             // Validation
-            req.check('priceSmall', 'Small bag price (number) is required').notEmpty();
-            req.check('priceMedium', 'Medium bag price (number) is required').notEmpty();
-            req.check('priceLarge', 'Large bag price (number) is required').notEmpty();
+            req.check('type', 'Bag size (selection) is required').not().equals("Choose...");
+            req.check('price', 'Bag price (number) is required').notEmpty();
             req.check('startDate', 'Active period: From date (selection) is required').notEmpty();
             req.check('endDate', 'Active period: To date (selection) is required').notEmpty();
             // Store validation errors if any...
@@ -210,9 +205,8 @@ router.post('/update', function(req, res) {
                 const bagDetails = {
                     startDate: startDate,
                     endDate: endDate,
-                    priceSmall: priceSmall,
-                    priceMedium: priceMedium,
-                    priceLarge: priceLarge
+                    type: type,
+                    price: price
                 };
 
                 Bag.updateBag(id, bagDetails, productList, function(err, bagContent) {

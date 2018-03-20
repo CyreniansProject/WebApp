@@ -23,15 +23,18 @@
                         <tr>
                             <td style="text-align: center; margin: 0px; padding: 5px 0px 5px 0px; width: 100px;">
                                 <a href="/api/users/edit/{{this._id}}" class="btn btn-primary btn-sm btn-outline" role="button">
-                                    <i class="fa fa-edit"></i>
+                                    <i style="transform: scale(1.5);" class="fa fa-edit"></i>
                                 </a>&nbsp;
                                 <a href="/api/users/remove/{{this._id}}" class="btn btn-danger btn-sm btn-outline" role="button">
-                                    <i class="fa fa-trash"></i>
+                                    <i style="transform: scale(1.5);" class="fa fa-trash"></i>
                                 </a>
                             </td>
                             <td style="font-size:16px;">{{this.firstname}} {{this.lastname}}</td>
                             <td style="font-size:16px;">
-                                <a href="mailto:{{this.email}}" style="text-decoration: none; color: #666;">{{this.email}}</a>
+                                {{this.email}}
+                                <a href="mailto:{{this.email}}" class="pull-right" style="text-decoration: none; color: #666;">
+                                    <i style="margin-right: 10px; transform: scale(1.75);" class="fa fa-envelope"></i>
+                                </a>
                             </td>
                             {{#eq this.role 0}}
                                 <td style="font-size:16px;">Administrator</td>

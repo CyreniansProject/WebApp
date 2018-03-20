@@ -5,16 +5,9 @@ const ProductSchema = new Schema ({
     name: {
         type: String
     },
+    /** definition of the 'amount' of the product 
+     ** that will be added in each bag (kg) **/
     avgWeight: {
-        type: Number
-    },
-    amountSmall: {
-        type: Number
-    },
-    amountMedium: {
-        type: Number
-    },
-    amountLarge: {
         type: Number
     }
 });

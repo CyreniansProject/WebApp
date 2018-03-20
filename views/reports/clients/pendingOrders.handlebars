@@ -1,30 +1,45 @@
 {{#if user}}
+<style>
+#ordersDateForm .inp-label {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+#ordersDateForm .h-label {
+    font-size: 24px;
+}
+</style>
+
 <div class="row">
-    <div class="col-lg-7">
-        <label><strong>Display pending deliveries for particular dates</strong></label>
-        <form class="form-inline" method="GET" action="/api/reports/orders/expecting-delivery">
+    <div class="col-lg-12" id="ordersDateForm">
+        <label class="h-label">
+            <p><strong>Usage:</strong></p>
+            <p>Display pending deliveries for particular dates.</p>
+        </label>
+        <form class="form-inline" method="GET" action="/api/reports/orders/expecting-delivery/generate">
             <div class="input-group input-daterange">
-                <label>From</label>
+                <label class="inp-label">From</label>
                 <div class="form-group">
                     {{#if criteria.startDate}}
-                    <input type="text" class="form-control" name="startDate" value="{{criteria.startDate}}">
+                    <input type="text" class="form-control input-lg" name="startDate" value="{{criteria.startDate}}">
                     {{else}}
-                    <input type="text" class="form-control" name="startDate" placeholder="mm-dd-yyyy">
+                    <input type="text" class="form-control input-lg" name="startDate" placeholder="mm-dd-yyyy">
                     {{/if}}
                 </div>
-                <label>To</label>
+                <label class="inp-label">To</label>
                 <div class="form-group">
                     {{#if criteria.endDate}}
-                    <input type="text" class="form-control" name="endDate" value="{{criteria.endDate}}">
+                    <input type="text" class="form-control input-lg" name="endDate" value="{{criteria.endDate}}">
                     {{else}}
-                    <input type="text" class="form-control" name="endDate" placeholder="mm-dd-yyyy">
+                    <input type="text" class="form-control input-lg" name="endDate" placeholder="mm-dd-yyyy">
                     {{/if}}
                 </div>
             </div>
-            <button type="submit" class="btn btn-purple">Show</button>
+            <button type="submit" class="btn btn-purple btn-lg">Generate</button>
         </form>
     </div>
 </div>
+{{#eq showOrdersReport true}}
 <div class="row" style="margin-top: 25px">
 <div class="col-lg-12">
     <div class="panel panel-default">
@@ -66,7 +81,7 @@
 </div>
 <!-- /.col-lg-12 -->
 </div>
-
+{{/eq}}
 <!-- Page-Level Demo Scripts - Tables - Use for reference -->
 <script src="http://code.jquery.com/jquery-3.3.1.min.js" 
 integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" 

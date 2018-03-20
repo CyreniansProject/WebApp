@@ -10,25 +10,23 @@ const dateHelper = require('./helpers/dates');
 const Product = require('./product');
 
 const BagSchema = new Schema ({
+    //list of products in the bag
     product: [{
-        //list of fruit in the bag
-        type: Schema.Types.ObjectId, ref: 'Product'
+        type: Schema.Types.ObjectId,
+        ref: 'Product'
     }],
+    //date of the bag creation
     startDate: {
-        //date of the bag creation
         type: Date
     },
+    //date of the bag expiration
     endDate: {
-        //date of the bag expiration
         type: Date
     },
-    priceSmall: {
-        type: Number
+    type: {
+        type: String
     },
-    priceMedium: {
-        type: Number
-    },
-    priceLarge: {
+    price: {
         type: Number
     }
 });

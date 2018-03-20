@@ -10,21 +10,21 @@ const dateHelper = require('./helpers/dates');
 const Product = require('./product');
 
 const PurchasingSchema = new Schema ({
+    // type of product purchased
     product: {
-        // type of product purchased
         type: Schema.Types.ObjectId,
         ref: 'Product'
     },
+    // date of purchase
     date: {
-        // date of picking
         type: Date
     },
+    // how many units have been purchased
     amountPurchased: {
-        // how much has been purchased
         type: Number
     },
+    // price for a single unit
     price: {
-        // price for a single unit
         type: Number
     }
 });
@@ -41,6 +41,11 @@ PurchasingSchema.virtual('editDate').get(function() {
 
 PurchasingSchema.virtual('totalPrice').get(function() {
     var result = this.amountPurchased * this.price;
+    return result;
+});
+
+PurchasingSchema.virtual('totalWeight').get(function() {
+    var result = this.amountPurchased * this.product.avgWeight;
     return result;
 });
 

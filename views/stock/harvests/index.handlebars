@@ -50,8 +50,8 @@
                         <tr>
                             <th style="text-align: center;">#</th>
                             <th>Harvesting date</th>
-                            <th>Harvested amount</th>
-                            <th>Total weight (kg)</th>
+                            <th>Number of units</th>
+                            <th>Total weight</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -59,15 +59,15 @@
                         <tr>
                             <td style="text-align: center; margin: 0px; padding: 5px 0px 5px 0px; width: 100px;">
                                 <a href="/api/stock/harvests/edit/{{this._id}}" class="btn btn-primary btn-sm btn-outline" role="button">
-                                    <i class="fa fa-edit"></i>
+                                    <istyle="transform: scale(1.5);" class="fa fa-edit"></i>
                                 </a>&nbsp;
                                 <a href="/api/stock/harvests/remove/{{this._id}}" class="btn btn-danger btn-sm btn-outline" role="button">
-                                    <i class="fa fa-trash"></i>
+                                    <i style="transform: scale(1.5);" class="fa fa-trash"></i>
                                 </a>
                             </td>
                             <td style="font-size:16px;">{{this.formatDate}}</td>
                             <td style="font-size:16px;">{{this.amountHarvested}}</td>
-                            <td style="font-size:16px;">{{toPrecision totalWeight 4}}</td>
+                            <td style="font-size:16px;">{{toFixed this.totalWeight 2}} <small>kg</small></td>
                         </tr>
                         {{/each}}
                     </tbody>

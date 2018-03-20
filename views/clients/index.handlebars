@@ -23,20 +23,24 @@
                         {{#each clients}}
                         <tr>
                             <td style="text-align: center;margin: 0px;padding: 5px 0px 5px 0px;width: 100px;">
-                                <a href="/api/clients/edit/{{this.client._id}}" class="btn btn-primary btn-sm btn-outline" role="button">
-                                    <i class="fa fa-edit"></i>
+                                <a href="/api/clients/edit/{{this.client._id}}" class="btn btn-primary btn-sm btn-outline">
+                                    <i style="transform: scale(1.5);" class="fa fa-edit"></i>
                                 </a>&nbsp;
-                                <a href="/api/clients/remove/{{this.client._id}}" class="btn btn-danger btn-sm btn-outline" role="button">
-                                    <i class="fa fa-trash"></i>
+                                <a href="/api/clients/remove/{{this.client._id}}" class="btn btn-danger btn-sm btn-outline">
+                                    <i style="transform: scale(1.5);" class="fa fa-trash"></i>
                                 </a>
                             </td>
                             <td style="font-size:16px;">{{this.client.name}}</td>
                             <td style="font-size:16px;">
                                 {{#eq this.lastOrder null}}
                                     <em>No orders</em>
+                                    <a href="/api/orders/to/{{this.client._id}}/new" class="pull-right" target="_blank">
+                                        <i style="margin-right: 10px; transform: scale(1.75);" class="fa fa-plus"></i>
+                                    </a>
                                 {{else}}
-                                    <a href="/api/orders/edit/{{this.lastOrder._id}}" target="_blank" style="text-decoration: none; color: #666;">
-                                        {{this.lastOrder.formatDate}}
+                                    {{this.lastOrder.formatDate}}
+                                    <a href="/api/orders/edit/{{this.lastOrder._id}}" class="pull-right" target="_blank">
+                                        <i style="margin-right: 10px; transform: scale(1.75);" class="fa fa-location-arrow"></i>
                                     </a>
                                 {{/eq}}
                             </td>

@@ -43,6 +43,60 @@ router.get('/sales', function(req, res) {
  * Reports' routes
 */
 
+router.get('/orders/expecting-delivery', function(req, res) {
+    if (req.user) {
+        if (req.user.role == 0 || req.user.role == 1) {
+            res.render('reports/clients/pendingOrders', { layout: 'layout_staff.handlebars', 
+                page_title: 'Clients expecting deliveries', reportsLink: true, 
+                user: req.user, showOrdersReport: false});
+        }
+        else {
+            req.flash('error_msg', 'You don\'t have the authority to access this page!');
+			res.redirect('/api/dashboard');
+        }
+    }
+    else {
+        req.flash('error_msg', 'You need to login first!');
+        res.redirect('/');
+    }
+});
+
+router.get('/products/summary', function(req, res) {
+    if (req.user) {
+        if (req.user.role == 0 || req.user.role == 1) {
+            res.render('reports/products/index', { layout: 'layout_staff.handlebars', 
+            page_title: 'Products summary', reportsLink: true,
+            user: req.user, showProductsReport: false });
+        }
+        else {
+            req.flash('error_msg', 'You don\'t have the authority to access this page!');
+			res.redirect('/api/dashboard');
+        }
+    }
+    else {
+        req.flash('error_msg', 'You need to login first!');
+        res.redirect('/');
+    }
+});
+
+router.get('/sales/summary', function(req, res) {
+    if (req.user) {
+        if (req.user.role == 0 || req.user.role == 1) {
+            res.render('reports/sales/index', { layout: 'layout_staff.handlebars', 
+            page_title: 'Sales summary', reportsLink: true,
+            user: req.user, showSalesReport: false });
+        }
+        else {
+            req.flash('error_msg', 'You don\'t have the authority to access this page!');
+			res.redirect('/api/dashboard');
+        }
+    }
+    else {
+        req.flash('error_msg', 'You need to login first!');
+        res.redirect('/');
+    }
+});
+
 router.get('/clients/summary', function(req, res) {
     if (req.user) {
         if (req.user.role == 0 || req.user.role == 1) {
@@ -67,7 +121,7 @@ router.get('/clients/summary', function(req, res) {
     }
 });
 
-router.get('/orders/expecting-delivery', function(req, res) {
+router.get('/orders/expecting-delivery/generate', function(req, res) {
     if (req.user) {
         if (req.user.role == 0 || req.user.role == 1) {
             const startDate = req.query['startDate'];
@@ -93,11 +147,16 @@ router.get('/orders/expecting-delivery', function(req, res) {
                 criteria = {}
             }
 
+            if (_.isEmpty(criteria)) {
+                req.flash('error_msg', 'Please select a date range or at least just a FROM or TO date!');
+                return res.redirect('back');
+            }
+
             reportHelper.findPendingOrders(criteria, function(err, pendingOrders) {
                 if (err) throw err;
                 res.render('reports/clients/pendingOrders', { layout: 'layout_staff.handlebars', 
                 page_title: 'Clients expecting deliveries', reportsLink: true, 
-                user: req.user, pendingOrders: pendingOrders, criteria: criteria});
+                user: req.user, pendingOrders: pendingOrders, criteria: criteria, showOrdersReport: true });
             });
         }
         else {
@@ -111,7 +170,7 @@ router.get('/orders/expecting-delivery', function(req, res) {
     }
 });
 
-router.get('/products/summary', function(req, res) {
+router.get('/products/summary/generate', function(req, res) {
     if (req.user) {
         if (req.user.role == 0 || req.user.role == 1) {
             const startDate = req.query['startDate'];
@@ -136,60 +195,117 @@ router.get('/products/summary', function(req, res) {
             else {
                 criteria = {}
             }
+
+            if (_.isEmpty(criteria)) {
+                req.flash('error_msg', 'Please select a date range or at least just a FROM or TO date!');
+                return res.redirect('back');
+            }
             
             var productList = [];
+
             Product.listProducts(function(err, products) {
                 if (err) throw err;
                 var prodCount = products.length;
+                
+                var totalProductSum = 0;
+                var totalHarvestSum = 0;
+                var totalPurchaseSum = 0;
+                var totalSoldSum = 0;
+
                 products.forEach(product => {
+                    var productSum = 0;
                     var harvestSum = 0;
                     var purchaseSum = 0;
                     var soldSum = 0;
-
+                    
                     Harvesting.listHarvests(product._id, criteria, function(harvErr, harvests) {
                         if (harvErr) throw harvErr;
                         Purchasing.listPurchases(product._id, criteria, function(purchErr, purchases) {
                             if (purchErr) throw purchErr;
-                            reportHelper.listBagsByProduct(product, criteria, function(bagErr, bags) {
-                                if (bagErr) throw bagErr;
-                                // get all orders for the period, not just the count!
-                                reportHelper.countOrdersForPeriod(criteria, function(ordErr, ordCount) {
-                                    if (ordErr) throw ordErr;
+                            reportHelper.findDeliveredOrders(criteria, function(ordErr, orders) {
+                                if (ordErr) throw ordErr;
+                                reportHelper.findBagsByOrderDate(criteria, function(bagErr, bags) {
+                                    if (bagErr) throw bagErr;
                                     var harvCount = harvests.length;
                                     var purchCount = purchases.length;
+                                    var ordCount = orders.length;
                                     var bagCount = bags.length;
 
                                     harvests.forEach(harvest => {
-                                        harvestSum += harvest.amountHarvested;
+                                        harvestSum += harvest.amountHarvested * product.avgWeight;
                                         harvCount--;
                                     });
 
                                     purchases.forEach(purchase => {
-                                        purchaseSum += purchase.amountPurchased;
+                                        purchaseSum += purchase.amountPurchased * product.avgWeight;
                                         purchCount--;
                                     });
                                     
-                                    bags.forEach(bag => {
-                                        // check if bag date equals order date
-                                        soldSum += product.amountSmall + product.amountMedium + product.amountLarge;
-                                        bagCount--;
-                                    });
-
-                                    if (harvCount == 0 && purchCount == 0 && bagCount == 0) {
-                                        const prodObj = {
-                                            product: product,
-                                            harvestSum: harvestSum,
-                                            purchaseSum: purchaseSum,
-                                            soldSum: soldSum
+                                    if (harvCount == 0 && purchCount == 0) {
+                                        if (ordCount == 0) {;
+                                            const prodObj = {
+                                                product: product,
+                                                harvestSum: harvestSum,
+                                                purchaseSum: purchaseSum,
+                                                soldSum: soldSum
+                                            }
+                                            productList.push(prodObj);
+                                            prodCount--;
                                         }
-                                        productList.push(prodObj);
-                                        prodCount--;
+                                        else {
+                                            orders.forEach(order => {
+                                                bags.forEach(bag => {
+                                                    if (order.date >= bag.startDate && order.date < bag.endDate 
+                                                    && order.delivered && !order.cancelled && bag.type == order.typeOfBag) {
+                                                        var localExtraSum = 0;
+                                                        if (order.extra.length > 0) {
+                                                            order.extra.forEach(xtra => {
+                                                                if (xtra.name == product.name) {
+                                                                    soldSum += xtra.avgWeight;
+                                                                }
+                                                            });
+                                                        }
+                                                        
+                                                        bag.product.forEach(productInBag => {
+                                                            if (productInBag.name == product.name) {
+                                                                soldSum += order.numberOfBags * product.avgWeight;
+                                                            }
+                                                        });
+                                                    }
+                                                });
+                                                ordCount--;
+                                                if (ordCount == 0) {
+                                                    const prodObj = {
+                                                        product: product,
+                                                        harvestSum: harvestSum,
+                                                        purchaseSum: purchaseSum,
+                                                        soldSum: soldSum
+                                                    }
+                                                    productList.push(prodObj);
+                                                    prodCount--;
+                                                }
+                                            });
+                                        }
                                     }
 
+                                    // total sums
+                                    totalHarvestSum += harvestSum;
+                                    totalPurchaseSum += purchaseSum;
+                                    totalProductSum += totalHarvestSum + totalPurchaseSum;
+                                    totalSoldSum += soldSum;
+
                                     if (prodCount == 0) {
+                                        const totals = {
+                                            productSum: totalProductSum,
+                                            harvestSum: totalHarvestSum,
+                                            purchaseSum: totalPurchaseSum,
+                                            soldSum: totalSoldSum
+                                        };
+
                                         res.render('reports/products/index', { layout: 'layout_staff.handlebars', 
                                         page_title: 'Products summary', reportsLink: true,
-                                        user: req.user, products: productList, criteria: criteria });
+                                        user: req.user, products: productList, totals: totals,
+                                        criteria: criteria, showProductsReport: true });
                                     }
                                 });
                             });
@@ -209,7 +325,7 @@ router.get('/products/summary', function(req, res) {
     }
 });
 
-router.get('/sales/summary', function(req, res) {
+router.get('/sales/summary/generate', function(req, res) {
     if (req.user) {
         if (req.user.role == 0 || req.user.role == 1) {
             const startDate = req.query['startDate'];
@@ -235,9 +351,14 @@ router.get('/sales/summary', function(req, res) {
                 criteria = {}
             }
 
+            if (_.isEmpty(criteria)) {
+                req.flash('error_msg', 'Please select a date range or at least just a FROM or TO date!');
+                return res.redirect('back');
+            }
+
             res.render('reports/sales/index', { layout: 'layout_staff.handlebars', 
             page_title: 'Sales summary', reportsLink: true,
-            user: req.user, criteria: criteria });
+            user: req.user, criteria: criteria, showSalesReport: true });
         }
         else {
             req.flash('error_msg', 'You don\'t have the authority to access this page!');

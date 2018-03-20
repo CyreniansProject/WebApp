@@ -86,20 +86,32 @@ router.post('/new', function(req, res) {
 			// CREATE EMAIL
 			const output = `
 				<p>Hi ${firstname} ${lastname}, </p><br/>
-				<p>Congratulations for beign added to Cyrenians Farm's management system.</p>
+				<p>Welcome to Cyrenians Farm's management system.</p>
 				<h3>Accout details</h3>
 				<ul>
 					<li>Email (LoginID): ${email}</li>
 					<li>Access level: ${accessLevel}</li>
 					<li>Temporary password: ${password} - Safe, but hard to remember. Not recommended.</li>
 				</ul>
-				<br/><strong>IMPORTANT:</strong> Set your own password.<br/>
+				<br/>
+				<strong>IMPORTANT:</strong> Set your own password.
+				<br/>
 				<ul>
-				<li>Step 1: Click on this link: <a href="http://localhost/api/users/reset/${email}">Complete account creation!</a></li>
-				<li>Step 2: Type in your preffered password and confirm it.</li>
-				<li>Step 3: Sign in to the system with your email and newly set password.</li>
+					<li>Step 1: Click on this link: <a href="http://vbd.cyrenians.scot/api/users/reset/${email}">Complete account creation!</a></li>
+					<li>Step 2: Type in your preffered password and confirm it.</li>
+					<li>Step 3: Sign in to the system with your email and newly set password.</li>
 				</ul>
-			`;
+				<br/>
+				<p>
+					<strong>Otherwise</strong>, you can login with the temporary password through <a href="http://vbd.cyrenians.scot/api/users/reset/${email}">this link</a>.
+					<br/>And then change this password from your profile settings of your account.
+				</p>
+				<br/><br/>
+				<p><strong>Thank you!</strong></p>
+
+			`; 
+			// http://vbd.cyrenians.scot/api/users/reset/${email}
+			// http://localhost/api/users/reset/${email}
 
 			// create reusable transporter object using the default SMTP transport
 			const transporter = nodemailer.createTransport({
@@ -117,7 +129,7 @@ router.post('/new', function(req, res) {
 
 			// setup email data with unicode symbols
 			const mailOptions = {
-				from: '"Georgi @ Cyrenians Farm" <georgi@georgim.com>', // sender address
+				from: '"Manager @ Cyrenians Farm" <georgi@georgim.com>', // sender address
 				to: email, // list of receivers
 				subject: 'Account completion request', // Subject line
 				text: 'Set your password!', // plain text body

@@ -22,13 +22,16 @@
                             <input class="form-control" name="purchaseId" type="hidden" value="{{purchase._id}}">
                             <fieldset>
                                 <div class="form-group row">
-                                        <label class="col-sm-2 col-form-label">How many? <span style="color:red;">*</span></label>
-                                        <div class="col-sm-3">
-                                            <div class="input-group">
-                                            <input value="{{purchase.amountPurchased}}" class="form-control pull-right" placeholder="" name="amountPurchased" type="text">
-                                            <div class="input-group-addon">Amount</div>
-                                            </div>
+                                    <label class="col-sm-2 col-form-label">
+                                        Purchased units <span style="color:red;">*</span><br>
+                                        <small><strong>(per avg. weight)</strong></small> 
+                                    </label>
+                                    <div class="col-sm-3">
+                                        <div class="input-group">
+                                        <input value="{{purchase.amountPurchased}}" class="form-control pull-right" placeholder="" name="amountPurchased" type="text">
+                                        <div class="input-group-addon">Amount</div>
                                         </div>
+                                    </div>
                                 </div>
                                 <div class="form-group row">
                                         <label class="col-sm-2 col-form-label">Single unit price <span style="color:red;">*</span></label>

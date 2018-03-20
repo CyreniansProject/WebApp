@@ -10,17 +10,17 @@ const dateHelper = require('./helpers/dates');
 const Product = require('./product');
 
 const PickingSchema = new Schema ({
+    // type of product picked
     product: {
-        //type of product picked
         type: Schema.Types.ObjectId, 
         ref: 'Product'
     },
+    // date of harversting
     date: {
-        //date of harversting
         type: Date
     },
+    // how many units have been harvested
     amountHarvested: {
-        //how much has been harvested
         type: Number
     }
 });

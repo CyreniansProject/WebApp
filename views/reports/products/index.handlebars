@@ -1,36 +1,48 @@
 {{#if user}}
+<style>
+#productsDateForm .inp-label {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+#productsDateForm .h-label {
+    font-size: 24px;
+}
+</style>
+
 <div class="row">
-    <div class="col-lg-7">
-        <label><strong>
-            Display products summary for particular dates
-            <br>
-            Filter is applied to both harvesting and purchasing
-        </strong></label>
-        <form class="form-inline" method="GET" action="/api/reports/products/summary">
+    <div class="col-lg-12" id="productsDateForm">
+        <label class="h-label">
+            <p><strong>Usage:</strong></p>
+            <p>Display products summary for particular dates.</p>
+            <p>Filter is applied to both harvesting and purchasing.</p>
+        </label>
+        <form class="form-inline" method="GET" action="/api/reports/products/summary/generate">
             <div class="input-group input-daterange">
-                <label>From</label>
+                <label class="inp-label">From</label>
                 <div class="form-group">
                     {{#if criteria.startDate}}
-                    <input type="text" class="form-control" name="startDate" value="{{criteria.startDate}}">
+                    <input type="text" class="form-control input-lg" name="startDate" value="{{criteria.startDate}}">
                     {{else}}
-                    <input type="text" class="form-control" name="startDate" placeholder="mm-dd-yyyy">
+                    <input type="text" class="form-control input-lg" name="startDate" placeholder="mm-dd-yyyy">
                     {{/if}}
                 </div>
-                <label>To</label>
+                <label class="inp-label">To</label>
                 <div class="form-group">
                     {{#if criteria.endDate}}
-                    <input type="text" class="form-control" name="endDate" value="{{criteria.endDate}}">
+                    <input type="text" class="form-control input-lg" name="endDate" value="{{criteria.endDate}}">
                     {{else}}
-                    <input type="text" class="form-control" name="endDate" placeholder="mm-dd-yyyy">
+                    <input type="text" class="form-control input-lg" name="endDate" placeholder="mm-dd-yyyy">
                     {{/if}}
                 </div>
             </div>
-            <button type="submit" class="btn btn-purple">Show</button>
+            <button type="submit" class="btn btn-purple btn-lg">Generate</button>
         </form>
     </div>
 </div>
+
+{{#eq showProductsReport true}}
 <div class="row" style="margin-top: 25px">
-<div class="row">
 <div class="col-lg-12">
     <div class="panel panel-default">
         <div class="panel-heading">
@@ -44,17 +56,23 @@
                     <thead>
                         <tr>
                             <th>Total products in stock</th>
-                            <th>Total products harvested</th>
-                            <th>Total products purchased</th>
-                            <th>Total products sold</th>
+                            <th>Total amount harvested</th>
+                            <th>Total amount purchased</th>
+                            <th>Total amount sold</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr style="font-weight: bold;">
-                            <td style="font-size:16px;">1680</td>
-                            <td style="font-size:16px;">1500</td>
-                            <td style="font-size:16px;">180</td>
-                            <td style="font-size:16px;">1000</td>
+                            <td style="font-size:16px;">{{totals.productSum}}</td>
+                            <td style="font-size:16px;">
+                                {{toFixed totals.harvestSum 2}} <small>kg</small>
+                            </td>
+                            <td style="font-size:16px;">
+                                {{toFixed totals.purchaseSum 2}} <small>kg</small>
+                            </td>
+                            <td style="font-size:16px;">
+                                {{toFixed totals.soldSum 2}} <small>kg</small>
+                            </td>
                         </tr>
                     </tbody>
                 </table>
@@ -86,17 +104,23 @@
                             {{#eq this.harvestSum 0}}
                             <td style="font-size:16px;"><em>No harvests</em></td>
                             {{else}}
-                            <td style="font-size:16px;">{{this.harvestSum}}</td>
+                            <td style="font-size:16px;">
+                                {{toFixed this.harvestSum 2}} <small>kg</small>
+                            </td>
                             {{/eq}}
                             {{#eq this.purchaseSum 0}}
                             <td style="font-size:16px;"><em>No purchases</em></td>
                             {{else}}
-                            <td style="font-size:16px;">{{this.purchaseSum}}</td>
+                            <td style="font-size:16px;">
+                                {{toFixed this.purchaseSum 2}} <small>kg</small>
+                            </td>
                             {{/eq}}
                             {{#eq this.soldSum 0}}
                             <td style="font-size:16px;"><em>None</em></td>
                             {{else}}
-                            <td style="font-size:16px;">{{this.soldSum}}</td>
+                            <td style="font-size:16px;">
+                                {{toFixed this.soldSum 2}} <small>kg</small>
+                            </td>
                             {{/eq}}
                         </tr>
                         {{/each}}
@@ -111,7 +135,7 @@
 </div>
 <!-- /.col-lg-12 -->
 </div>
-
+{{/eq}}
 <!-- Page-Level Demo Scripts - Tables - Use for reference -->
 <script src="http://code.jquery.com/jquery-3.3.1.min.js" 
 integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" 

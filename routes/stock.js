@@ -2,9 +2,13 @@ const express = require('express');
 var router = express.Router();
 const flash = require('connect-flash');
 
+// schemas
 var Product = require('../models/product');
 var Picking = require('../models/picking');
 var Purchasing = require('../models/purchasing');
+
+// schema helpers
+const lastResultHelper = require('../models/helpers/lastResult');
 
 // PRODUCTS ROUTING
 
@@ -13,10 +17,31 @@ router.get('/', function(req, res) { res.redirect('/api/stock/products'); });
 router.get('/products', function(req, res) {
     if (req.user) {
         if (req.user.role == 0 || req.user.role == 1) {
-            Product.listProducts(function(err, products) {
+            var products = [];
+            Product.listProducts(function(err, productList) {
                 if (err) throw err;
-                res.render('stock/products/index', { layout: 'layout_staff.handlebars', page_title: 'Products list', 
-                user: req.user, products: products });
+                var count = productList.length;
+
+                productList.forEach(product => {
+                    lastResultHelper.getLastHarvest(product, function(lhErr, lastHarvest) {
+                        if (lhErr) throw lhErr;
+                        lastResultHelper.getLastPurchase(product, function(lpErr, lastPurchase) {
+                            if (lpErr) throw lpErr;
+                            
+                            products.push({
+                                product: product,
+                                lastHarvest: lastHarvest,
+                                lastPurchase: lastPurchase
+                            });
+                            count--;
+                            
+                            if (count == 0) {
+                                res.render('stock/products/index', { layout: 'layout_staff.handlebars', page_title: 'Products list', 
+                                user: req.user, products: products });
+                            }
+                        });
+                    }); 
+                });
             });
         }
         else {
@@ -51,16 +76,10 @@ router.post('/products/new', function(req, res) {
         if (req.user.role == 0 || req.user.role == 1) {
             const name = req.body.itemName;
             const avgWeight = req.body.avgWeight;
-            const amountSmall = req.body.amountSmall;
-            const amountMedium = req.body.amountMedium;
-            const amountLarge = req.body.amountLarge;
 
             // Validation
             req.check('itemName', 'Product name is required').notEmpty();
             req.check('avgWeight', 'Average weight (number) is required').notEmpty();
-            req.check('amountSmall', 'Small bag amount (number) is required').notEmpty();
-            req.check('amountMedium', 'Medium bag amount (number) is required').notEmpty();
-            req.check('amountLarge', 'Large bag amount (number) is required').notEmpty();
             // Store validation errors if any...
             var validErrors = req.validationErrors();
     
@@ -72,10 +91,7 @@ router.post('/products/new', function(req, res) {
             else {
                 const productDetails = {
                     name: name,
-                    avgWeight: avgWeight,
-                    amountSmall: amountSmall,
-                    amountMedium: amountMedium,
-                    amountLarge: amountLarge
+                    avgWeight: avgWeight
                 };
 
                 Product.createProduct(productDetails, function(err, product) {
@@ -124,16 +140,10 @@ router.post('/products/update', function(req, res) {
 
             const name = req.body.itemName;
             const avgWeight = req.body.avgWeight;
-            const amountSmall = req.body.amountSmall;
-            const amountMedium = req.body.amountMedium;
-            const amountLarge = req.body.amountLarge;
 
             // Validation
             req.check('itemName', 'Product name is required').notEmpty();
             req.check('avgWeight', 'Average weight (number) is required').notEmpty();
-            req.check('amountSmall', 'Small bag amount (number) is required').notEmpty();
-            req.check('amountMedium', 'Medium bag amount (number) is required').notEmpty();
-            req.check('amountLarge', 'Large bag amount (number) is required').notEmpty();
             // Store validation errors if any...
             var validErrors = req.validationErrors();
     
@@ -145,10 +155,7 @@ router.post('/products/update', function(req, res) {
             else {
                 const productDetails = {
                     name: name,
-                    avgWeight: avgWeight,
-                    amountSmall: amountSmall,
-                    amountMedium: amountMedium,
-                    amountLarge: amountLarge
+                    avgWeight: avgWeight
                 };
 
                 Product.updateProduct(id, productDetails, function(err, product) {

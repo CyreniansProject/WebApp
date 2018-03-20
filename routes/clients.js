@@ -2,7 +2,11 @@ const express = require('express');
 const router = express.Router();
 const flash = require('connect-flash');
 
+// schemas
 const Client = require('../models/client');
+
+// schema helpers
+const lastResultHelper = require('../models/helpers/lastResult');
 
 router.get('/', function(req, res) {
     if (req.user) {
@@ -14,7 +18,7 @@ router.get('/', function(req, res) {
                 
                 // find the last order for each client object
                 clientList.forEach(client => {
-                    Client.getLastOrder(client, function(oErr, lastOrder) {
+                    lastResultHelper.getLastOrder(client, function(oErr, lastOrder) {
                         if (oErr) throw oErr;
                         clients.push({
                             client: client,

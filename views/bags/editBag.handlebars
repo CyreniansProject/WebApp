@@ -19,10 +19,19 @@ crossorigin="anonymous"></script>
                         <form id="addBagForm" role="form" method="post" action="/api/bags/update">
                             <input class="form-control" name="bagId" type="hidden" value="{{bagContent._id}}">
                             <fieldset>
+                                <div class="form-group">
+                                    <label>Bag size <span style="color:red;">*</span></label>
+                                    <select multiple class="form-control" name="type" id="bag-size">
+                                        <option value="Choose...">Choose...</option>
+                                        <option value="Small">Small</option>
+                                        <option value="Medium">Medium</option>
+                                        <option value="Large">Large</option>
+                                    </select>
+                                </div>
+                                <br>
                                 <div class="form-group row">
                                 <div class="pull-left col-sm-6">
-                                    <h4>List of products</h4>
-                                    <hr>
+                                    <label><p>List of products</p></label>
                                     <div style="display: none;" class="alert alert-danger">Please select an amount for the product you wish to add.</div>
                                     <div style="height: 300px; overflow-y: auto;" class="list-group">
                                         {{#each products}}
@@ -35,8 +44,7 @@ crossorigin="anonymous"></script>
                                     </div>
                                 </div>
                                 <div class="pull-left col-sm-6">
-                                    <h4>Products in bag</h4>
-                                    <hr>
+                                    <label><p>Products in bag</p></label>
                                     <div id="bagElems" style="height: 300px; overflow-y: auto;" class="list-group">
                                         <input type="hidden" id="productData" name="products"/>
                                         <!-- display the updated to bag products -->
@@ -57,39 +65,29 @@ crossorigin="anonymous"></script>
                                         {{/each}}
                                     </div>
                                 </div>
-                                </div>
-                                <hr>
+                                </div> 
                                 <div class="form-group row">
-                                <div class="pull-left col-sm-12">
-                                    <h4>Price <span style="color:red;">*</span></h4>
-                                    <div class="col-sm-2 pull-left">
-                                        <label>Small</label>
-                                        <input type="text" class="form-control" name="priceSmall" value="{{bagContent.priceSmall}}">
-                                    </div>
-                                    <div class="col-sm-2 pull-left">
-                                        <label>Medium</label>
-                                        <input type="text" class="form-control" name="priceMedium" value="{{bagContent.priceMedium}}">
-                                    </div>
-                                    <div class="col-sm-2 pull-left">
-                                        <label>Large</label>
-                                        <input type="text" class="form-control" name="priceLarge" value="{{bagContent.priceLarge}}">
-                                    </div>
-                                </div>
-                                </div>
-                                <div class="form-group row">
-                                <div class="pull-left col-sm-6">
-                                    <h4>Active period <span style="color:red;">*</span></h4>
-                                    <div class="input-group input-daterange form-inline">
-                                        <label>From</label>
-                                        <div class="form-group">
-                                            <input type="text" class="form-control" name="startDate" value="{{bagContent.editStartDate}}">
-                                        </div>
-                                        <label>To</label>
-                                        <div class="form-group">
-                                            <input type="text" class="form-control" name="endDate" value="{{bagContent.editEndDate}}">
+                                    <div class="col-sm-6">
+                                        <label>Price <strong>(&pound;)</strong> <span style="color:red;">*</span></label>
+                                        <div class="form-inline">
+                                            <input style="width:100px;" class="form-control" name="price" type="text" value="{{bagContent.price}}">
                                         </div>
                                     </div>
                                 </div>
+                                <div class="form-group row">
+                                    <div class="pull-left col-sm-6">
+                                        <label>Active period <span style="color:red;">*</span></label>
+                                        <div class="input-group input-daterange form-inline">
+                                            <label>From</label>
+                                            <div class="form-group">
+                                                <input type="text" class="form-control" name="startDate" value="{{bagContent.editStartDate}}">
+                                            </div>
+                                            <label>To</label>
+                                            <div class="form-group">
+                                                <input type="text" class="form-control" name="endDate" value="{{bagContent.editEndDate}}">
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                                 <br><br>
                                 <button type="submit" class="btn btn-lg btn-purple btn-block">Update bag</button>
@@ -103,6 +101,8 @@ crossorigin="anonymous"></script>
 </div>
 
 <script>
+    $("#bag-size").val('{{bagContent.type}}').change();
+
     // TODO: ABSTRACT THOSE FUNCTIONS IN bagHelper.js
 
     function removeFromBag(elementId) {
