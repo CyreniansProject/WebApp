@@ -21,27 +21,32 @@ router.get('/products', function(req, res) {
             Product.listProducts(function(err, productList) {
                 if (err) throw err;
                 var count = productList.length;
-
-                productList.forEach(product => {
-                    lastResultHelper.getLastHarvest(product, function(lhErr, lastHarvest) {
-                        if (lhErr) throw lhErr;
-                        lastResultHelper.getLastPurchase(product, function(lpErr, lastPurchase) {
-                            if (lpErr) throw lpErr;
-                            
-                            products.push({
-                                product: product,
-                                lastHarvest: lastHarvest,
-                                lastPurchase: lastPurchase
+                if (productList.length > 0) {
+                    productList.forEach(product => {
+                        lastResultHelper.getLastHarvest(product, function(lhErr, lastHarvest) {
+                            if (lhErr) throw lhErr;
+                            lastResultHelper.getLastPurchase(product, function(lpErr, lastPurchase) {
+                                if (lpErr) throw lpErr;
+                                
+                                products.push({
+                                    product: product,
+                                    lastHarvest: lastHarvest,
+                                    lastPurchase: lastPurchase
+                                });
+                                count--;
+                                
+                                if (count == 0) {
+                                    res.render('stock/products/index', { layout: 'layout_staff.handlebars', page_title: 'Products list', 
+                                    user: req.user, products: products });
+                                }
                             });
-                            count--;
-                            
-                            if (count == 0) {
-                                res.render('stock/products/index', { layout: 'layout_staff.handlebars', page_title: 'Products list', 
-                                user: req.user, products: products });
-                            }
-                        });
-                    }); 
-                });
+                        }); 
+                    });
+                }
+                else {
+                    res.render('stock/products/index', { layout: 'layout_staff.handlebars', page_title: 'Products list', 
+                    user: req.user, products: productList });
+                }
             });
         }
         else {

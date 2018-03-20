@@ -33,7 +33,7 @@
                             <td style="font-size:16px;">{{this.product.name}}</td>
                             <td style="font-size:16px;">
                                 {{#eq this.lastHarvest null}}
-                                <em>No harvests</em>
+                                <em>None</em>
                                 <a href="/api/stock/harvests/to/{{this.product._id}}/new" class="pull-right" target="_blank">
                                     <i style="margin-right: 10px; transform: scale(1.75);" class="fa fa-plus"></i>
                                 </a>
@@ -46,7 +46,7 @@
                             </td>
                             <td style="font-size:16px;">
                                 {{#eq this.lastPurchase null}}
-                                <em>No harvests</em>
+                                <em>None</em>
                                 <a href="/api/stock/purchases/to/{{this.product._id}}/new" class="pull-right" target="_blank">
                                     <i style="margin-right: 10px; transform: scale(1.75);" class="fa fa-plus"></i>
                                 </a>
