@@ -11,20 +11,23 @@
             <div class="panel-body">
                 <div class="row">
                     <div class="col-lg-12">
-                        <form role="form" method="post" action="/api/users/update">
+                        <form role="form" method="POST" action="/api/users/update">
                             <input class="form-control" name="userId" type="hidden" value="{{member._id}}">
                             <fieldset>
                                 <div class="form-group">
-                                    <input class="form-control" placeholder="First name" name="firstname" value="{{member.firstname}}" type="text" autofocus>
+                                    <label><h4>First name</h4></label>
+                                    <input class="form-control" name="firstname" value="{{member.firstname}}" type="text" autofocus>
                                 </div>
                                 <div class="form-group">
-                                    <input class="form-control" placeholder="Last name" name="lastname" value="{{member.lastname}}" type="text">
+                                    <label><h4>Surname</h4></label>
+                                    <input class="form-control" name="lastname" value="{{member.lastname}}" type="text">
                                 </div>
                                 <div class="form-group">
-                                    <input class="form-control" placeholder="E-mail" name="email" value="{{member.email}}" type="email">
+                                    <label><h4>E-mail address</h4></label>
+                                    <input class="form-control" name="email" value="{{member.email}}" type="email">
                                 </div>
                                 <div class="form-group">
-                                    <label>Access level</label>
+                                    <label><h4>Access level</h4></label>
                                     <select multiple class="form-control" id="access" name="role">
                                         <option value="Choose...">Choose...</option>
                                         <option value="0">Administrator</option>
@@ -32,8 +35,18 @@
                                         <option value="2">Delivery man</option>
                                     </select>
                                 </div>
-                                <!-- Change this to a button or input when using this as a form -->
-                                <button type="submit" class="btn btn-lg btn-purple btn-block">Save changes</a>
+                                <button type="submit" class="btn btn-lg btn-purple btn-block">Save changes</button>
+                            </fieldset>
+                        </form>
+                        <hr/>
+                        <form role="form" method="POST" action="/api/users/send-password">
+                            <input class="form-control" name="userId" type="hidden" value="{{member._id}}">
+                            <input class="form-control" name="userEmail" type="hidden" value="{{member.email}}">
+                            <input class="form-control" name="userFirstname" type="hidden" value="{{member.firstname}}">
+                            <input class="form-control" name="userLastname" type="hidden" value="{{member.lastname}}">
+                            <fieldset>
+                                <label><h4>Send an email for password resetting</h4></label>
+                                <button type="submit" class="btn btn-lg btn-purple btn-block">Send new password</button>
                             </fieldset>
                         </form>
                     </div>

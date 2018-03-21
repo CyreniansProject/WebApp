@@ -67,8 +67,7 @@ module.exports.resetPassword = (userEmail, newPassword, callback) => {
     bcrypt.genSalt(10, function(err, salt) {
         bcrypt.hash(newPassword, salt, function(err, hash) {
             newPassword = hash;
-            // Find user by email AND
-            // Upate user's old password with the new one
+            // Find user by email & Upate user's old password with the new one
             User.update({email: userEmail}, {password: newPassword}, callback);
         });
     });

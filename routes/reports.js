@@ -242,7 +242,7 @@ router.get('/products/summary/generate', function(req, res) {
                                     });
                                     
                                     if (harvCount == 0 && purchCount == 0) {
-                                        if (ordCount == 0) {;
+                                        if (ordCount == 0) {
                                             const prodObj = {
                                                 product: product,
                                                 harvestSum: harvestSum,

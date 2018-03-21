@@ -97,19 +97,21 @@ router.post('/new', function(req, res) {
 				<strong>IMPORTANT:</strong> Set your own password.
 				<br/>
 				<ul>
-					<li>Step 1: Click on this link: <a href="http://vbd.cyrenians.scot/api/users/reset/${email}">Complete account creation!</a></li>
+					<li>Step 1: Click on this link: <a href="http://vbd.cyrenians.scot/api/users/reset/${email}">Complete account creation!</a>
+					</li>
 					<li>Step 2: Type in your preffered password and confirm it.</li>
 					<li>Step 3: Sign in to the system with your email and newly set password.</li>
 				</ul>
 				<br/>
 				<p>
-					<strong>Otherwise</strong>, you can login with the temporary password through <a href="http://vbd.cyrenians.scot/api/users/reset/${email}">this link</a>.
+					<strong>Otherwise</strong>, you can login with the temporary password through 
+					<a href="http://vbd.cyrenians.scot">this link</a>.
 					<br/>And then change this password from your profile settings of your account.
 				</p>
 				<br/><br/>
 				<p><strong>Thank you!</strong></p>
+			`;
 
-			`; 
 			// http://vbd.cyrenians.scot/api/users/reset/${email}
 			// http://localhost/api/users/reset/${email}
 
@@ -276,12 +278,18 @@ router.get('/remove/:id', function(req, res) {
 });
 
 // Reset - GET
-router.get('/reset/:email', function(req, res) {
+router.get('/reset/:email?', function(req, res) {
 	var email = req.params.email;
-	if (req.user && req.user.email == email)
-		res.redirect('/api/dashboard');
-	else
+	if (!email) {
+		return res.render('users/reset', { page_title: 'Reset password' });
+	}
+	else {
+		if (req.user && req.user.email == email) {
+			return res.redirect('/api/dashboard');
+		}
+		// else if a non-logged-in user has passed an email parameter.
 		res.render('users/reset', { page_title: 'Reset password', email: email });
+	}
 });
 
 // Reset - POST
@@ -293,7 +301,7 @@ router.post('/reset', function(req, res) {
 	// Validation
 	req.check('email', 'The email is wrong / does not exist in the database').isEmail();
 	req.check('password', 'Password field is required').notEmpty();
-	req.check('confirmPassword', 'Both passwords do not match').equals(req.body.password);
+	req.check('confirmPassword', 'Both password fields must match').equals(req.body.password);
 	// Store validation errors if any...
 	var validErrors = req.validationErrors();
 
@@ -303,16 +311,129 @@ router.post('/reset', function(req, res) {
 		res.redirect('back');
 	}
 	else {
-		// Find user by Email func.
-		// then send User as param instead of email and password
-		// then alter the resetPassword func.
-		User.resetPassword(email, password, (err) => {
-			if(err) throw err;
+		User.count({email: email}, function(err, usrCount) {
+			if (usrCount == 0) {
+				req.flash('error_msg', 'A user with this email address does not exist in the database.');
+				res.redirect('back');
+			}
 
-			req.flash('success_msg', 'Password was successfully updated.');
-			// delay for 3 seconds and redirect to login
-			res.redirect('/');
+			User.resetPassword(email, password, (err) => {
+				if(err) throw err;
+				
+				req.flash('success_msg', 'Password was successfully updated.');
+				if (req.user && req.user.email == email) {
+					res.redirect('back');
+				}
+				else {
+					res.redirect('/');
+				}
+			});
 		});
+	}
+});
+
+// Send new password - POST
+router.post('/send-password', function(req, res) {
+	if (req.user) {
+		if (req.user.role == 0) {
+			const id = req.body.userId;
+			const email = req.body.userEmail;
+			const firstname = req.body.userFirstname;
+			const lastname = req.body.userLastname;
+
+			if (req.user && req.user._id == id &&  req.user.email == email && 
+				req.user.firstname == firstname && req.user.lastname == lastname) {
+				req.flash('error_msg', 'Invalid action. You can change your password through your profile/account settings.');
+				return res.redirect('/api/dashboard');
+			}
+			
+			var password = generator.generate({
+				length: 10,
+				numbers: true
+			})
+
+			// CREATE EMAIL
+			const output = `
+				<p>Hi ${firstname} ${lastname}, </p><br/>
+				<p>We've generated a temporary password and a link from which you can set your own new password for yourself!</p>
+				<h3>Details</h3>
+				<ul>
+					<li>Temporary password: ${password} - Safe, but hard to remember. Set a new one from the link below.</li>
+					<li><a href="http://vbd.cyrenians.scot/api/users/reset/${email}">Set a new password!</a></li>
+				</ul>
+				<br/>
+				<p>
+					<strong>Otherwise</strong>, you can login with the temporary password through 
+					<a href="http://vbd.cyrenians.scot">this link</a>.
+					<br/>And then change this password from your profile settings of your account.
+				</p>
+				<br/><br/>
+				<p><strong>Thank you!</strong></p>
+			`;
+
+			// http://vbd.cyrenians.scot/api/users/reset/${email}
+			// http://localhost/api/users/reset/${email}
+
+			// create reusable transporter object using the default SMTP transport
+			const transporter = nodemailer.createTransport({
+				host: 'mail.georgim.com',
+				port: 25,
+				secure: false, // true for 465, false for any other ports
+				auth: {
+					user: 'georgi@georgim.com', // generated ethereal user
+					pass: '405060Gg'  // generated ethereal password
+				},
+				tls: {
+					rejectUnauthorized: false
+				}
+			});
+
+			// setup email data with unicode symbols
+			const mailOptions = {
+				from: '"Manager @ Cyrenians Farm" <georgi@georgim.com>', // sender address
+				to: email, // list of receivers
+				subject: 'Forgotten password request', // Subject line
+				text: 'Set a new password password!', // plain text body
+				html: output // html body
+			};
+			// END EMAIL CREATION
+
+			// Validation
+			req.check('userEmail', 'Email is required').isEmail();
+			req.check('userFirstname', 'First Name is required').notEmpty();
+			req.check('userLastname', 'Last Name is required').notEmpty();
+			
+			// Store validation errors if any...
+			var validErrors = req.validationErrors();
+			// Attempt User creation
+			if (validErrors) {
+				req.flash('valid_msg', validErrors[0].msg);
+				res.redirect('back');
+			}
+			else {
+				bcrypt.genSalt(10, function(err, salt) {
+					bcrypt.hash(password, salt, function(err, hash) {
+						User.findByIdAndUpdate(id, {password: hash}, function(err, user) {
+							if(err) throw err;
+							// send mail with defined transport object
+							transporter.sendMail(mailOptions, (mailErr, info) => {
+								if (mailErr) return mailErr;
+								req.flash('success_msg', 'New password and a reset link successfully send via email.');
+								res.redirect('back');
+							});
+						});
+					});
+				});
+			}
+		}
+		else {
+			req.flash('error_msg', 'You don\'t have the authority to add new staff members!');
+			res.redirect('/api/dashboard');
+		}
+	}	
+	else {
+		req.flash('error_msg', 'You need to login first!');
+		res.redirect('/');
 	}
 });
 
