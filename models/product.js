@@ -13,7 +13,8 @@ const ProductSchema = new Schema ({
 });
 
 ProductSchema.pre('remove', function(next) {
-    this.model('picking').remove({ product: this._id }, next);
+    this.model('Picking').remove({ product: this._id });
+    this.model('Purchasing').remove({ product: this._id }, next);
 });
 
 const Product = module.exports = mongoose.model('Product', ProductSchema);
