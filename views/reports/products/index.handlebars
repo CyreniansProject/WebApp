@@ -55,7 +55,7 @@
                 <table class="table table-striped table-bordered table-hover" id="total-products">
                     <thead>
                         <tr>
-                            <th>Total products in stock</th>
+                            <th>Products in stock</th>
                             <th>Total amount harvested</th>
                             <th>Total amount purchased</th>
                             <th>Total amount sold</th>
@@ -63,7 +63,9 @@
                     </thead>
                     <tbody>
                         <tr style="font-weight: bold;">
-                            <td style="font-size:16px;">{{totals.productSum}}</td>
+                            <td style="font-size:16px;">
+                                {{toFixed totals.productSum 2}} <small>kg</small>
+                            </td>
                             <td style="font-size:16px;">
                                 {{toFixed totals.harvestSum 2}} <small>kg</small>
                             </td>

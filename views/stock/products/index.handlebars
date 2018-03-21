@@ -26,7 +26,7 @@
                                  <a href="/api/stock/products/edit/{{this.product._id}}" class="btn btn-primary btn-sm btn-outline" role="button">
                                     <i style="transform: scale(1.5);" class="fa fa-edit"></i>
                                 </a>&nbsp;
-                                 <a href="/api/stock/products/remove/{{this.product._id}}" class="btn btn-danger btn-sm btn-outline" role="button">
+                                 <a class="btn btn-danger btn-sm btn-outline" type="button" data-toggle="modal" data-target="#del-modal-{{this.product._id}}">
                                     <i style="transform: scale(1.5);" class="fa fa-trash"></i>
                                 </a>
                             </td>
@@ -59,6 +59,30 @@
                             </td>
                             <td style="font-size:16px;">{{toFixed this.product.avgWeight 2}} <small>kg</small></td>
                         </tr>
+
+                        <!-- .DELETE MODAL-->
+                        <div class="modal fade" id="del-modal-{{this.product._id}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                            <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                <button type="button" class="close" style="transform: scale(1.5);" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                                <center>
+                                    <h1>Deleting product <strong>{{this.product.name}}</strong> ... ?</h1>
+                                </center>
+                                </div>
+                                
+                                <div class="modal-footer">
+                                <center>
+                                    <a href="/api/stock/products/remove/{{this.product._id}}" class="btn btn-purple">Confirm</a>
+                                    <button type="button" class="btn btn-purple" data-dismiss="modal" aria-label="Close">Cancel</button>
+                                </center>
+                                </div>
+                            </div>
+                            </div> 
+                        </div>
+                        <!-- /.DELETE MODAL-->
                         {{/each}}
                     </tbody>
                 </table>

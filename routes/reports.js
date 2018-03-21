@@ -291,10 +291,11 @@ router.get('/products/summary/generate', function(req, res) {
                                     // total sums
                                     totalHarvestSum += harvestSum;
                                     totalPurchaseSum += purchaseSum;
-                                    totalProductSum += totalHarvestSum + totalPurchaseSum;
                                     totalSoldSum += soldSum;
+                                    totalProductSum = totalHarvestSum + totalPurchaseSum;
 
                                     if (prodCount == 0) {
+
                                         const totals = {
                                             productSum: totalProductSum,
                                             harvestSum: totalHarvestSum,
