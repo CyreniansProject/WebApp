@@ -29,21 +29,21 @@
                                     <i style="transform: scale(1.5);" class="fa fa-trash"></i>
                                 </a>
                             </td>
-                            <td style="font-size:16px;">{{this.firstname}} {{this.lastname}}</td>
-                            <td style="font-size:16px;">
+                            <td style="font-size:14px;">{{this.firstname}} {{this.lastname}}</td>
+                            <td style="font-size:14px;">
                                 {{this.email}}
                                 <a href="mailto:{{this.email}}" class="pull-right" style="text-decoration: none; color: #666;">
-                                    <i style="margin-right: 10px; transform: scale(1.75);" class="fa fa-envelope"></i>
+                                    <i style="margin-right: 5px; transform: scale(2.0, 1.75);" class="fa fa-envelope"></i>
                                 </a>
                             </td>
                             {{#eq this.role 0}}
-                                <td style="font-size:16px;">Administrator</td>
+                                <td style="font-size:14px;">Administrator</td>
                             {{/eq}}
                             {{#eq this.role 1}}
-                                <td style="font-size:16px;">Staff member</td>
+                                <td style="font-size:14px;">Staff member</td>
                             {{/eq}}
                             {{#eq this.role 2}}
-                                <td style="font-size:16px;">Delivery man</td>
+                                <td style="font-size:14px;">Delivery man</td>
                             {{/eq}}
                         </tr>
 

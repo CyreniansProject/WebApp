@@ -1,4 +1,8 @@
 {{#if user}}
+{{#if valid_msg}}
+    <div class="alert alert-danger">{{valid_msg}}</div>
+{{/if}}
+
 <style>
 #sales-chart {
     max-height: 500px;
@@ -6,12 +10,21 @@
 }
 
 .morris-hover.morris-default-style {
-    transform: scale(2.0, 2.0);
+    transform: scale(1.25);
 }
 
 #salesDateForm .inp-label {
     font-size: 18px;
     font-weight: bold;
+}
+
+
+#salesDateForm .inp-select {
+    font-size: 16px;
+    width: 138px;
+    height: 46px;
+    padding: 1px;
+    text-align: center;
 }
 
 #salesDateForm .h-label {
@@ -21,40 +34,87 @@
 </style>
 <div class="row">
     <div class="col-lg-12" id="salesDateForm">
-        <label class="h-label">
-            <p><strong>Usage:</strong></p>
-            <p>Display sales summary for particular dates.</p>
-        </label>
-        <form class="form-inline" method="GET" action="/api/reports/sales/summary/generate">
-            <div class="input-group input-daterange">
-                <label class="inp-label">From</label>
-                <div class="form-group">
-                    {{#if criteria.startDate}}
-                    <input type="text" class="form-control input-lg" name="startDate" value="{{criteria.startDate}}">
-                    {{else}}
-                    <input type="text" class="form-control input-lg" name="startDate" placeholder="mm-dd-yyyy">
-                    {{/if}}
-                </div>
-                <label class="inp-label">To</label>
-                <div class="form-group">
-                    {{#if criteria.endDate}}
-                    <input type="text" class="form-control input-lg" name="endDate" value="{{criteria.endDate}}">
-                    {{else}}
-                    <input type="text" class="form-control input-lg" name="endDate" placeholder="mm-dd-yyyy">
-                    {{/if}}
+        <p><big>Providing a Monthly / Yearly based report.</big></p>
+        <hr/>
+        <form class="" method="GET" action="/api/reports/sales/summary/generate">
+            <fieldset>
+            <div class="form-group row">
+                <div class="col-sm-12">
+                    <div class="pull-left">
+                    <label class="inp-label">Month(s)</label>
+                    <select id="sel-start-month" class="form-control inp-select" name="startMonth" required>
+                        <optgroup label="Yearly">
+                        <option value="12m">12 months</option>
+                        </optgroup>
+                        <optgroup label="Monthly">
+                        <option value="1">January</option>
+                        <option value="2">February</option>
+                        <option value="3">March</option>
+                        <option value="4">April</option>
+                        <option value="5">May</option>
+                        <option value="6">June</option>
+                        <option value="7">July</option>
+                        <option value="8">August</option>
+                        <option value="9">September</option>
+                        <option value="10">October</option>
+                        <option value="11">November</option>
+                        <option value="12">December</option>
+                        </optgroup>
+                    </select>
+                    </div>
+                    <div class="pull-left" style="margin-left: 10px;">
+                        <label class="inp-label">Year</label><br>                        
+                        <input type="text" name="year" id="inp-year" class="form-control" style="width: 100px; height: 46px; font-size: 16px;">
+                    </div>
+                    <div class="pull-left" style="margin-left: 20px;">
+                        <button type="submit" class="btn btn-purple btn-lg" style="margin-top: 30px;">Generate</button>
+                    </div>
                 </div>
             </div>
-            <button type="submit" class="btn btn-purple btn-lg">Generate</button>
+        </fieldset>
         </form>
     </div>
 </div>
+<script>var salesList = [];</script>
 {{#eq showSalesReport true}}
 <div class="row" style="margin-top: 25px">
 <div class="col-lg-12">
+    {{#if salesList}}
+    <script>
+        var list;
+    </script>
+    {{#each salesList}}
+    <script>
+        var month = '{{this.month}}';
+        var small = Number('{{this.sumSmall}}');
+        var med = Number('{{this.sumMed}}');
+        var large = Number('{{this.sumLarge}}');
+        var revenue = Number('{{this.sumProfit}}');
+        salesList.push({
+            month: month,
+            revenue: revenue
+        });
+        console.log("len: " + salesList.length);
+    </script>
+    {{/each}}
+    <!-- BARCHART VIEW -->
+    <div class="panel panel-default" id="sales-chart-holder" style="cursor: pointer;">
+        <div class="panel-heading">
+            <strong><big>Revenue chart</big></strong>
+        </div>
+        <!-- /.panel-heading -->
+        <div class="panel-body" id="sales-chart-toggle" style="display: none; cursor: auto;">
+            <div id="sales-chart"></div>
+        </div>
+        <div id="legend" class="bar-legend"></div>
+        <!-- /.panel-body -->
+    </div>
+    <!-- /.panel -->
+
     <!-- TABLE VIEW -->
     <div class="panel panel-default">
         <div class="panel-heading">
-            <strong><big>Sales overview - Table</big></strong>
+            <strong><big>Sales overview</big></strong>
         </div>
         <!-- /.panel-heading -->
         <div class="panel-body">
@@ -62,23 +122,27 @@
                 <table class="table table-striped table-bordered table-hover" id="clients">
                     <thead>
                         <tr>
+                            <th>Month</th>
                             <th>Small bags</th>
                             <th>Medium bags</th>
                             <th>Large bags</th>
-                            <th>Total Profits</th>
-                            <th>Total Expenses</th>
-                            <th>Gross profit</th>
+                            <th>Net profit</th>
+                            <th>Expenses</th>
+                            <th>Revenue</th>
                         </tr>
                     </thead>
                     <tbody>
+                        {{#each salesList}}
                         <tr style="font-weight: bold;">
-                            <td style="font-size:16px;">100</td>
-                            <td style="font-size:16px;">200</td>
-                            <td style="font-size:16px;">300</td>
-                            <td style="font-size:16px;">&pound; 3000</td>
-                            <td style="font-size:16px;">&pound; 2000</td>
-                            <td style="font-size:16px;">&pound; 1000</td>
+                            <td style="font-size:16px;">{{this.month}}</td>
+                            <td style="font-size:16px;">{{this.sumSmall}}</td>
+                            <td style="font-size:16px;">{{this.sumMed}}</td>
+                            <td style="font-size:16px;">{{this.sumLarge}}</td>
+                            <td style="font-size:16px;">&pound; {{this.sumProfit}}</td>
+                            <td style="font-size:16px;">&pound; 0</td>
+                            <td style="font-size:16px;">&pound; {{this.sumProfit}}</td>
                         </tr>
+                        {{/each}}
                     </tbody>
                 </table>
             </div>
@@ -87,20 +151,48 @@
         <!-- /.panel-body -->
     </div>
     <!-- /.panel -->
-    
-    <!-- BARCHART VIEW -->
+    {{else}}
+    <!-- TABLE VIEW -->
     <div class="panel panel-default">
         <div class="panel-heading">
-            <strong><big>Sales overview - Bar Chart</big></strong>
+            <strong><big>Sales overview</big></strong>
         </div>
         <!-- /.panel-heading -->
         <div class="panel-body">
-            <div id="sales-chart"></div>
+            <div class="dataTable_wrapper">
+                <table class="table table-striped table-bordered table-hover" id="clients">
+                    <thead>
+                        <tr>
+                            <th>Month</th>
+                            <th>Small bags</th>
+                            <th>Medium bags</th>
+                            <th>Large bags</th>
+                            <th>Net profit</th>
+                            <th>Expenses</th>
+                            <th>Revenue</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{#isnt sales null}}
+                        <tr style="font-weight: bold;">
+                            <td style="font-size:16px;">{{sales.month}}</td>
+                            <td style="font-size:16px;">{{sales.sumSmall}}</td>
+                            <td style="font-size:16px;">{{sales.sumMed}}</td>
+                            <td style="font-size:16px;">{{sales.sumLarge}}</td>
+                            <td style="font-size:16px;">&pound; {{sales.sumProfit}}</td>
+                            <td style="font-size:16px;">&pound; 0</td>
+                            <td style="font-size:16px;">&pound; {{sales.sumProfit}}</td>
+                        </tr>
+                        {{/isnt}}
+                    </tbody>
+                </table>
+            </div>
+            <!-- /.table-responsive -->
         </div>
-        <div id="legend" class="bar-legend"></div>
         <!-- /.panel-body -->
     </div>
     <!-- /.panel -->
+    {{/if}}
 </div>
 <!-- /.col-lg-12 -->
 </div>
@@ -115,6 +207,8 @@ crossorigin="anonymous"></script>
 <script>
     $(document).ready(function() {
         
+        $("#inp-year").val('{{year}}');
+
         $('#clients').DataTable({
             responsive: true,
             paging: false,
@@ -123,33 +217,58 @@ crossorigin="anonymous"></script>
             dom: ''
         });
 
-        // date view
-        $('.input-daterange input').each(function() {
-            $(this).datepicker({
-                format: 'mm-dd-yyyy'
+        if (salesList.length > 0) {
+            console.log(salesList);
+            var data = [];
+            var count = salesList.length;
+            salesList.forEach(sale => {
+                //console.log(sale);
+                data.push({
+                    date: sale.month, 
+                    revenue: sale.revenue
+                });
+                count--;
+                if (count == 0) {
+                    var salesChart = null;
+                    $("#sales-chart-holder").click(function() {
+                        var done = false;
+                        if (!done) {
+                            $("#sales-chart-toggle").slideToggle();
+                            done = true;
+                        }
+                        if (done) {
+                            // bar-chart view
+                            if (salesChart == null) {
+                                data.forEach(d => {
+                                    console.log("FINAL: " + d.date);
+                                });
+                                salesChart = Morris.Bar({
+                                    element: 'sales-chart',
+                                    data: data,
+                                    xkey: 'date',
+                                    ykeys: ['revenue'],
+                                    labels: ['Revenue'],
+                                    barColors: function (row, series, type) {
+                                        if (type === 'bar') {
+                                            var red = Math.ceil(161 * row.y / this.ymax);
+                                            var green = Math.ceil(34 * row.y / this.ymax);
+                                            var blue = Math.ceil(94 * row.y / this.ymax);
+                                            return 'rgb(' + red + ',' + green + ',' + blue + ')';
+                                        }
+                                        else {
+                                            return '#000';
+                                        }
+                                    },
+                                    hideHover: 'auto',
+                                    resize: true
+                                });
+                            }
+                        }
+                    });
+                }
             });
-        });
-
-        // bar-chart view
-        var salesChart = Morris.Bar({
-            element: 'sales-chart',
-            data: [{
-                date: ('{{criteria.startDate}}' != '' && '{{criteria.endDate}}' != '') ? '{{criteria.startDate}} : {{criteria.endDate}}'
-                    : ('{{criteria.startDate}}' != '' && '{{criteria.endDate}}' == '') ? '{{criteria.startDate}} (mm-dd-yyyy)'
-                    : ('{{criteria.startDate}}' == '' && '{{criteria.endDate}}' != '') ? '{{criteria.endDate}}' : '',
-                smallBags: 100, 
-                mediumBags: 200, 
-                largeBags: 300, 
-                totalProfits: 3000, 
-                totalExpenses: 2000, 
-                grossProfit: 1000 
-            }],
-            xkey: 'date',
-            ykeys: ['smallBags', 'mediumBags', 'largeBags', 'totalProfits', 'totalExpenses', 'grossProfit'],
-            labels: ['Small bags', 'Medium bags', 'Large bags', 'Total profits', 'Total expenses', 'Gross profit'],
-            hideHover: 'auto',
-            resize: true
-        });
+            
+        }
     });
 </script>
 {{/if}}

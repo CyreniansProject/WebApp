@@ -105,8 +105,8 @@ router.get('/clients/summary', function(req, res) {
                 reportHelper.countClients(function(cErr, totalNum) {
                     if (cErr) throw cErr;
                     res.render('reports/clients/index', { layout: 'layout_staff.handlebars', 
-                    page_title: 'Clients summary', reportsLink: true,
-                    user: req.user, clients: clients, totalNum: totalNum });
+                    page_title: 'Clients summary', user: req.user, reportsLink: true, 
+                    clients: clients, totalNum: totalNum });
                 })
             });
         }
@@ -155,8 +155,9 @@ router.get('/orders/expecting-delivery/generate', function(req, res) {
             reportHelper.findPendingOrders(criteria, function(err, pendingOrders) {
                 if (err) throw err;
                 res.render('reports/clients/pendingOrders', { layout: 'layout_staff.handlebars', 
-                page_title: 'Clients expecting deliveries', reportsLink: true, 
-                user: req.user, pendingOrders: pendingOrders, criteria: criteria, showOrdersReport: true });
+                page_title: 'Clients expecting deliveries', user: req.user, 
+                pendingOrders: pendingOrders, criteria: criteria, reportsLink: true, 
+                showOrdersReport: true });
             });
         }
         else {
@@ -295,18 +296,16 @@ router.get('/products/summary/generate', function(req, res) {
                                     totalProductSum = totalHarvestSum + totalPurchaseSum;
 
                                     if (prodCount == 0) {
-
                                         const totals = {
                                             productSum: totalProductSum,
                                             harvestSum: totalHarvestSum,
                                             purchaseSum: totalPurchaseSum,
                                             soldSum: totalSoldSum
                                         };
-
                                         res.render('reports/products/index', { layout: 'layout_staff.handlebars', 
-                                        page_title: 'Products summary', reportsLink: true,
-                                        user: req.user, products: productList, totals: totals,
-                                        criteria: criteria, showProductsReport: true });
+                                        page_title: 'Products summary', user: req.user, 
+                                        products: productList, totals: totals, criteria: criteria, 
+                                        reportsLink: true, showProductsReport: true });
                                     }
                                 });
                             });
@@ -329,37 +328,215 @@ router.get('/products/summary/generate', function(req, res) {
 router.get('/sales/summary/generate', function(req, res) {
     if (req.user) {
         if (req.user.role == 0 || req.user.role == 1) {
-            const startDate = req.query['startDate'];
-            const endDate = req.query['endDate'];
-            var criteria;
-            if (startDate && endDate) {
-                criteria = {
-                    startDate: startDate,
-                    endDate: endDate
-                }
-            }
-            else if (startDate) {
-                criteria = {
-                    startDate: startDate,
-                }
-            }
-            else if (endDate) {
-                criteria = {
-                    endDate: endDate
-                }
-            }
-            else {
-                criteria = {}
-            }
+            const startMonth = req.query['startMonth'];
+            const year = req.query['year'];
 
-            if (_.isEmpty(criteria)) {
-                req.flash('error_msg', 'Please select a date range or at least just a FROM or TO date!');
+            var criteria;
+            var criterias = [];
+            var months = [];
+            var saleList = [];
+            if (!startMonth && !year) {
+                req.flash("Select yearly or monthly from the list provided and type a valid year.");
                 return res.redirect('back');
             }
 
-            res.render('reports/sales/index', { layout: 'layout_staff.handlebars', 
-            page_title: 'Sales summary', reportsLink: true,
-            user: req.user, criteria: criteria, showSalesReport: true });
+            if (startMonth && startMonth !== "12m") {
+                const startDate = new Date(startMonth + '-' + 1 + '-' + year);
+                const int_endDate = new Date(year, startMonth, 1);
+                const endDate = new Date(int_endDate - 1);
+                
+                criteria = {
+                    startDate: startDate,
+                    endDate: endDate,
+                }
+
+                const month = startMonth;
+                reportHelper.findBagsByOrderDate(criteria, function(bagErr, bags) {
+                    if (bagErr) throw bagErr;
+                    reportHelper.findDeliveredOrders(criteria, function(ordErr, orders) {
+                        if (ordErr) throw ordErr;
+                        var bagCount = bags.length;
+                        var ordCount = orders.length;
+                        var sumSmall = 0;
+                        var sumMed = 0;
+                        var sumLarge = 0;
+                        var sumProfit = 0;
+                        var sumExpense = 0;
+                        var sumRevenue = 0;
+
+                        if (ordCount == 0) {
+                            return res.render('reports/sales/index', { layout: 'layout_staff.handlebars', 
+                            page_title: 'Sales summary', user: req.user, criteria: criteria,
+                            reportsLink: true, showSalesReport: true });
+                        }
+
+                        bags.forEach(bag =>{
+                            orders.forEach(order=>{
+                                if(order.date>= bag.startDate && order.date< bag.endDate && order.delivered && !order.cancelled 
+                                && order.typeOfBag == bag.type) {
+                                    if(bag.type == 'Small'){
+                                        sumSmall = sumSmall + order.numberOfBags;
+                                        sumProfit += order.numberOfBags * bag.price;
+                                    }
+                                    else if(bag.type == 'Medium'){
+                                        sumMed = sumMed + order.numberOfBags;
+                                        sumProfit += order.numberOfBags * bag.price;
+                                    }
+                                    else if(bag.type == 'Large'){
+                                        sumLarge = sumLarge + order.numberOfBags;
+                                        sumProfit += order.numberOfBags * bag.price;
+                                    }
+                                }
+                            });
+                            bagCount--;
+                            if (bagCount == 0) {
+                                console.log("total small: " + sumSmall);
+                                console.log("total medium: " + sumMed);
+                                console.log("total large: " + sumLarge);
+                                var monthToStr;
+                                if (month == 1) { monthToStr = "January"; }
+                                else if (month == 2) { monthToStr = "February"; }
+                                else if (month == 3) { monthToStr = "March"; }
+                                else if (month == 4) { monthToStr = "April"; }
+                                else if (month == 5) { monthToStr = "May"; }
+                                else if (month == 6) { monthToStr = "June"; }
+                                else if (month == 7) { monthToStr = "July"; }
+                                else if (month == 8) { monthToStr = "August"; }
+                                else if (month == 9) { monthToStr = "September"; }
+                                else if (month == 10) { monthToStr = "October"; }
+                                else if (month == 11) { monthToStr = "November"; }
+                                else if (month == 12) { monthToStr = "December"; }
+                                const saleObj = {
+                                    monthId: month,
+                                    month: monthToStr,
+                                    sumSmall: sumSmall,
+                                    sumMed: sumMed,
+                                    sumLarge: sumLarge,
+                                    sumProfit: sumProfit
+                                }
+                                console.log(saleObj);
+                                console.log('single month');
+                                res.render('reports/sales/index', { layout: 'layout_staff.handlebars', 
+                                page_title: 'Sales summary', user: req.user, 
+                                sales: saleObj, criteria: criteria, 
+                                reportsLink: true, showSalesReport: true });
+                            }
+                        });
+                    });
+                });
+            }
+            else {
+                months = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+                console.log(months);
+                monthCount = months.length;
+                console.log(monthCount);
+                var startDate, int_endDate, endDate;
+                months.forEach(month => {
+                    startDate = new Date(month + '-' + 1 + '-' + year);
+                    int_endDate = new Date(year, month, 1);
+                    endDate = new Date(int_endDate - 1);
+                    const criteriaObj = {
+                        startDate: startDate,
+                        endDate: endDate,
+                    }
+                    criterias.push(criteriaObj);
+                    //console.log(criteriaObj);
+                    //console.log(criterias.length);
+                    monthCount--;
+                    if (monthCount == 0) {
+                        var critCount = criterias.length;
+                        var month;
+                        criterias.forEach(criteria => {
+                            //console.log(month);
+                            var saleObj;
+                            reportHelper.findBagsByOrderDate(criteria, function(bagErr, bags) {
+                                if (bagErr) throw bagErr;
+                                //console.log(criteria);
+                                reportHelper.findDeliveredOrders(criteria, function(ordErr, orders) {
+                                    month = new Date(criteria.startDate).getMonth() + 1;
+                                    //console.log(criteria);
+                                    console.log(month);
+                                    if (ordErr) throw ordErr;
+                                    var bagCount = bags.length;
+                                    var ordCount = orders.length;
+                                    var sumSmall = 0;
+                                    var sumMed = 0;
+                                    var sumLarge = 0;
+                                    var sumProfit = 0;
+                                    var sumExpense = 0;
+                                    var sumRevenue = 0;
+                                    bags.forEach(bag =>{
+                                        orders.forEach(order=>{
+                                            if(order.date >= bag.startDate && order.date < bag.endDate 
+                                            && order.delivered && !order.cancelled 
+                                            && order.typeOfBag == bag.type) {
+                                                if(bag.type == 'Small'){
+                                                    sumSmall = sumSmall + order.numberOfBags;
+                                                    sumProfit += order.numberOfBags * bag.price;
+                                                }
+                                                else if(bag.type == 'Medium'){
+                                                    sumMed = sumMed + order.numberOfBags;
+                                                    sumProfit += order.numberOfBags * bag.price;
+                                                }
+                                                else if(bag.type == 'Large'){
+                                                    sumLarge = sumLarge + order.numberOfBags;
+                                                    sumProfit += order.numberOfBags * bag.price;
+                                                }
+                                            }
+                                        });
+                                        bagCount--;
+                                    });
+                                    if (bagCount == 0) {
+                                        console.log("total small: " + sumSmall);
+                                        console.log("total medium: " + sumMed);
+                                        console.log("total large: " + sumLarge);
+                                        console.log("total profit: " + sumProfit);
+                                        var monthToStr;
+                                        if (month == 1) { monthToStr = "January"; }
+                                        else if (month == 2) { monthToStr = "February"; }
+                                        else if (month == 3) { monthToStr = "March"; }
+                                        else if (month == 4) { monthToStr = "April"; }
+                                        else if (month == 5) { monthToStr = "May"; }
+                                        else if (month == 6) { monthToStr = "June"; }
+                                        else if (month == 7) { monthToStr = "July"; }
+                                        else if (month == 8) { monthToStr = "August"; }
+                                        else if (month == 9) { monthToStr = "September"; }
+                                        else if (month == 10) { monthToStr = "October"; }
+                                        else if (month == 11) { monthToStr = "November"; }
+                                        else if (month == 12) { monthToStr = "December"; }
+
+                                        saleObj = {
+                                            monthId: month,
+                                            month: monthToStr,
+                                            sumSmall: sumSmall,
+                                            sumMed: sumMed,
+                                            sumLarge: sumLarge,
+                                            sumProfit: sumProfit
+                                        }
+                                        console.log(saleObj);
+                                        saleList.push(saleObj);
+                                        critCount--;
+                                    }
+                                    console.log("Crit ct: " + critCount);
+                                    if (critCount == 0) {
+                                        console.log('rendering multi')
+                                        saleList.sort(function(a, b){
+                                            if(a.monthId < b.monthId) return -1;
+                                            if(a.monthId > b.monthId) return 1;
+                                            return 0;
+                                        });
+                                        console.log(saleList);
+                                        res.render('reports/sales/index', { layout: 'layout_staff.handlebars', 
+                                        page_title: 'Sales summary', user: req.user, 
+                                        sales: saleObj, salesList: saleList, criteria: criteria, 
+                                        reportsLink: true, showSalesReport: true });
+                                    }
+                                });
+                            });
+                        });
+                    }
+                });
+            }
         }
         else {
             req.flash('error_msg', 'You don\'t have the authority to access this page!');

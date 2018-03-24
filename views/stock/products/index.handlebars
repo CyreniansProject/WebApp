@@ -30,34 +30,34 @@
                                     <i style="transform: scale(1.5);" class="fa fa-trash"></i>
                                 </a>
                             </td>
-                            <td style="font-size:16px;">{{this.product.name}}</td>
-                            <td style="font-size:16px;">
+                            <td style="font-size:14px;">{{this.product.name}}</td>
+                            <td style="font-size:14px;">
                                 {{#eq this.lastHarvest null}}
                                 <em>None</em>
                                 <a href="/api/stock/harvests/to/{{this.product._id}}/new" class="pull-right" target="_blank">
-                                    <i style="margin-right: 10px; transform: scale(1.75);" class="fa fa-plus"></i>
+                                    <i style="margin-right: 5px; transform: scale(1.5);" class="fa fa-plus"></i>
                                 </a>
                             {{else}}
                                 {{this.lastHarvest.formatDate}}
                                 <a href="/api/stock/harvests/edit/{{this.lastHarvest._id}}" class="pull-right" target="_blank">
-                                    <i style="margin-right: 10px; transform: scale(1.75);" class="fa fa-location-arrow"></i>
+                                    <i style="margin-right: 5px; transform: scale(1.5);" class="fa fa-location-arrow"></i>
                                 </a>
                             {{/eq}}
                             </td>
-                            <td style="font-size:16px;">
+                            <td style="font-size:14px;">
                                 {{#eq this.lastPurchase null}}
                                 <em>None</em>
                                 <a href="/api/stock/purchases/to/{{this.product._id}}/new" class="pull-right" target="_blank">
-                                    <i style="margin-right: 10px; transform: scale(1.75);" class="fa fa-plus"></i>
+                                    <i style="margin-right: 5px; transform: scale(1.5);" class="fa fa-plus"></i>
                                 </a>
                             {{else}}
                                 {{this.lastPurchase.formatDate}}
                                 <a href="/api/stock/purchases/edit/{{this.lastPurchase._id}}" class="pull-right" target="_blank">
-                                    <i style="margin-right: 10px; transform: scale(1.75);" class="fa fa-location-arrow"></i>
+                                    <i style="margin-right: 5px; transform: scale(1.5);" class="fa fa-location-arrow"></i>
                                 </a>
                             {{/eq}}
                             </td>
-                            <td style="font-size:16px;">{{toFixed this.product.avgWeight 2}} <small>kg</small></td>
+                            <td style="font-size:14px;">{{toFixed this.product.avgWeight 2}} <small>kg</small></td>
                         </tr>
 
                         <!-- .DELETE MODAL-->

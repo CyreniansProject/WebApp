@@ -30,22 +30,22 @@
                                     <i style="transform: scale(1.5);" class="fa fa-trash"></i>
                                 </a>
                             </td>
-                            <td style="font-size:16px;">{{this.client.name}}</td>
-                            <td style="font-size:16px;">
+                            <td style="font-size:14px;">{{this.client.name}}</td>
+                            <td style="font-size:14px;">
                                 {{#eq this.lastOrder null}}
                                     <em>None</em>
                                     <a href="/api/orders/to/{{this.client._id}}/new" class="pull-right" target="_blank">
-                                        <i style="margin-right: 10px; transform: scale(1.75);" class="fa fa-plus"></i>
+                                        <i style="margin-right: 5px; transform: scale(1.5);" class="fa fa-plus"></i>
                                     </a>
                                 {{else}}
                                     {{this.lastOrder.formatDate}}
                                     <a href="/api/orders/edit/{{this.lastOrder._id}}" class="pull-right" target="_blank">
-                                        <i style="margin-right: 10px; transform: scale(1.75);" class="fa fa-location-arrow"></i>
+                                        <i style="margin-right: 5px; transform: scale(1.5);" class="fa fa-location-arrow"></i>
                                     </a>
                                 {{/eq}}
                             </td>
-                            <td style="font-size:16px;">{{this.client.frequency}}</td>
-                            <td style="font-size:16px;">{{this.client.address}}</td>
+                            <td style="font-size:14px;">{{this.client.frequency}}</td>
+                            <td style="font-size:14px;">{{this.client.address}}</td>
                         </tr>
                         
                         <!-- .DELETE MODAL-->
