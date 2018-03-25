@@ -225,7 +225,7 @@ router.get('/products/summary/generate', function(req, res) {
                             if (purchErr) throw purchErr;
                             reportHelper.findDeliveredOrders(criteria, function(ordErr, orders) {
                                 if (ordErr) throw ordErr;
-                                reportHelper.findBagsByOrderDate(criteria, function(bagErr, bags) {
+                                reportHelper.findBagsByOrderDate({}, function(bagErr, bags) {
                                     if (bagErr) throw bagErr;
                                     var harvCount = harvests.length;
                                     var purchCount = purchases.length;
@@ -351,7 +351,7 @@ router.get('/sales/summary/generate', function(req, res) {
                 }
 
                 const month = startMonth;
-                reportHelper.findBagsByOrderDate(criteria, function(bagErr, bags) {
+                reportHelper.findBagsByOrderDate({}, function(bagErr, bags) {
                     if (bagErr) throw bagErr;
                     reportHelper.findDeliveredOrders(criteria, function(ordErr, orders) {
                         if (ordErr) throw ordErr;
@@ -381,7 +381,7 @@ router.get('/sales/summary/generate', function(req, res) {
                             if (purchCount == 0) {
                                 bags.forEach(bag =>{
                                     orders.forEach(order=>{
-                                        if(order.date>= bag.startDate && order.date< bag.endDate && order.delivered && !order.cancelled 
+                                        if(order.date >= bag.startDate && order.date < bag.endDate && order.delivered && !order.cancelled 
                                         && order.typeOfBag == bag.type) {
                                             if(bag.type == 'Small'){
                                                 sumSmall = sumSmall + order.numberOfBags;
@@ -452,7 +452,7 @@ router.get('/sales/summary/generate', function(req, res) {
                         var month;
                         criterias.forEach(criteria => {
                             var saleObj;
-                            reportHelper.findBagsByOrderDate(criteria, function(bagErr, bags) {
+                            reportHelper.findBagsByOrderDate({}, function(bagErr, bags) {
                                 if (bagErr) throw bagErr;
                                 reportHelper.findDeliveredOrders(criteria, function(ordErr, orders) {
                                     if (ordErr) throw ordErr;

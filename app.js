@@ -47,7 +47,7 @@ app.use(session({
   resave: true
 }));
 
-// Secure the Express server
+// Secure the Express server (at least a bit)
 app.use(require('helmet')());
 
 // Passport init

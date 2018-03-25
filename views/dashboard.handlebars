@@ -1,6 +1,15 @@
+<style>
+    .date-heading {
+        font-size: 16px;
+        font-weight: bolder;
+        text-decoration: none;
+        color: #666;
+    }
+</style>
+
 <!-- START OF DASHBOARD TILES -->
-<div class="pull-left"><strong>{{moment}}</strong></div>
-<div class="pull-right"><strong><span id="clock"></span></strong></div>
+<div class="date-heading pull-left"><strong>{{moment}}</strong></div>
+<div class="date-heading pull-right"><strong><span id="clock"></span></strong></div>
 <br><br>
 <div class="row">
     <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
@@ -8,7 +17,7 @@
             <div class="panel-body">
             <center>
                 <h1 class="tiles-header">
-                    <span class="tiles-small">£</span>1050 
+                    <span class="tiles-small">£</span> {{totals.profitSum}}
                 </h1>
                 <p class="tiles-label">Total Sales</p>
             </center>
@@ -21,7 +30,7 @@
             <div class="panel-body">
             <center>
                 <h1 class="tiles-header">
-                    50<span class="tiles-small">kg</span> 
+                    {{toFixed totals.soldSum 2}}<span class="tiles-small"> kg</span> 
                 </h1>
                 <p class="tiles-label">Amount Sold</p>
             </center>
@@ -34,7 +43,7 @@
             <div class="panel-body">
             <center>
                 <h1 class="tiles-header">
-                    50
+                    {{toFixed totals.purchaseSum 2}} <span class="tiles-small">kg</span>
                 </h1>
                 <p class="tiles-label">Amount purchased</p>
             </center>
@@ -47,7 +56,7 @@
             <div class="panel-body">
             <center>
                 <h1 class="tiles-header">
-                    10<span class="tiles-small">kg</span>  
+                    {{toFixed totals.harvestSum 2}} <span class="tiles-small">kg</span>  
                 </h1>
                 <p class="tiles-label">Amount Harvested</p>
             </center>
@@ -62,22 +71,31 @@
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="panel panel-default">
             <div class="panel-heading">
-            <h3 class="panel-title"><span class="badge" style="transform: scale(1.225);">52</span> Order Status</h3>
+                <h3 class="panel-title"><span class="badge" style="transform: scale(1.5); margin-bottom: 2px;">{{orders.totalNum}}</span>&nbsp;&nbsp;Order Status</h3>
             </div>
             <div class="panel-body">
             <div class="row" style="padding: 15px 10px 15px 45px">
                 <div class="col-md-4">
-                    <h4 class="black margin-md"><b>25 </b> - Delivered</h4>
-                    <h4 class="black margin-md"><b>2 </b> - Pending Delivery</h4>
-                    <h4 class="black margin-md"><b>25 </b> - Not Delivered</h4>
+                    <h2 class="black margin-md">
+                        <span style="background: #a6d000;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>&nbsp;&nbsp;
+                        <b>Delivered</b>
+                    </h2>
+                    <h2 class="black margin-md">
+                        <span style="background: #0080ff;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>&nbsp;&nbsp;
+                        <b>Pending</b>
+                    </h2>
+                    <h2 class="black margin-md">
+                        <span style="background: #ff0606;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>&nbsp;&nbsp;
+                        <b>Cancelled</b>
+                    </h2>
                 </div>
-                <div class="col-md-7" style="background: #CCC; height: 300px;">
-                    <h1>CHART</h1>
+                <div class="col-md-7" style="transform: scale(1.275, 1.125); height: auto;">
+                    <div id="morris-donut-chart"></div>
                 </div>                            
             </div>
             </div><!--.panel-body-->
         </div>
-    </div><!--.col-->
+    </div><!--.275ol-->25
     <!-- END OF ORDER STATUS --> 
 </div><!--.row-->
 
@@ -85,6 +103,9 @@
 <script src="http://code.jquery.com/jquery-3.3.1.min.js" 
 integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" 
 crossorigin="anonymous"></script>
+<!-- Morris Charts JavaScript -->
+<script src="/js/raphael.min.js"></script>
+<script src="/js/morris.min.js"></script>
 <script>
     $(document).ready(function() {
         function getdate(){
@@ -93,10 +114,10 @@ crossorigin="anonymous"></script>
             var m = today.getMinutes();
             var s = today.getSeconds();
             
-            // format seconds
-            if(s < 10){
-                s = "0" + s;
-            }
+            // format seconds, minutes, hours - (0 in front)
+            h = (h < 10) ? "0" + h : h;
+            m = (m < 10) ? "0" + m : m;
+            s = (s < 10) ? "0" + s : s;
 
             // format hours (am / pm)
             if (h <= 12) {
@@ -110,5 +131,25 @@ crossorigin="anonymous"></script>
             setTimeout(function(){getdate()}, 500);
         }
         getdate();
+
+        const delivered = Number('{{orders.delivered}}');
+        const pending = Number('{{orders.pending}}');
+        const cancelled = Number('{{orders.cancelled}}');
+
+        ordersChart = Morris.Donut({
+            element: 'morris-donut-chart',
+            data: [{
+                label: "Delivered",
+                value: delivered
+            }, {
+                label: "Pending",
+                value: pending
+            }, {
+                label: "Cancelled",
+                value: cancelled
+            }],
+            colors: ['#a6d000', '#ff0606', '#0080ff'],
+            resize: true
+        });
     });
 </script>

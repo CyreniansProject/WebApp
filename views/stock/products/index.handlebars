@@ -34,28 +34,22 @@
                             <td style="font-size:14px;">
                                 {{#eq this.lastHarvest null}}
                                 <em>None</em>
-                                <a href="/api/stock/harvests/to/{{this.product._id}}/new" class="pull-right" target="_blank">
-                                    <i style="margin-right: 5px; transform: scale(1.5);" class="fa fa-plus"></i>
-                                </a>
-                            {{else}}
+                                {{else}}
                                 {{this.lastHarvest.formatDate}}
-                                <a href="/api/stock/harvests/edit/{{this.lastHarvest._id}}" class="pull-right" target="_blank">
-                                    <i style="margin-right: 5px; transform: scale(1.5);" class="fa fa-location-arrow"></i>
+                                {{/eq}}
+                                <a href="/api/stock/harvests/to/{{this.product._id}}/new" class="pull-right" target="_blank">
+                                    <i style="margin-right: 5px; transform: scale(1.5); color: #a1225e;" class="fa fa-plus"></i>
                                 </a>
-                            {{/eq}}
                             </td>
                             <td style="font-size:14px;">
                                 {{#eq this.lastPurchase null}}
                                 <em>None</em>
-                                <a href="/api/stock/purchases/to/{{this.product._id}}/new" class="pull-right" target="_blank">
-                                    <i style="margin-right: 5px; transform: scale(1.5);" class="fa fa-plus"></i>
-                                </a>
-                            {{else}}
+                                {{else}}
                                 {{this.lastPurchase.formatDate}}
-                                <a href="/api/stock/purchases/edit/{{this.lastPurchase._id}}" class="pull-right" target="_blank">
-                                    <i style="margin-right: 5px; transform: scale(1.5);" class="fa fa-location-arrow"></i>
+                                {{/eq}}
+                                <a href="/api/stock/purchases/to/{{this.product._id}}/new" class="pull-right" target="_blank">
+                                    <i style="margin-right: 5px; transform: scale(1.5); color: #a1225e;" class="fa fa-plus"></i>
                                 </a>
-                            {{/eq}}
                             </td>
                             <td style="font-size:14px;">{{toFixed this.product.avgWeight 2}} <small>kg</small></td>
                         </tr>
