@@ -100,7 +100,7 @@ app.use('/api/driver', driver);
 app.set('port', (process.env.PORT || 80));
 
 // environmet based server setup
-const prod_env = false;
+const prod_env = true;
 if (prod_env === true)
 {
   // Set Options (SSL Certificate - Let's Encrypt)
