@@ -1,4 +1,4 @@
-const https = require('https');
+const http = require('http');
 const fs = require('fs');
 const express = require('express');
 const path = require('path');
@@ -97,22 +97,6 @@ app.use('/api/reports', reports);
 app.use('/api/driver', driver);
 
 // Set Port
-app.set('port', (process.env.PORT || 80));
-
-// environmet based server setup
-const prod_env = true;
-if (prod_env === true)
-{
-  // Set Options (SSL Certificate - Let's Encrypt)
-  const options = {
-    cert: fs.readFileSync('/etc/letsencrypt/live/vbd.cyrenians.scot/fullchain.pem'),
-    key: fs.readFileSync('/etc/letsencrypt/live/vbd.cyrenians.scot/privkey.pem')
-  }
-  // Start the server using https
-  https.createServer(options, app).listen(app.get('port'), 
-  () => console.log('Server started on port ' + app.get('port')));
-}
-else {
-  // Start server port listener
-  app.listen(app.get('port'), () => console.log('Server started on port ' + app.get('port')));
-}
+app.set('port', process.env.PORT || 80);
+// Start server on the set port
+app.listen(app.get('port'), () => console.log('Server started on port ' + app.get('port')));
