@@ -26,7 +26,7 @@ router.get('/', function(req, res) {
             var delivered = 0;
             var cancelled = 0;
 
-            var today = new Date('04-05-2018');
+            var today = new Date();
             today.setHours(0, 0, 0, 0);
 
             const criteria = {
