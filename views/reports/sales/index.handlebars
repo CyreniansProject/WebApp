@@ -86,10 +86,7 @@
     {{#each salesList}}
     <script>
         var month = '{{this.month}}';
-        var small = Number('{{this.sumSmall}}');
-        var med = Number('{{this.sumMed}}');
-        var large = Number('{{this.sumLarge}}');
-        var revenue = Number('{{this.sumProfit}}');
+        var revenue = Number('{{toFixed this.sumRevenue 2}}');
         salesList.push({
             month: month,
             revenue: revenue
@@ -138,9 +135,9 @@
                             <td style="font-size:16px;">{{this.sumSmall}}</td>
                             <td style="font-size:16px;">{{this.sumMed}}</td>
                             <td style="font-size:16px;">{{this.sumLarge}}</td>
-                            <td style="font-size:16px;">&pound; {{this.sumProfit}}</td>
-                            <td style="font-size:16px;">&pound; 0</td>
-                            <td style="font-size:16px;">&pound; {{this.sumProfit}}</td>
+                            <td style="font-size:16px;">&pound; {{toFixed this.sumProfit 2}}</td>
+                            <td style="font-size:16px;">&pound; {{toFixed this.sumExpense 2}}</td>
+                            <td style="font-size:16px;">&pound; {{toFixed this.sumRevenue 2}}</td>
                         </tr>
                         {{/each}}
                     </tbody>
@@ -179,9 +176,9 @@
                             <td style="font-size:16px;">{{sales.sumSmall}}</td>
                             <td style="font-size:16px;">{{sales.sumMed}}</td>
                             <td style="font-size:16px;">{{sales.sumLarge}}</td>
-                            <td style="font-size:16px;">&pound; {{sales.sumProfit}}</td>
-                            <td style="font-size:16px;">&pound; 0</td>
-                            <td style="font-size:16px;">&pound; {{sales.sumProfit}}</td>
+                            <td style="font-size:16px;">&pound; {{toFixed sales.sumProfit 2}}</td>
+                            <td style="font-size:16px;">&pound; {{toFixed sales.sumExpense 2}}</td>
+                            <td style="font-size:16px;">&pound; {{toFixed sales.sumRevenue 2}}</td>
                         </tr>
                         {{/isnt}}
                     </tbody>
@@ -250,9 +247,9 @@ crossorigin="anonymous"></script>
                                     labels: ['Revenue'],
                                     barColors: function (row, series, type) {
                                         if (type === 'bar') {
-                                            var red = Math.ceil(161 * row.y / this.ymax);
-                                            var green = Math.ceil(34 * row.y / this.ymax);
-                                            var blue = Math.ceil(94 * row.y / this.ymax);
+                                            var red = Math.ceil(211 * row.y / this.ymax);
+                                            var green = Math.ceil(84 * row.y / this.ymax);
+                                            var blue = Math.ceil(144 * row.y / this.ymax);
                                             return 'rgb(' + red + ',' + green + ',' + blue + ')';
                                         }
                                         else {
