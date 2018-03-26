@@ -4,7 +4,7 @@ var mongoose = require('mongoose');
 // Build the connection string 
 // on the  cloud: mongodb://georgim:123123@ds237848.mlab.com:37848/cyrenians-farm
 // on the server: mongodb://localhost:27017/cyrenians-farm
-var dbURI = 'mongodb://georgim:123123@ds237848.mlab.com:37848/cyrenians-farm'; 
+var dbURI = 'mongodb://localhost:27017/cyrenians-farm'; 
 
 // Create the database connection 
 mongoose.connect(dbURI);
