@@ -89,6 +89,7 @@
                         <b>Cancelled</b>
                     </h2>
                 </div>
+                <!--TODO: Check ... --> {{!--{{#isnt and}}--}}
                 <div class="col-md-7" style="transform: scale(1.275, 1.125); height: auto;">
                     <div id="morris-donut-chart"></div>
                 </div>                            
@@ -146,7 +147,7 @@ crossorigin="anonymous"></script>
                 value: pending
             }, {
                 label: "Cancelled",
-                value: cancelled
+                value: cancelled 
             }],
             colors: ['#a6d000', '#ff0606', '#0080ff'],
             resize: true
