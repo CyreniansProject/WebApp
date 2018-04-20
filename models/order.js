@@ -48,10 +48,6 @@ const OrderSchema = new Schema({
     }]
 });
 
-OrderSchema.pre('remove', function(next) {
-    this.model('Order').remove({client: this._id}, next);
-});
-
 OrderSchema.virtual('formatDate').get(function() {
     var result = dateFormat(this.date, 'ddd, mmmm dd yyyy');
     return result;
