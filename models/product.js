@@ -12,12 +12,12 @@ const ProductSchema = new Schema ({
     }
 });
 
+const Product = module.exports = mongoose.model('Product', ProductSchema);
+
 ProductSchema.pre('remove', function(next) {
     this.model('Picking').remove({ product: this._id });
     this.model('Purchasing').remove({ product: this._id }, next);
 });
-
-const Product = module.exports = mongoose.model('Product', ProductSchema);
 
 module.exports.listProducts = function(callback) {
     Product.find({})

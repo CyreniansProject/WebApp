@@ -25,11 +25,11 @@ const ClientSchema = new Schema({
     }
 });
 
+const Client = module.exports = mongoose.model('Client', ClientSchema);
+
 ClientSchema.pre('remove', function(next) {
     this.model('Order').remove({ client: this._id }, next);
 });
-
-const Client = module.exports = mongoose.model('Client', ClientSchema);
 
 const Order = require('./order');
 
