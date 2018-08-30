@@ -1,8 +1,6 @@
 {{#if user}}
-{{#if errors}}
-      {{#each errors}}
-        <div class="alert alert-danger">{{msg}}</div>
-      {{/each}}
+{{#if valid_msg}}
+    <div class="alert alert-danger">{{valid_msg}}</div>
 {{/if}}
 <div class="row">
     <div class="col-lg-12">
@@ -35,6 +33,7 @@
                                     <label>Frequency <span style="color:red;">*</span></label>
                                     <select multiple class="form-control" name="frequency">
                                         <option selected>Choose...</option>
+                                        <option value="Ad-hoc">Ad-hoc</option>
                                         <option value="Weekly">Weekly</option>
                                         <option value="Forth-nightly">Forth-nightly</option>
                                         <option value="Monthly">Monthly</option>
@@ -42,7 +41,7 @@
                                 </div>
 
                                 <!-- Change this to a button or input when using this as a form -->
-                                <button type="submit" class="btn btn-lg btn-danger btn-block">Add client</a>
+                                <button type="submit" class="btn btn-lg btn-purple btn-block">Add client</a>
                             </fieldset>
                         </form>
                     </div>

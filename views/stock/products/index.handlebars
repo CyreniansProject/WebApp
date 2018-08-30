@@ -2,8 +2,9 @@
 <div class="row">
 <div class="col-lg-12">
     <div class="panel panel-default">
-        <div style="height: 50px;" class="panel-heading">
-            <a href="/api/stock/products/new" class="btn btn-danger pull-right" role="button">New product</a>
+        <div style="height: 65px;" class="panel-heading">
+            <big><strong>Table of all product types</strong></big>
+            <a href="/api/stock/products/new" class="btn btn-purple pull-right" role="button">Add Product</a>
         </div>
         <!-- /.panel-heading -->
         <div class="panel-body">
@@ -13,23 +14,69 @@
                         <tr>
                             <th style="text-align: center;">#</th>
                             <th>Name</th>
-                            <th>Average weight</th>
+                            <th>Last harvest</th>
+                            <th>Last purchase</th>
+                            <th>Average weight (per unit)</th>
                         </tr>
                     </thead>
                     <tbody>
                         {{#each products}}
                         <tr>
-                            <td style="text-align: center;margin: 0px;padding: 5px;width: 120px;">
-                                <a href="/api/stock/products/edit/{{this._id}}" class="btn btn-primary btn-outline" role="button">
-                                    <strong>Edit</strong>
+                            <td style="text-align: center; margin: 0px; padding: 5px 0px 5px 0px; width: 100px;">
+                                 <a href="/api/stock/products/edit/{{this.product._id}}" class="btn btn-primary btn-sm btn-outline" role="button">
+                                    <i style="transform: scale(1.5);" class="fa fa-edit"></i>
                                 </a>&nbsp;
-                                <a href="/api/stock/products/remove/{{this._id}}" class="btn btn-danger btn-outline" role="button">
-                                    <strong>Del</strong>
+                                 <a class="btn btn-danger btn-sm btn-outline" type="button" data-toggle="modal" data-target="#del-modal-{{this.product._id}}">
+                                    <i style="transform: scale(1.5);" class="fa fa-trash"></i>
                                 </a>
                             </td>
-                            <td style="font-size:18px;">{{this.name}}</td>
-                            <td style="font-size:18px;">{{this.avgWeight}}</td>
+                            <td style="font-size:14px;">{{this.product.name}}</td>
+                            <td style="font-size:14px;">
+                                {{#eq this.lastHarvest null}}
+                                <em>None</em>
+                                {{else}}
+                                {{this.lastHarvest.formatDate}}
+                                {{/eq}}
+                                <a href="/api/stock/harvests/to/{{this.product._id}}/new" class="pull-right" target="_blank">
+                                    <i style="margin-right: 5px; transform: scale(1.5); color: #a1225e;" class="fa fa-plus"></i>
+                                </a>
+                            </td>
+                            <td style="font-size:14px;">
+                                {{#eq this.lastPurchase null}}
+                                <em>None</em>
+                                {{else}}
+                                {{this.lastPurchase.formatDate}}
+                                {{/eq}}
+                                <a href="/api/stock/purchases/to/{{this.product._id}}/new" class="pull-right" target="_blank">
+                                    <i style="margin-right: 5px; transform: scale(1.5); color: #a1225e;" class="fa fa-plus"></i>
+                                </a>
+                            </td>
+                            <td style="font-size:14px;">{{toFixed this.product.avgWeight 2}} <small>kg</small></td>
                         </tr>
+
+                        <!-- .DELETE MODAL-->
+                        <div class="modal fade" id="del-modal-{{this.product._id}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                            <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                <button type="button" class="close" style="transform: scale(1.5);" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                                <center>
+                                    <h1>Deleting product <strong>{{this.product.name}}</strong> ... ?</h1>
+                                </center>
+                                </div>
+                                
+                                <div class="modal-footer">
+                                <center>
+                                    <a href="/api/stock/products/remove/{{this.product._id}}" class="btn btn-purple">Confirm</a>
+                                    <button type="button" class="btn btn-purple" data-dismiss="modal" aria-label="Close">Cancel</button>
+                                </center>
+                                </div>
+                            </div>
+                            </div> 
+                        </div>
+                        <!-- /.DELETE MODAL-->
                         {{/each}}
                     </tbody>
                 </table>

@@ -1,33 +1,62 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
+// helpers
+const _ = require('lodash');
+const dateFormat = require('dateformat');
+const dateHelper = require('./helpers/dates');
+
+// related schemas
 const Product = require('./product');
 
 const PickingSchema = new Schema ({
+    // type of product picked
     product: {
-        //type of product picked
-        type: Schema.Types.ObjectId, ref: 'Product'
+        type: Schema.Types.ObjectId, 
+        ref: 'Product'
     },
-    pickingWeek: {
-        //date of picking
-        type: String
+    // date of harversting
+    date: {
+        type: Date
     },
+    // how many units have been harvested
     amountHarvested: {
-        //how much has been harvested
         type: Number
     }
 });
 
+PickingSchema.virtual('formatDate').get(function() {
+    var result = dateFormat(this.date, 'ddd, mmmm dd yyyy');
+    return result;
+});
+
+PickingSchema.virtual('editDate').get(function() {
+    var result = dateFormat(this.date, 'mm-dd-yyyy');
+    return result;
+});
+
+PickingSchema.virtual('totalWeight').get(function() {
+    var result = this.amountHarvested * this.product.avgWeight;
+    return result;
+});
+
 const Picking = module.exports = mongoose.model('Picking', PickingSchema);
 
-module.exports.listHarvests = function(_id, callback) {
+module.exports.listHarvests = function(_id, criteria, callback) {
     Product.findById({_id})
     .then((product) => {
-        Picking.find({product: product})
-        .populate({
-            path: 'product'
-        })
-        .exec(callback);
+        if (!_.isEmpty(criteria)) {   
+            Picking.find({product: product, date: dateHelper.dateRangedSearch(criteria)})
+            .sort('date')
+            .populate({path: 'product'})
+            .exec(callback);
+        }
+        else {
+            Picking.find({product: product})
+            .sort('date')
+            .populate({path: 'product'})
+            .exec(callback);
+        }
     });
 };
 

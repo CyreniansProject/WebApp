@@ -1,3 +1,5 @@
+const http = require('http');
+const fs = require('fs');
 const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
@@ -19,9 +21,9 @@ const users = require('./routes/users');
 const clients = require('./routes/clients');
 const orders = require('./routes/orders');
 const stock = require('./routes/stock');
-const reports = require('./routes/reports');
 const bags = require('./routes/bags');
-
+const reports = require('./routes/reports');
+const driver = require('./routes/driver');
 // Init App
 const app = express();
 
@@ -40,10 +42,13 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Express Session
 app.use(session({
-  secret: '!secret!of!cyrenians!',
+  secret: 'secret',
   saveUninitialized: true,
   resave: true
 }));
+
+// Secure the Express server (at least a bit)
+app.use(require('helmet')());
 
 // Passport init
 app.use(passport.initialize());
@@ -64,7 +69,7 @@ app.use(expressValidator({
       msg   : msg,
       value : value
     };
-  },
+  }
 }));
 
 // Connect Flash
@@ -74,6 +79,8 @@ app.use(flash());
 app.use(function (req, res, next) {
   res.locals.success_msg = req.flash('success_msg');
   res.locals.error_msg = req.flash('error_msg');
+  res.locals.valid_msg = req.flash('valid_msg');
+  res.locals.app_err_msg = req.flash('app_err_msg');
   res.locals.error = req.flash('error');
   res.locals.user = req.user || null;
   next();
@@ -87,8 +94,9 @@ app.use('/api/orders', orders);
 app.use('/api/stock', stock);
 app.use('/api/bags', bags);
 app.use('/api/reports', reports);
+app.use('/api/driver', driver);
 
 // Set Port
-app.set('port', (process.env.PORT || 3000));
-
+app.set('port', process.env.PORT || 80);
+// Start server on the set port
 app.listen(app.get('port'), () => console.log('Server started on port ' + app.get('port')));

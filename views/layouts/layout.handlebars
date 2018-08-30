@@ -26,6 +26,8 @@
 
     <!-- Custom Fonts -->
     <link href="/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    
+    <link href="/css/cyrenians.css" rel="stylesheet" type="text/css">
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -37,34 +39,34 @@
 <body>
 
   <!-- Page Content -->
-  <div id="page-wrapper">
-      <div class="container-fluid">
+<body id="login-background">
 
-          <div class="row">
-              <div class="col-lg-12">
-                  <h1 class="page-header">{{page_title}}</h1>
-              </div>
-          </div>
-          
-          <div class="col-lg-12">
-              {{#if success_msg}}
-                  <div class="alert alert-success">{{success_msg}}</div>
-              {{/if}}
-              
-              {{#if error_msg}}
-                  <div class="alert alert-danger">{{error_msg}}</div>
-              {{/if}}
-              
-              {{#if error}}
-                  <div class="alert alert-danger">{{error}}</div>
-              {{/if}}
-          </div>
+<div class="container">
+    <div class="row">
+        <div class="col-sm-4 col-sm-offset-4">
 
-          {{{body}}}
+            <div class="col-sm-12" style="position: relative; margin: 10% 0% 0% 0%;">
+                {{#if success_msg}}
+                    <div class="alert alert-success">{{success_msg}}</div>
+                {{/if}}
+                
+                {{#if error_msg}}
+                    <div class="alert alert-danger">{{error_msg}}</div>
+                {{/if}}
+                
+                {{#if error}}
+                    <div class="alert alert-danger">{{error}}</div>
+                {{/if}}
+            </div>
 
-      </div>
-    </div>
-  </div>
+            <div class="panel panel-default" style="margin-top: 35%">
+
+                {{{body}}}
+
+            </div><!--.panel-->
+        </div><!--.col-->
+    </div><!--.row-->
+</div><!--.container-->
 
   <!-- jQuery -->
   <script src="/js/jquery.min.js"></script>

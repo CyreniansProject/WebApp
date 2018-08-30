@@ -2,8 +2,9 @@
 <div class="row">
 <div class="col-lg-12">
     <div class="panel panel-default">
-        <div style="height: 50px;" class="panel-heading">
-            <a href="/api/clients/new" class="btn btn-danger pull-right" role="button">New client</a>
+        <div style="height: 65px;" class="panel-heading">
+            <big><strong>Table view of all clients and their subscriptions</strong></big>
+            <a href="/api/clients/new" class="btn btn-purple pull-right" role="button">Add Client</a>
         </div>
         <!-- /.panel-heading -->
         <div class="panel-body">
@@ -12,28 +13,61 @@
                     <thead>
                         <tr>
                             <th style="text-align: center;">#</th>
-                            <th>Full Name</th>
+                            <th>Full name</th>
+                            <th>Last order</th>
                             <th>Frequency</th>
-                            <th>Account</th>
                             <th>Address</th>
                         </tr>
                     </thead>
                     <tbody>
                         {{#each clients}}
                         <tr>
-                            <td style="text-align: center;margin: 0px;padding: 5px;width: 120px;">
-                                <a href="/api/clients/edit/{{this._id}}" class="btn btn-primary btn-outline" role="button">
-                                    <strong>Edit</strong>
+                            <td style="text-align: center;margin: 0px;padding: 5px 0px 5px 0px;width: 100px;">
+                                <a href="/api/clients/edit/{{this.client._id}}" class="btn btn-primary btn-sm btn-outline">
+                                    <i style="transform: scale(1.5);" class="fa fa-edit"></i>
                                 </a>&nbsp;
-                                <a href="/api/clients/remove/{{this._id}}" class="btn btn-danger btn-outline" role="button">
-                                    <strong>Del</strong>
+                                <a class="btn btn-danger btn-sm btn-outline" type="button" data-toggle="modal" data-target="#del-modal-{{this.client._id}}">
+                                    <i style="transform: scale(1.5);" class="fa fa-trash"></i>
                                 </a>
                             </td>
-                            <td style="font-size:18px;">{{this.name}}</td>
-                            <td style="font-size:18px;">{{this.frequency}}</td>
-                            <td style="font-size:18px;">{{this.account}}</td>
-                            <td style="font-size:18px;">{{this.address}}</td>
+                            <td style="font-size:14px;">{{this.client.name}}</td>
+                            <td style="font-size:14px;">
+                                {{#eq this.lastOrder null}}
+                                    <em>None</em>
+                                {{else}}
+                                    {{this.lastOrder.formatDate}}
+                                {{/eq}}
+                                <a href="/api/orders/to/{{this.client._id}}/new" class="pull-right" target="_blank">
+                                    <i style="margin-right: 5px; transform: scale(1.5); color: #a1225e;" class="fa fa-plus"></i>
+                                </a>
+                            </td>
+                            <td style="font-size:14px;">{{this.client.frequency}}</td>
+                            <td style="font-size:14px;">{{this.client.address}}</td>
                         </tr>
+                        
+                        <!-- .DELETE MODAL-->
+                        <div class="modal fade" id="del-modal-{{this.client._id}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                            <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                <button type="button" class="close" style="transform: scale(1.5);" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                                <center>
+                                    <h1>Deleting client <strong>{{this.client.name}}</strong> ... ?</h1>
+                                </center>
+                                </div>
+                                
+                                <div class="modal-footer">
+                                <center>
+                                    <a href="/api/clients/remove/{{this.client._id}}" class="btn btn-purple">Confirm</a>
+                                    <button type="button" class="btn btn-purple" data-dismiss="modal" aria-label="Close">Cancel</button>
+                                </center>
+                                </div>
+                            </div>
+                            </div> 
+                        </div>
+                        <!-- /.DELETE MODAL-->
                         {{/each}}
                     </tbody>
                 </table>

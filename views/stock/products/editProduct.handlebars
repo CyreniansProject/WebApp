@@ -11,10 +11,13 @@
         <div class="panel panel-default">
             <div class="panel-heading">
                 <div class="btn-group" role="group">
-                    <a href="/api/stock/harvests/to/{{productId}}" class="btn btn-danger btn-outline btn-md" role="button">
+                    <a href="/api/stock/purchases/to/{{productId}}" class="btn btn-primary btn-outline btn-md" role="button">
+                        <strong>Product purchases</strong>
+                    </a>
+                    <a href="/api/stock/harvests/to/{{productId}}" class="btn btn-primary btn-outline btn-md" role="button">
                         <strong>Product harvestings</strong>
                     </a>
-                    <a href="/api/stock/products/edit/{{productId}}" class="btn btn-primary btn-md" role="button">
+                    <a href="/api/stock/products/edit/{{productId}}" class="btn btn-purple btn-md" role="button">
                         <strong>Product details</strong>
                     </a>
                 </div>
@@ -32,7 +35,11 @@
                                         </div>
                                 </div>
                                 <div class="form-group row">
-                                        <label class="col-sm-2 col-form-label">Average weight <span style="color:red;">*</span></label>
+                                        <label class="col-sm-2 col-form-label">
+                                        Average weight (kg) 
+                                        <span style="color:red;">*</span><br>
+                                        <smal><strong>amount in a bag</strong></smal>
+                                    </label>
                                         <div class="col-sm-3">
                                             <div class="input-group">
                                             <input value="{{product.avgWeight}}" class="form-control pull-right" placeholder="" name="avgWeight" type="text">
@@ -41,7 +48,7 @@
                                         </div>
                                 </div>
                                 <!-- Change this to a button or input when using this as a form -->
-                                <button type="submit" class="btn btn-lg btn-danger btn-block">Update product</a>
+                                <button type="submit" class="btn btn-lg btn-purple btn-block">Update product</a>
                             </fieldset>
                         </form>
                     </div>

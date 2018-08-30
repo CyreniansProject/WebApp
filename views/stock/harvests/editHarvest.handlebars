@@ -13,7 +13,7 @@
                 <div class="btn-group" role="group">
                     <script>const goBack = () => { return window.location.href = '/api/stock/harvests/to/{{harvest.product._id}}'; };</script>
                     <div class="pull-left">
-                        <button type="button" class="btn btn-danger btn-outline pull-left" onclick="goBack()">< Back</button>
+                        <button type="button" class="btn btn-purple pull-left" onclick="goBack()">< Back</button>
                     </div>
                 </div>
             </div>
@@ -24,19 +24,22 @@
                             <input class="form-control" name="harvestId" type="hidden" value="{{harvest._id}}">
                             <fieldset>
                                 <div class="form-group row">
-                                        <label class="col-sm-2 col-form-label">How many? <span style="color:red;">*</span></label>
-                                        <div class="col-sm-3">
-                                            <div class="input-group">
-                                            <input value="{{harvest.amountHarvested}}" class="form-control pull-right" placeholder="" name="amountHarvested" type="text">
-                                            <div class="input-group-addon">Amount</div>
-                                            </div>
+                                    <label class="col-sm-2 col-form-label">
+                                        Harvested units <span style="color:red;">*</span><br>
+                                        <small><strong>(per avg. weight)</strong></small> 
+                                    </label>
+                                    <div class="col-sm-3">
+                                        <div class="input-group">
+                                        <input value="{{harvest.amountHarvested}}" class="form-control pull-right" placeholder="" name="amountHarvested" type="text">
+                                        <div class="input-group-addon">Amount</div>
                                         </div>
+                                    </div>
                                 </div>
                                 <div class="form-group row">
                                     <label class="col-sm-2 col-form-label">Harvesting date <span style="color:red;">*</span></label>
                                     <div class="col-sm-3">
                                         <div class="input-group date">
-                                            <input value="{{harvest.pickingWeek}}" type="text" class="form-control" name="pickingWeek">
+                                            <input value="{{harvest.editDate}}" type="text" class="form-control" name="pickingDate">
                                             <div class="input-group-addon">
                                                 mm/dd/yyyy
                                             </div>
@@ -44,7 +47,7 @@
                                     </div>
                                 </div>
                                 <!-- Change this to a button or input when using this as a form -->
-                                <button type="submit" class="btn btn-lg btn-danger btn-block">Save harvesting information</a>
+                                <button type="submit" class="btn btn-lg btn-purple btn-block">Save harvesting information</a>
                             </fieldset>
                         </form>
                     </div>
@@ -60,7 +63,9 @@ crossorigin="anonymous"></script>
 <script>
 $(document).ready(function() {
     $('.date input').each(function() {
-        $(this).datepicker();
+        $(this).datepicker({
+            format: 'mm-dd-yyyy'
+        });
     });
 });
 </script>

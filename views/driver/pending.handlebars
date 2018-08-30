@@ -1,0 +1,147 @@
+<style type="text/css">
+    input[type=checkbox] {
+        transform: scale(2);
+    }
+
+    .address-d {
+        margin-left: 1%;
+        margin-top: 7px;
+        font-size: 18px;
+        color: #444;
+    }
+
+    .delivery-heading {
+        padding-bottom: 10px;
+        font-size: 16px;
+        font-weight: bolder;
+        text-decoration: none;
+        color: #666;
+    }
+
+    .moment-heading {
+        padding-bottom: 10px;
+        font-size: 16px;
+        font-weight: bolder;
+        text-decoration: none;
+        color: #999;
+    }
+</style>
+<!-- Page-Level Demo Scripts - Tables - Use for reference -->
+<script src="http://code.jquery.com/jquery-3.3.1.min.js" 
+integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" 
+crossorigin="anonymous"></script>
+<div class="row">
+<p class="delivery-heading pull-left">
+    {{delivery_title}}
+</p>
+<p class="moment-heading pull-right">
+    {{moment}}
+</p>
+</div>
+<div class="row">
+    <!-- START OF DRIVER PANEL -->
+    <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="false">
+
+        {{!-- PENDING DELIVERIES VIEW --}}
+
+        {{#isnt pending_deliveries 'undefined'}}
+        {{#isEmpty pending_deliveries}}
+        <em>No pending deliveries</em>
+        {{else}}
+        <script>var deliveryStatsList = [];</script>
+        {{#each pending_deliveries}}
+        <div class="panel panel-default">
+        <div class="panel-heading" role="tab" id="heading{{this.id}}">
+            <h2 class="panel-title" data-toggle="collapse" data-parent="#accordion" href="#collapse{{this.id}}" aria-expanded="false" aria-controls="collapse{{this.id}}">
+                <!-- Address info -->
+                <p class="tiles-label address-d">{{this.address}}</p>
+                <!-- /Address info -->
+            </h2>
+        </div>
+        <div id="collapse{{this.id}}" class="panel-collapse collapse out" role="tabpanel" aria-labelledby="heading{{this.id}}">
+            <div class="panel-body">
+            <div class="dataTable_wrapper">
+                <table class="table table-striped table-bordered table-hover" id="clients">
+                    <thead>
+                        <tr>
+                            <!-- Client info -->
+                            <th>Customer name</th>
+                            <!-- /Client info -->
+
+                            <!-- Order - bag -->
+                            <th>Qty</th>
+                            <th>Type</th>
+                            <!-- /Order - bag -->
+
+                            <!-- Order - status -->
+                            <th>Delivered?</th>
+                            <!-- /Order - status -->
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{#each this.orders}}
+                        <tr>
+                            <td style="font-size:14px;">{{this.client.name}}</td>
+                            <td style="font-size:14px;">{{this.numberOfBags}}</td>
+                            <td style="font-size:14px;">{{this.typeOfBag}}</td>
+                            <td style="text-align: center;">
+                                <div class="checkbox">
+                                    <label>
+                                    <input type="checkbox" class="status-check" onchange="handleStatus('{{../this.id}}', '{{this._id}}')">
+                                    </label>
+                                </div>
+                            </td>
+                        </tr>
+                        {{/each}}           
+                    </tbody>
+                </table>
+                
+                </div>
+                <!-- /.table-responsive -->
+                <!-- table footer -->
+            </div>
+            <div class="panel-footer" style="padding-left: 20px; padding-right: 25px">
+            <form id="complete-{{this.id}}" class="form-inline" method="POST" action="/api/driver/complete">
+                <label><h4><strong>All delivered ?</strong></h4></label>
+                <!-- INITIAL STATS - IF NO ACTIONS ARE TAKEN (NO CHECKBOXES CHECKED) => CANCELLED -->
+                {{#each this.orders}}
+                    <script>
+                        deliveryStatsList.push({
+                            id: '{{../this.id}}',
+                            order: {
+                                id: '{{this._id}}',
+                                status: {
+                                    cancelled: true,
+                                    delivered: false
+                                }
+                            }
+                        });
+                    </script>
+                {{/each}}
+                <input type="hidden" class="form-control" name="deliveryId" value="{{this.id}}">
+                <input type="hidden" class="form-control" id="deliveryData{{this.id}}" name="deliveries">
+                <script>document.getElementById('deliveryData' + '{{this.id}}').value = JSON.stringify(deliveryStatsList);</script>
+                <button type="submit" class="btn btn-purple pull-right" style="margin-top: 6px;">Submit</button>
+            </form>
+            </div>
+            <!-- /.table footer -->
+        </div>
+        </div>
+        {{/each}}
+        <script>
+            function handleStatus(id, orderId) {
+                var delivery = deliveryStatsList.find(elem => elem.order.id === orderId);
+                delivery.order.status.delivered = !delivery.order.status.delivered;
+                delivery.order.status.cancelled = !delivery.order.status.cancelled;
+                document.getElementById('deliveryData' + id).value = JSON.stringify(deliveryStatsList);
+            }
+        </script>
+        {{/isEmpty}}
+        {{/isnt}}
+    </div>
+    <!-- END OF DRIVER PANEL -->           
+</div><!--.row-->   
+
+<script>
+    
+</script>

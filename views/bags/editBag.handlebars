@@ -1,0 +1,146 @@
+{{#if user}}
+{{#if valid_msg}}
+    <div class="alert alert-danger">{{valid_msg}}</div>
+{{/if}}
+<!-- Page-Level Demo Scripts - Tables - Use for reference -->
+<script src="http://code.jquery.com/jquery-3.3.1.min.js" 
+integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" 
+crossorigin="anonymous"></script>
+<script>var bagElemsList = [];</script>
+<div class="row">
+    <div class="col-lg-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Please fill out the details</h3>
+            </div>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <form id="addBagForm" role="form" method="post" action="/api/bags/update">
+                            <input class="form-control" name="bagId" type="hidden" value="{{bagContent._id}}">
+                            <fieldset>
+                                <div class="form-group">
+                                    <label>Bag size <span style="color:red;">*</span></label>
+                                    <select multiple class="form-control" name="type" id="bag-size">
+                                        <option value="Choose...">Choose...</option>
+                                        <option value="Small">Small</option>
+                                        <option value="Medium">Medium</option>
+                                        <option value="Large">Large</option>
+                                    </select>
+                                </div>
+                                <br>
+                                <div class="form-group row">
+                                <div class="pull-left col-sm-6">
+                                    <label><p>List of products</p></label>
+                                    <div style="display: none;" class="alert alert-danger">Please select an amount for the product you wish to add.</div>
+                                    <div style="height: 300px; overflow-y: auto;" class="list-group">
+                                        {{#each products}}
+                                            <!-- products -->
+                                            <div id="prod_{{this._id}}">
+                                                <a onclick="addToBag('{{this._id}}');" class="list-group-item list-group-item-action productToAdd">{{this.name}}</a>
+                                                <input type="hidden" name="itemName" value="{{this.name}}">
+                                            </div>
+                                        {{/each}}
+                                    </div>
+                                </div>
+                                <div class="pull-left col-sm-6">
+                                    <label><p>Products in bag</p></label>
+                                    <div id="bagElems" style="height: 300px; overflow-y: auto;" class="list-group">
+                                        <input type="hidden" id="productData" name="products"/>
+                                        <!-- display the updated to bag products -->
+                                        {{#each bagContent.product}}
+                                        <script>
+                                            bagElemsList.push('{{this._id}}');
+                                            document.getElementById("productData").value = JSON.stringify(bagElemsList);
+
+                                            $('#prod_{{this._id}}' + ' a').css('text-decoration', 'line-through');
+                                            $('#prod_{{this._id}}' + ' a').attr('onclick', 'return false');
+                                        </script>
+                                        <div id="elem_{{this._id}}">
+                                        <a class="list-group-item list-group-item-action col-sm-12 pull-left" onclick="removeFromBag('{{this._id}}')">
+                                            {{this.name}}
+                                        </a>
+                                        <input type="hidden" name="itemName" value="{{this.name}}">
+                                        </div>
+                                        {{/each}}
+                                    </div>
+                                </div>
+                                </div> 
+                                <div class="form-group row">
+                                    <div class="col-sm-6">
+                                        <label>Price <strong>(&pound;)</strong> <span style="color:red;">*</span></label>
+                                        <div class="form-inline">
+                                            <input style="width:100px;" class="form-control" name="price" type="text" value="{{bagContent.price}}">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="pull-left col-sm-6">
+                                        <label>Active period <span style="color:red;">*</span></label>
+                                        <div class="input-group input-daterange form-inline">
+                                            <label>From</label>
+                                            <div class="form-group">
+                                                <input type="text" class="form-control" name="startDate" value="{{bagContent.editStartDate}}">
+                                            </div>
+                                            <label>To</label>
+                                            <div class="form-group">
+                                                <input type="text" class="form-control" name="endDate" value="{{bagContent.editEndDate}}">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <br><br>
+                                <button type="submit" class="btn btn-lg btn-purple btn-block">Update bag</button>
+                            </fieldset>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $("#bag-size").val('{{bagContent.type}}').change();
+
+    // TODO: ABSTRACT THOSE FUNCTIONS IN bagHelper.js
+
+    function removeFromBag(elementId) {
+        const bagElemIndex = bagElemsList.indexOf(elementId);
+        bagElemsList.splice(bagElemIndex, 1);
+        document.getElementById("productData").value = JSON.stringify(bagElemsList);
+
+        $("#elem_" + elementId).remove();
+
+        $('#prod_' + elementId + ' a').css('text-decoration', 'none');
+        $('#prod_' + elementId + ' a').attr('onclick', 'addToBag("' + elementId + '")');
+    }
+
+    function addToBag(productId) {
+        const productName = $('#prod_' + productId + ' input[name=itemName]').val();
+
+        // create the html dom elements for a new product in bag list
+        $('#bagElems').append(
+            '<div id="elem_' + productId + '">' +
+            '<a class="list-group-item list-group-item-action col-sm-12 pull-left" onclick=removeFromBag("' + productId + '")>' + productName + '</a>' +
+            '<input type="hidden" name="itemName" value="' + productName + '">' +
+            '</div>'
+        );
+        
+        bagElemsList.push(productId);
+
+        document.getElementById("productData").value = JSON.stringify(bagElemsList);
+
+        $('#prod_' + productId + ' a').css('text-decoration', 'line-through');
+        $('#prod_' + productId + ' a').attr('onclick', 'return false');
+    }
+
+    $(document).ready(function() {
+         $('.input-daterange input').each(function() {
+           $(this).datepicker(({
+                format: 'mm-dd-yyyy'
+            }));
+        });
+    });
+</script>
+{{/if}}

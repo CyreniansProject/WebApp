@@ -1,9 +1,12 @@
 {{#if user}}
-{{#if errors}}
-      {{#each errors}}
-        <div class="alert alert-danger">{{msg}}</div>
-      {{/each}}
+{{#if valid_msg}}
+    <div class="alert alert-danger">{{valid_msg}}</div>
 {{/if}}
+<!-- Page-Level Demo Scripts - Tables - Use for reference -->
+<script src="http://code.jquery.com/jquery-3.3.1.min.js" 
+integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" 
+crossorigin="anonymous"></script>
+<script>var extraElemsList = [];</script>
 <div class="row">
     <div class="col-lg-12">
         <div class="panel panel-default">
@@ -11,7 +14,7 @@
                 <div class="btn-group" role="group">
                     <script>const goBack = () => { return window.location.href = '/api/orders/to/{{clientId}}'; };</script>
                     <div class="pull-left">
-                        <button type="button" class="btn btn-danger btn-outline pull-left" onclick="goBack()">< Back</button>
+                        <button type="button" class="btn btn-purple pull-left" onclick="goBack()">< Back</button>
                     </div>
                     <h3 style="margin-left: 20px; margin-top: 10px;" class="panel-title pull-right">Please fill out the details</h3>
                 </div>
@@ -23,16 +26,27 @@
                             <input class="form-control" name="clientId" type="hidden" value="{{clientId}}">
                             <fieldset>
                                 <div class="form-group row">
-                                        <label class="col-sm-2 col-form-label">Bags <span style="color:red;">*</span></label>
-                                        <div class="col-sm-3">
-                                            <div class="input-group">
+                                    <label class="col-sm-2 col-form-label">Bags <span style="color:red;">*</span></label>
+                                    <div class="col-sm-3">
+                                        <div class="input-group">
                                             <input class="form-control pull-right" placeholder="" name="numberOfBags" type="text">
                                             <div class="input-group-addon">Amount</div>
-                                            </div>
                                         </div>
+                                    </div>
                                 </div>
                                 <div class="form-group row">
-                                    <label class="col-sm-2 col-form-label">Notes <span style="color:red;">*</span></label>
+                                    <label class="col-sm-2 col-form-label">Bag size <span style="color:red;">*</span></label>
+                                    <div class="col-sm-3">
+                                        <select multiple class="form-control" name="typeOfBag">
+                                            <option value="Choose..." selected>Choose...</option>
+                                            <option value="Small">Small</option>
+                                            <option value="Medium">Medium</option>
+                                            <option value="Large">Large</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-sm-2 col-form-label">Notes</label>
                                     <div class="col-sm-3">
                                         <textarea rows="6" class="form-control" placeholder="" name="notes" type="text"></textarea>
                                     </div>
@@ -41,9 +55,9 @@
                                     <label class="col-sm-2 col-form-label">Date <span style="color:red;">*</span></label>
                                     <div class="col-sm-3">
                                         <div class="input-group date">
-                                            <input type="text" class="form-control" name="date">
+                                            <input type="text" class="form-control" name="date" placeholder="mm/dd/yyyy">
                                             <div class="input-group-addon">
-                                                mm/dd/yyyy
+                                                date
                                             </div>
                                         </div>
                                     </div>
@@ -57,7 +71,38 @@
                                         <label class="custom-control-label">No</label>
                                     </div>
                                 </div>
-                                <button type="submit" class="btn btn-lg btn-danger btn-block">Add order</a>
+                                <div class="form-group row">
+                                    <label class="col-sm-2 col-form-label">Extra product(s)?</label>
+                                    <div class="col-sm-1">
+                                        <input type="checkbox" class="form-check-input" name="extras" onclick="return shouldAddExtras();">
+                                    </div>
+                                </div>
+                                <div style="display: none;" class="form-group row" id="extras-holder">
+                                <div class="pull-left col-sm-6">
+                                    <h4>List of products</h4>
+                                    <hr>
+                                    <div style="display: none;" class="alert alert-danger">Please select an amount for the product you wish to add.</div>
+                                    <div style="height: 300px; overflow-y: auto;" class="list-group">
+                                        {{#each products}}
+                                            <!-- products -->
+                                            <div id="prod_{{this._id}}">
+                                                <a onclick="addExtra('{{this._id}}');" class="list-group-item list-group-item-action productToAdd">{{this.name}}</a>
+                                                <input type="hidden" name="pId" value="{{this._id}}">
+                                                <input type="hidden" name="itemName" value="{{this.name}}">
+                                            </div>
+                                        {{/each}}
+                                    </div>
+                                </div>
+                                <div class="pull-left col-sm-6">
+                                    <h4>Added as extra</h4>
+                                    <hr>
+                                    <div id="extraElems" style="height: 300px; overflow-y: auto;" class="list-group">
+                                        <input type="hidden" id="productData" name="products"/>
+                                        <!-- display the added extra products -->
+                                    </div>
+                                </div>
+                                </div>
+                                <button type="submit" class="btn btn-lg btn-purple btn-block">Add order</a>
                             </fieldset>
                         </form>
                     </div>
@@ -67,14 +112,64 @@
     </div>
 </div>
 
-<!-- Page-Level Demo Scripts - Tables - Use for reference -->
-<script src="http://code.jquery.com/jquery-3.3.1.min.js" 
-integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" 
-crossorigin="anonymous"></script>
 <script>
+    // TODO: ABSTRACT THOSE FUNCTIONS IN orderHelper.js
+
+    function shouldAddExtras() {
+        if ($('#extras-holder').css('display') !== 'none') {            
+            while (extraElemsList.length > 0) {
+                extraElemsList.pop();
+            }
+            
+            $("[id^='prod_']").each(function() {
+                var pId = $(this).find('input[name=pId]').val();
+                $(this).find('a').css('text-decoration', 'none');
+                $(this).find('a').attr('onclick', 'addExtra("' + pId + '")');
+            })
+
+            document.getElementById("productData").value = JSON.stringify(extraElemsList);
+            $("[id^='elem_']").remove();
+        }
+
+        // toggle (show/hide) the list views
+        $('#extras-holder').toggle();
+    }
+
+    function removeExtra(elementId) {
+        const extraElemIndex = extraElemsList.indexOf(elementId);
+        extraElemsList.splice(extraElemIndex, 1);
+        document.getElementById("productData").value = JSON.stringify(extraElemsList);
+
+        $('#elem_' + elementId).remove();
+
+        $('#prod_' + elementId + ' a').css('text-decoration', 'none');
+        $('#prod_' + elementId + ' a').attr('onclick', 'addExtra("' + elementId + '")');
+    }
+
+    function addExtra(productId) {
+        const productName = $('#prod_' + productId + ' input[name=itemName]').val();
+
+        // create the html dom elements for a new product in extra list
+        $('#extraElems').append(
+            '<div id="elem_' + productId + '">' +
+            '<a class="list-group-item list-group-item-action col-sm-12 pull-left" onclick=removeExtra("' + productId + '")>' + productName + '</a>' +
+            '<input type="hidden" name="itemName" value="' + productName + '">' +
+            '</div>'
+        );
+        
+        extraElemsList.push(productId);
+
+        document.getElementById("productData").value = JSON.stringify(extraElemsList);
+
+        $('#prod_' + productId + ' a').css('text-decoration', 'line-through');
+        $('#prod_' + productId + ' a').attr('onclick', 'return false');
+    }
+
     $(document).ready(function() {
          $('.date input').each(function() {
-            $(this).datepicker();
+            $(this).datepicker(({
+                format: 'mm-dd-yyyy'
+            }));
         });
     });
 </script>

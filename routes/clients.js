@@ -2,25 +2,36 @@ const express = require('express');
 const router = express.Router();
 const flash = require('connect-flash');
 
+// schemas
 const Client = require('../models/client');
-/** !!!
- ** THIS IS A BASE AND PURE API WITH NO FRONT-END CONNECTION ATM!
 
- ** NOTE: AFTER RECEIVING THE FRONT-END TEMPLATE,
- ** DO: if (req.user) { ... res.render(...) } else { res.flash(...) res.redirect(...) }
- ** WITH USER LEVEL RESTRICTIONS AS WELL WHERE APPLICABLE
-!!! **/
+// schema helpers
+const lastResultHelper = require('../models/helpers/lastResult');
 
 router.get('/', function(req, res) {
     if (req.user) {
         if (req.user.role == 0 || req.user.role == 1) {
-            Client.find({}, function(err, clients) {
-                // Display all items by name category. -> name & avgWeight just once AND THEN =>
-                // Calculate totalWeight and totalAmount from all items within the name category
-                // Display the calculated fileds.
+            var clients = [];
+            Client.listClients(function(err, clientList) {
                 if (err) throw err;
-                res.render('clients/index', { layout: 'layout_staff.handlebars', page_title: 'Client list', 
-                user: req.user, clients: clients });
+                var count = clientList.length;
+                
+                // find the last order for each client object
+                clientList.forEach(client => {
+                    lastResultHelper.getLastOrder(client, function(oErr, lastOrder) {
+                        if (oErr) throw oErr;
+                        clients.push({
+                            client: client,
+                            lastOrder: lastOrder
+                        });
+                        count--;
+
+                        if (count == 0) {
+                            res.render('clients/index', { layout: 'layout_staff.handlebars', page_title: 'Client list', 
+                            user: req.user, clients: clients });
+                        }
+                    });
+                });
             });
         }
         else {
@@ -56,22 +67,46 @@ router.post('/new', function(req, res) {
             const name = req.body.fullname;
             const email = req.body.email;
             const account = req.body.account;
+            // TODO (possibly): Split 'address' / Collection point into 6 fields: 
+            /** !!!!!!!!!!!!!!!!!!!!!!!!
+            ** Address Line 1 (Street address, P.O. box, Company name) - required
+            ** Address Line 2 (Apartment, suite, unit, building floor) - optional
+            ** City/Town - required
+            ** State/Province/Region - optional
+            ** Zip/Postal Code - required
+            ** Country - required
+            **/
             const address = req.body.address;
             const frequency = req.body.frequency;
-            // VALIDATION ... TODO
+            
+            // Validation
+            req.check('fullname', 'Full name is required').notEmpty();
+            req.check('email', 'Email is required').isEmail();
+            req.check('account', 'Bank account (number) is required').isNumeric();
+            req.check('address', 'Collection point is required').notEmpty();
+            req.check('frequency', 'Frequency (selection) is required').not().equals("Choose...");
+            // Store validation errors if any...
+            var validErrors = req.validationErrors();
 
-            const clientDetails = {
-                name: name,
-                frequency: frequency,
-                email: email,
-                account: account,
-                address: address
-            };
+            // Attempt User creation
+            if (validErrors) {
+                req.flash('valid_msg', validErrors[0].msg);
+                res.redirect('back');
+            }
+            else {
+                const clientDetails = {
+                    name: name,
+                    frequency: frequency,
+                    email: email,
+                    account: account,
+                    address: address
+                };
 
-            Client.createClient(clientDetails, function(err, client) {
-                if (err) throw err;
-                res.redirect('/api/clients');
-            });
+                Client.createClient(clientDetails, function(err, client) {
+                    if (err) throw err;
+                    res.redirect('/api/clients');
+                });
+            }
         }
         else {
             req.flash('error_msg', 'You don\'t have the authority to access this page!');
@@ -117,21 +152,35 @@ router.post('/update', function(req, res) {
             const account = req.body.account;
             const address = req.body.address;
 
-            // VALIDATION ... TODO
+            // Validation
+            req.check('fullname', 'Full name is required').notEmpty();
+            req.check('email', 'Email is required').isEmail();
+            req.check('account', 'Bank account (number) is required').isNumeric();
+            req.check('address', 'Collection point is required').notEmpty();
+            req.check('frequency', 'Frequency (selection) is required').not().equals("Choose...");
+            // Store validation errors if any...
+            var validErrors = req.validationErrors();
 
-            const clientDetails = {
-                name: name,
-                frequency: frequency,
-                email: email,
-                account: account,
-                address: address
-            };
-
-            Client.updateClient(id, clientDetails, function(err, client) {
-                if (err) throw err;
-                req.flash('success_msg', 'Client successfully updated!');
+            // Attempt User creation
+            if (validErrors) {
+                req.flash('valid_msg', validErrors[0].msg);
                 res.redirect('back');
-            });
+            }
+            else {
+                const clientDetails = {
+                    name: name,
+                    frequency: frequency,
+                    email: email,
+                    account: account,
+                    address: address
+                };
+
+                Client.updateClient(id, clientDetails, function(err, client) {
+                    if (err) throw err;
+                    req.flash('success_msg', 'Client successfully updated!');
+                    res.redirect('back');
+                });
+            }
         }
         else {
             req.flash('error_msg', 'You don\'t have the authority to access this page!');
@@ -163,6 +212,6 @@ router.get('/remove/:id', function(req, res) {
         req.flash('error_msg', 'You need to login first!');
         res.redirect('/');
     }
-})
+});
 
 module.exports = router;

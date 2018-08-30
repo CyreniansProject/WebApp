@@ -1,0 +1,65 @@
+{{#if user}}
+{{#if valid_msg}}
+    <div class="alert alert-danger">{{valid_msg}}</div>
+{{/if}}
+<div class="row">
+    <div class="col-lg-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Alter the user's details</h3>
+            </div>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <form role="form" method="POST" action="/api/users/update">
+                            <input class="form-control" name="userId" type="hidden" value="{{member._id}}">
+                            <fieldset>
+                                <div class="form-group">
+                                    <label><h4>First name</h4></label>
+                                    <input class="form-control" name="firstname" value="{{member.firstname}}" type="text" autofocus>
+                                </div>
+                                <div class="form-group">
+                                    <label><h4>Surname</h4></label>
+                                    <input class="form-control" name="lastname" value="{{member.lastname}}" type="text">
+                                </div>
+                                <div class="form-group">
+                                    <label><h4>E-mail address</h4></label>
+                                    <input class="form-control" name="email" value="{{member.email}}" type="email">
+                                </div>
+                                <div class="form-group">
+                                    <label><h4>Access level</h4></label>
+                                    <select multiple class="form-control" id="access" name="role">
+                                        <option value="Choose...">Choose...</option>
+                                        <option value="0">Administrator</option>
+                                        <option value="1">Staff member</option>
+                                        <option value="2">Delivery man</option>
+                                    </select>
+                                </div>
+                                <button type="submit" class="btn btn-lg btn-purple btn-block">Save changes</button>
+                            </fieldset>
+                        </form>
+                        <hr/>
+                        <form role="form" method="POST" action="/api/users/send-password">
+                            <input class="form-control" name="userId" type="hidden" value="{{member._id}}">
+                            <input class="form-control" name="userEmail" type="hidden" value="{{member.email}}">
+                            <input class="form-control" name="userFirstname" type="hidden" value="{{member.firstname}}">
+                            <input class="form-control" name="userLastname" type="hidden" value="{{member.lastname}}">
+                            <fieldset>
+                                <label><h4>Send an email for password resetting</h4></label>
+                                <button type="submit" class="btn btn-lg btn-purple btn-block">Send new password</button>
+                            </fieldset>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Page-Level Demo Scripts - Tables - Use for reference -->
+<script src="http://code.jquery.com/jquery-3.3.1.min.js" 
+integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" 
+crossorigin="anonymous"></script>
+<script>
+    $("#access").val('{{member.role}}').change();
+</script>
+{{/if}}
